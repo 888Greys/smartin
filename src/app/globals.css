@@ -1,13 +1,17 @@
 @import "tailwindcss";
 
 :root {
-  --bg: #05070a;
-  --surface: rgba(255, 255, 255, 0.05);
+  --bg: #020408;
+  --accent: #00f2ff;
+  --accent-glow: rgba(0, 242, 255, 0.3);
+  --glass: rgba(255, 255, 255, 0.03);
+  --border: rgba(255, 255, 255, 0.08);
+  --text: #f0f2f5;
   --primary: #00f2ff;
   --secondary: #7000ff;
-  --text: #ffffff;
   --text-dim: #a0a0a0;
-  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-border: var(--border);
+  --surface: var(--glass);
   --success: #00ff88;
 }
 
@@ -15,12 +19,13 @@
   --color-background: var(--bg);
   --color-foreground: var(--text);
   --color-primary: var(--primary);
+  --color-accent: var(--accent);
   --color-secondary: var(--secondary);
   --color-success: var(--success);
   --color-surface: var(--surface);
   --color-text-dim: var(--text-dim);
   --color-glass-border: var(--glass-border);
-  --font-sans: 'Inter', sans-serif;
+  --font-sans: 'Plus Jakarta Sans', 'Inter', sans-serif;
 }
 
 * {
@@ -32,63 +37,152 @@
 body {
   background-color: var(--bg);
   color: var(--text);
-  font-family: 'Inter', sans-serif;
+  font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
   overflow-x: hidden;
   min-height: 100vh;
 }
 
-/* Morphing Logo Animation */
-@keyframes morph {
+/* --- VAULT DESIGN STRICT CSS --- */
+
+@keyframes float {
+  from {
+    transform: translate(-20%, -20%);
+  }
+
+  to {
+    transform: translate(20%, 20%);
+  }
+}
+
+@keyframes rotateLogo {
   0% {
-    border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
     transform: rotate(0deg);
+    border-radius: 20px;
   }
+
   50% {
-    border-radius: 70% 30% 30% 70% / 70% 70% 30% 30%;
+    border-radius: 35%;
   }
+
   100% {
-    border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
     transform: rotate(360deg);
+    border-radius: 20px;
   }
 }
 
-.logo-pulse {
-  width: 80px;
-  height: 80px;
-  border: 3px solid var(--primary);
-  animation: morph 3s linear infinite;
+@keyframes pulse {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(2.5);
+  }
 }
 
-/* Blinking Dot Animation */
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.3; }
+.orb {
+  position: absolute;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+  filter: blur(80px);
+  z-index: -1;
+  animation: float 10s infinite alternate;
 }
 
-.dot-blink {
-  animation: blink 1.5s infinite;
+.vault-container {
+  width: 100%;
+  max-width: 420px;
+  padding: 40px;
+  background: var(--glass);
+  backdrop-filter: blur(30px);
+  border: 1px solid var(--border);
+  border-radius: 40px;
+  text-align: center;
+  box-shadow: 0 40px 100px rgba(0, 0, 0, 0.5);
+  position: relative;
+  margin: 0 auto;
+  /* Ensure centering */
 }
 
-/* Glass Card */
-.glass-card {
-  background: var(--surface);
-  backdrop-filter: blur(20px);
-  border: 1px solid var(--glass-border);
-  border-radius: 24px;
+.vault-logo-ring {
+  width: 70px;
+  height: 70px;
+  margin: 0 auto 20px;
+  border: 2px solid var(--accent);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 20px var(--accent-glow);
+  animation: rotateLogo 8s linear infinite;
 }
 
-/* Gradient Button */
-.btn-gradient {
-  background: linear-gradient(45deg, var(--primary), var(--secondary));
-  transition: all 0.3s ease;
+.vault-input {
+  width: 100%;
+  padding: 18px 20px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  color: white;
+  outline: none;
+  transition: 0.3s;
+  font-size: 0.95rem;
+  margin-bottom: 15px;
 }
 
-.btn-gradient:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 40px rgba(0, 242, 255, 0.3);
+.vault-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 15px var(--accent-glow);
 }
 
-/* Progress Ring */
+.vault-btn {
+  width: 100%;
+  padding: 18px;
+  margin-top: 10px;
+  background: linear-gradient(135deg, var(--accent), #7000ff);
+  border: none;
+  border-radius: 18px;
+  color: white;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.vault-btn:hover {
+  transform: scale(1.02);
+  filter: brightness(1.1);
+}
+
+.vault-status {
+  margin-top: 25px;
+  font-size: 0.75rem;
+  color: var(--accent);
+  background: rgba(0, 242, 255, 0.05);
+  padding: 10px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.pulse-dot {
+  width: 6px;
+  height: 6px;
+  background: var(--accent);
+  border-radius: 50%;
+  animation: pulse 1.5s infinite;
+}
+
+/* Dashboard Styles Helper */
 .progress-ring {
   transform: rotate(-90deg);
 }
@@ -99,32 +193,25 @@ body {
   filter: drop-shadow(0 0 8px var(--primary));
 }
 
-/* Input Styles */
-input {
-  background: rgba(255, 255, 255, 0.05);
+.glass-card {
+  background: var(--surface);
+  backdrop-filter: blur(20px);
   border: 1px solid var(--glass-border);
-  transition: border-color 0.3s ease;
+  border-radius: 24px;
 }
 
-input:focus {
-  outline: none;
-  border-color: var(--primary);
+.dot-blink {
+  animation: blink 1.5s infinite;
 }
 
-input::placeholder {
-  color: var(--text-dim);
-}
+@keyframes blink {
 
-/* Scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-}
+  0%,
+  100% {
+    opacity: 1;
+  }
 
-::-webkit-scrollbar-track {
-  background: var(--bg);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--glass-border);
-  border-radius: 3px;
+  50% {
+    opacity: 0.3;
+  }
 }

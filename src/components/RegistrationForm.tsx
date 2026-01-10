@@ -17,58 +17,95 @@ export default function RegistrationForm({ onSubmit }: RegistrationFormProps) {
             return;
         }
 
-        onSubmit();
+        // Simulate "Deploying Agent" state
+        const btn = form.querySelector("button") as HTMLButtonElement;
+        btn.innerHTML = `Deploying Agent...`;
+        btn.style.opacity = "0.7";
+
+        setTimeout(() => {
+            onSubmit();
+        }, 1500);
     };
 
     return (
-        <motion.div
-            className="min-h-screen flex flex-col items-center px-5 py-10"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5 }}
-        >
-            {/* Navigation */}
-            <nav className="w-full max-w-md mb-10">
-                <div className="text-xl font-bold">
-                    smart<span className="text-[var(--primary)]">Invest</span>
-                </div>
-            </nav>
+        <div className="min-h-screen flex items-center justify-center relative overflow-hidden">
+            {/* Orb Background */}
+            <div className="orb" />
 
-            {/* Form Card */}
-            <motion.form
-                onSubmit={handleSubmit}
-                className="glass-card p-8 w-full max-w-md text-center"
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.2, duration: 0.5 }}
+            {/* Vault Container */}
+            <motion.div
+                className="vault-container"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.6 }}
             >
-                <h2 className="text-2xl font-semibold mb-2">Get Started</h2>
-                <p className="text-[var(--text-dim)] text-sm mb-6">
-                    Deposit $10. See yield in 24h.
+                <div className="vault-logo-ring">
+                    <svg
+                        width="30"
+                        height="30"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2.5"
+                        style={{ color: "var(--accent)" }}
+                    >
+                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                    </svg>
+                </div>
+
+                <h1 className="font-extrabold text-[1.8rem] tracking-[-0.5px] mb-2">
+                    smart<span className="text-[var(--accent)]">Invest</span>
+                </h1>
+                <p className="text-[#888] text-sm mb-9">
+                    Autonomous yield for the agentic era.
                 </p>
 
-                <input
-                    type="email"
-                    name="email"
-                    placeholder="Email Address"
-                    className="w-full p-4 rounded-xl text-white mb-3"
-                    required
-                />
-                <input
-                    type="password"
-                    name="password"
-                    placeholder="Password"
-                    className="w-full p-4 rounded-xl text-white mb-4"
-                    required
-                />
+                <form onSubmit={handleSubmit}>
+                    <div>
+                        <input
+                            type="email"
+                            name="email"
+                            placeholder="Email Address"
+                            className="vault-input"
+                            required
+                        />
+                    </div>
+                    <div>
+                        <input
+                            type="password"
+                            name="password"
+                            placeholder="Secure Password"
+                            className="vault-input"
+                            required
+                        />
+                    </div>
 
-                <button
-                    type="submit"
-                    className="btn-gradient w-full py-4 rounded-xl text-white font-bold cursor-pointer"
-                >
-                    CREATE ACCOUNT
-                </button>
-            </motion.form>
-        </motion.div>
+                    <button type="submit" className="vault-btn">
+                        Start Earning $10
+                        <svg
+                            width="20"
+                            height="20"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="3"
+                        >
+                            <path d="M5 12h14M12 5l7 7-7 7"></path>
+                        </svg>
+                    </button>
+                </form>
+
+                <div className="vault-status">
+                    <div className="pulse-dot"></div>
+                    <span>SmartAgent active: Scanning T-Bill Yields (4.12% APY)</span>
+                </div>
+
+                <div className="mt-8 flex justify-center gap-4 opacity-50 grayscale text-[0.7rem] font-bold tracking-wider">
+                    <span>SECURED BY GOOGLE CLOUD</span>
+                    <span>•</span>
+                    <span>VERIFIED ON BASE</span>
+                </div>
+            </motion.div>
+        </div>
     );
 }
