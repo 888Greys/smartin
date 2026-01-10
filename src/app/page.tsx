@@ -6,6 +6,7 @@ import Link from "next/link";
 export default function LandingPage() {
   const [liveVal, setLiveVal] = useState(1402.92);
   const [revealed, setRevealed] = useState<Set<number>>(new Set());
+  const [menuOpen, setMenuOpen] = useState(false);
   const observerRef = useRef<IntersectionObserver | null>(null);
   const elementsRef = useRef<Map<number, HTMLElement>>(new Map());
 
@@ -63,7 +64,6 @@ export default function LandingPage() {
                     .hero-desc { font-size: 1rem !important; }
                     .cta-btn { padding: 18px 35px !important; font-size: 1rem !important; }
                     .nav-container { padding: 15px 4% !important; }
-                    .nav-btn { padding: 8px 16px !important; font-size: 0.85rem !important; }
                     .bento-item h2 { font-size: 1.4rem !important; }
                     .bento-item p { font-size: 0.9rem !important; }
                     .trust-logos { gap: 25px !important; }
@@ -78,9 +78,30 @@ export default function LandingPage() {
             <div style={{ width: '28px', height: '28px', background: '#0052ff', borderRadius: '7px', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.9rem' }}>S</div>
             smartInvest
           </div>
-          <Link href="/register" className="nav-btn" style={{ background: '#0052ff', color: 'white', padding: '10px 20px', borderRadius: '12px', textDecoration: 'none', fontWeight: 700, fontSize: '0.9rem' }}>
-            Get Started
-          </Link>
+
+          {/* Hamburger Menu */}
+          <div style={{ position: 'relative' }}>
+            <button onClick={() => setMenuOpen(!menuOpen)} style={{ background: 'transparent', border: 'none', cursor: 'pointer', padding: '8px', display: 'flex', flexDirection: 'column', gap: '5px' }}>
+              <span style={{ width: '24px', height: '2px', background: '#0f172a', borderRadius: '2px', transition: '0.3s', transform: menuOpen ? 'rotate(45deg) translateY(7px)' : 'none' }}></span>
+              <span style={{ width: '24px', height: '2px', background: '#0f172a', borderRadius: '2px', transition: '0.3s', opacity: menuOpen ? 0 : 1 }}></span>
+              <span style={{ width: '24px', height: '2px', background: '#0f172a', borderRadius: '2px', transition: '0.3s', transform: menuOpen ? 'rotate(-45deg) translateY(-7px)' : 'none' }}></span>
+            </button>
+
+            {/* Dropdown Menu */}
+            {menuOpen && (
+              <div style={{ position: 'absolute', top: '50px', right: 0, background: 'white', borderRadius: '16px', boxShadow: '0 15px 40px rgba(0,0,0,0.12)', border: '1px solid #e2e8f0', minWidth: '200px', overflow: 'hidden' }}>
+                <Link href="/contact" onClick={() => setMenuOpen(false)} style={{ display: 'block', padding: '14px 20px', color: '#0f172a', textDecoration: 'none', fontWeight: 600, fontSize: '0.95rem', borderBottom: '1px solid #f1f5f9' }}>
+                  📧 Contact Us
+                </Link>
+                <Link href="/faqs" onClick={() => setMenuOpen(false)} style={{ display: 'block', padding: '14px 20px', color: '#0f172a', textDecoration: 'none', fontWeight: 600, fontSize: '0.95rem', borderBottom: '1px solid #f1f5f9' }}>
+                  ❓ FAQs
+                </Link>
+                <Link href="/terms" onClick={() => setMenuOpen(false)} style={{ display: 'block', padding: '14px 20px', color: '#0f172a', textDecoration: 'none', fontWeight: 600, fontSize: '0.95rem' }}>
+                  📄 Terms & Conditions
+                </Link>
+              </div>
+            )}
+          </div>
         </nav>
 
         {/* Hero Section */}
@@ -94,7 +115,7 @@ export default function LandingPage() {
 
           <div ref={setRef(2)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '15px', ...revealStyle(2) }}>
             <Link href="/register" className="cta-btn" style={{ background: '#0f172a', color: 'white', padding: '20px 40px', borderRadius: '18px', fontSize: '1.1rem', fontWeight: 800, textDecoration: 'none', boxShadow: '0 15px 35px rgba(0,0,0,0.12)' }}>
-              Start with just $10
+              Get Started
             </Link>
             <div style={{ marginTop: '15px', background: 'white', padding: '18px 25px', borderRadius: '20px', boxShadow: '0 8px 25px rgba(0,0,0,0.06)', border: '1px solid #f1f5f9' }}>
               <p style={{ fontSize: '0.75rem', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', marginBottom: '5px' }}>Live Network Growth</p>
@@ -144,6 +165,11 @@ export default function LandingPage() {
           <p>© 2026 smartInvest. All rights reserved.</p>
         </footer>
       </div>
+
+      {/* Overlay to close menu */}
+      {menuOpen && (
+        <div onClick={() => setMenuOpen(false)} style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 50 }}></div>
+      )}
     </>
   );
 }
