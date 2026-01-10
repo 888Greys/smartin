@@ -7,12 +7,12 @@ declare global {
     var prisma: PrismaClient | undefined;
 }
 
-// Connection with explicit empty password for trust auth
+// TCP connection with password
 const pool = new Pool({
-    host: '/var/run/postgresql',
+    host: '127.0.0.1',
     port: 5433,
     user: 'postgres',
-    password: '',
+    password: process.env.POSTGRES_PASSWORD || 'postgres123',
     database: 'smartinvest',
 });
 
