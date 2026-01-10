@@ -1,10 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 type Step = 'register' | 'otp';
+
+interface RegistrationState {
+    step: Step;
+    email: string;
+    timestamp: number;
+}
 
 export default function RegisterPage() {
     const router = useRouter();
@@ -15,6 +21,45 @@ export default function RegisterPage() {
     const [otp, setOtp] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
+    const [isHydrated, setIsHydrated] = useState(false);
+
+    // Restore state from localStorage on mount
+    useEffect(() => {
+        const saved = localStorage.getItem('smartinvest_registration');
+        if (saved) {
+            try {
+                const state: RegistrationState = JSON.parse(saved);
+                // Check if state is less than 10 minutes old
+                if (Date.now() - state.timestamp < 10 * 60 * 1000) {
+                    setStep(state.step);
+                    setEmail(state.email);
+                } else {
+                    // Expired - clear it
+                    localStorage.removeItem('smartinvest_registration');
+                }
+            } catch {
+                localStorage.removeItem('smartinvest_registration');
+            }
+        }
+        setIsHydrated(true);
+    }, []);
+
+    // Save state to localStorage when step or email changes
+    useEffect(() => {
+        if (step === 'otp' && email) {
+            const state: RegistrationState = {
+                step,
+                email,
+                timestamp: Date.now()
+            };
+            localStorage.setItem('smartinvest_registration', JSON.stringify(state));
+        }
+    }, [step, email]);
+
+    // Clear state on successful registration
+    const clearSavedState = () => {
+        localStorage.removeItem('smartinvest_registration');
+    };
 
     const handleRegister = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -84,7 +129,8 @@ export default function RegisterPage() {
                 return;
             }
 
-            // OTP verified - redirect to dashboard
+            // OTP verified - clear saved state and redirect
+            clearSavedState();
             router.push('/dashboard');
         } catch {
             setError('Something went wrong. Please try again.');
@@ -108,6 +154,9 @@ export default function RegisterPage() {
 
             if (!res.ok) {
                 setError(data.error || 'Failed to resend code');
+            } else {
+                setError(''); // Clear any previous error
+                alert('New code sent!');
             }
         } catch {
             setError('Something went wrong. Please try again.');
@@ -115,6 +164,22 @@ export default function RegisterPage() {
             setIsLoading(false);
         }
     };
+
+    const goBack = () => {
+        setStep('register');
+        setOtp('');
+        setError('');
+        clearSavedState();
+    };
+
+    // Don't render until hydrated to prevent flash
+    if (!isHydrated) {
+        return (
+            <div style={{ minHeight: '100vh', background: 'linear-gradient(180deg, #f0f5ff 0%, #ffffff 100%)', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <div style={{ width: '32px', height: '32px', background: '#0052ff', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 900 }}>S</div>
+            </div>
+        );
+    }
 
     const renderStep = () => {
         if (step === 'register') {
@@ -222,7 +287,7 @@ export default function RegisterPage() {
                         <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '15px' }}>
                             <button
                                 type="button"
-                                onClick={() => { setStep('register'); setOtp(''); setError(''); }}
+                                onClick={goBack}
                                 style={{ background: 'transparent', color: '#64748b', border: 'none', fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer' }}
                             >
                                 ← Back
