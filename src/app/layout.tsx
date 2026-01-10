@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { ThemeProvider } from "../context/ThemeContext";
 
 export const metadata: Metadata = {
   title: "smartInvest | AI-Powered Investment Dashboard",
-  description: "Deposit $10. See yield in 24h. AI-powered investment platform with tokenized T-Bills.",
-  keywords: ["investment", "AI", "yield", "crypto", "T-Bills", "smartInvest"],
+  description: "Autonomous yield for the agentic era",
 };
 
 export default function RootLayout({
@@ -20,7 +20,9 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="antialiased">{children}</body>
+      <body className="antialiased">
+        <ThemeProvider>{children}</ThemeProvider>
+      </body>
     </html>
   );
 }

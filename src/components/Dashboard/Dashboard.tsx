@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import PortfolioWidget from "./PortfolioWidget";
 import StatsGrid from "./StatsGrid";
 import AIStatus from "./AIStatus";
+import ThemeToggle from "../ThemeToggle";
 
 export default function Dashboard() {
     return (
@@ -18,7 +19,11 @@ export default function Dashboard() {
                 <div className="text-xl font-bold">
                     smart<span className="text-[var(--primary)]">Invest</span>
                 </div>
-                <div className="w-2 h-2 bg-[var(--primary)] rounded-full dot-blink" />
+                {/* Theme Toggle & Blink Dot */}
+                <div className="flex items-center gap-4">
+                    <ThemeToggle />
+                    <div className="w-2 h-2 bg-[var(--primary)] rounded-full dot-blink" />
+                </div>
             </nav>
 
             {/* Portfolio Widget */}

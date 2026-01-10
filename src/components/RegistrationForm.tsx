@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import ThemeToggle from "./ThemeToggle";
 
 interface RegistrationFormProps {
     onSubmit: () => void;
@@ -29,6 +30,11 @@ export default function RegistrationForm({ onSubmit }: RegistrationFormProps) {
 
     return (
         <div className="min-h-screen flex items-center justify-center relative overflow-hidden">
+            {/* Theme Toggle - Top Right */}
+            <div className="absolute top-5 right-5 z-50">
+                <ThemeToggle />
+            </div>
+
             {/* Orb Background */}
             <div className="orb" />
 
