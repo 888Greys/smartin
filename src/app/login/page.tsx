@@ -129,7 +129,7 @@ export default function LoginPage() {
                         <label style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: '6px', display: 'block' }}>Password</label>
                         <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter your password" required style={{ width: '100%', padding: '12px', border: '1px solid #cbd5e1', borderRadius: '10px', marginBottom: '6px', fontSize: '0.9rem', outline: 'none', boxSizing: 'border-box' }} />
 
-                        <a href="#" style={{ display: 'block', textAlign: 'right', fontSize: '0.75rem', color: '#0052ff', textDecoration: 'none', fontWeight: 600, marginBottom: '16px' }}>Forgot password?</a>
+                        <Link href="/forgot-password" style={{ display: 'block', textAlign: 'right', fontSize: '0.75rem', color: '#0052ff', textDecoration: 'none', fontWeight: 600, marginBottom: '16px' }}>Forgot password?</Link>
 
                         {error && <p style={{ color: '#dc2626', fontSize: '0.75rem', marginBottom: '12px' }}>{error}</p>}
 
