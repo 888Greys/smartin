@@ -106,9 +106,9 @@ export default function DashboardPage() {
                 </div>
 
                 {/* Deposit Button */}
-                <button className="w-full py-4 bg-[#0052ff] text-white rounded-xl text-base font-bold hover:bg-[#0044d6] transition-colors mb-4">
+                <Link href="/deposit" className="block w-full py-4 bg-[#0052ff] text-white rounded-xl text-base font-bold text-center hover:bg-[#0044d6] transition-colors mb-4">
                     Deposit More
-                </button>
+                </Link>
 
                 {/* Withdraw Button */}
                 <button className="w-full py-4 bg-[#f1f5f9] text-[#1e293b] rounded-xl text-base font-semibold hover:bg-[#e2e8f0] transition-colors mb-6">

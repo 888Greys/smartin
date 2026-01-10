@@ -29,12 +29,10 @@ export default function RegisterPage() {
         if (saved) {
             try {
                 const state: RegistrationState = JSON.parse(saved);
-                // Check if state is less than 10 minutes old
                 if (Date.now() - state.timestamp < 10 * 60 * 1000) {
                     setStep(state.step);
                     setEmail(state.email);
                 } else {
-                    // Expired - clear it
                     localStorage.removeItem('smartinvest_registration');
                 }
             } catch {
@@ -44,19 +42,13 @@ export default function RegisterPage() {
         setIsHydrated(true);
     }, []);
 
-    // Save state to localStorage when step or email changes
     useEffect(() => {
         if (step === 'otp' && email) {
-            const state: RegistrationState = {
-                step,
-                email,
-                timestamp: Date.now()
-            };
+            const state: RegistrationState = { step, email, timestamp: Date.now() };
             localStorage.setItem('smartinvest_registration', JSON.stringify(state));
         }
     }, [step, email]);
 
-    // Clear state on successful registration
     const clearSavedState = () => {
         localStorage.removeItem('smartinvest_registration');
     };
@@ -69,33 +61,27 @@ export default function RegisterPage() {
             setError('Please enter a valid email address.');
             return;
         }
-
         if (password.length < 8) {
             setError('Password must be at least 8 characters.');
             return;
         }
-
         if (password !== confirmPassword) {
             setError('Passwords do not match.');
             return;
         }
 
         setIsLoading(true);
-
         try {
             const res = await fetch('/api/send-otp', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email }),
             });
-
             const data = await res.json();
-
             if (!res.ok) {
                 setError(data.error || 'Failed to send code');
                 return;
             }
-
             setStep('otp');
         } catch {
             setError('Something went wrong. Please try again.');
@@ -107,29 +93,23 @@ export default function RegisterPage() {
     const handleVerifyOTP = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
-
         if (otp.length !== 6) {
             setError('Please enter the 6-digit code.');
             return;
         }
 
         setIsLoading(true);
-
         try {
             const res = await fetch('/api/verify-otp', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, otp }),
             });
-
             const data = await res.json();
-
             if (!res.ok) {
                 setError(data.error || 'Invalid code');
                 return;
             }
-
-            // OTP verified - clear saved state and redirect
             clearSavedState();
             router.push('/dashboard');
         } catch {
@@ -142,20 +122,16 @@ export default function RegisterPage() {
     const resendOTP = async () => {
         setError('');
         setIsLoading(true);
-
         try {
             const res = await fetch('/api/send-otp', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email }),
             });
-
             const data = await res.json();
-
             if (!res.ok) {
                 setError(data.error || 'Failed to resend code');
             } else {
-                setError(''); // Clear any previous error
                 alert('New code sent!');
             }
         } catch {
@@ -172,11 +148,10 @@ export default function RegisterPage() {
         clearSavedState();
     };
 
-    // Don't render until hydrated to prevent flash
     if (!isHydrated) {
         return (
             <div style={{ minHeight: '100vh', background: 'linear-gradient(180deg, #f0f5ff 0%, #ffffff 100%)', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                <div style={{ width: '32px', height: '32px', background: '#0052ff', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 900 }}>S</div>
+                <div style={{ width: '24px', height: '24px', background: '#0052ff', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 900, fontSize: '0.75rem' }}>S</div>
             </div>
         );
     }
@@ -185,15 +160,15 @@ export default function RegisterPage() {
         if (step === 'register') {
             return (
                 <>
-                    <h1 style={{ fontSize: '1.8rem', fontWeight: 800, marginBottom: '12px', letterSpacing: '-0.5px' }}>
+                    <h1 style={{ fontSize: '1.4rem', fontWeight: 800, marginBottom: '8px', letterSpacing: '-0.3px' }}>
                         Grow your $10
                     </h1>
-                    <p style={{ fontSize: '1rem', color: '#64748b', marginBottom: '30px', lineHeight: 1.5 }}>
+                    <p style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '20px', lineHeight: 1.4 }}>
                         Join over 10,000 people making a daily profit on their savings.
                     </p>
-                    <div style={{ background: 'white', padding: '30px', borderRadius: '24px', boxShadow: '0 20px 40px rgba(0,0,0,0.05)', border: '1px solid #e2e8f0', textAlign: 'left' }}>
+                    <div style={{ background: 'white', padding: '20px', borderRadius: '16px', boxShadow: '0 10px 25px rgba(0,0,0,0.04)', border: '1px solid #e2e8f0', textAlign: 'left' }}>
                         <form onSubmit={handleRegister}>
-                            <label style={{ fontSize: '0.9rem', fontWeight: 600, marginBottom: '8px', display: 'block' }}>
+                            <label style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: '6px', display: 'block' }}>
                                 Your Email
                             </label>
                             <input
@@ -202,10 +177,10 @@ export default function RegisterPage() {
                                 onChange={(e) => setEmail(e.target.value)}
                                 placeholder="e.g. name@mail.com"
                                 required
-                                style={{ width: '100%', padding: '16px', border: '1px solid #cbd5e1', borderRadius: '12px', marginBottom: '20px', fontSize: '1rem', outline: 'none', boxSizing: 'border-box' }}
+                                style={{ width: '100%', padding: '12px', border: '1px solid #cbd5e1', borderRadius: '10px', marginBottom: '14px', fontSize: '0.9rem', outline: 'none', boxSizing: 'border-box' }}
                             />
 
-                            <label style={{ fontSize: '0.9rem', fontWeight: 600, marginBottom: '8px', display: 'block' }}>
+                            <label style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: '6px', display: 'block' }}>
                                 Create Password
                             </label>
                             <input
@@ -214,10 +189,10 @@ export default function RegisterPage() {
                                 onChange={(e) => setPassword(e.target.value)}
                                 placeholder="At least 8 characters"
                                 required
-                                style={{ width: '100%', padding: '16px', border: '1px solid #cbd5e1', borderRadius: '12px', marginBottom: '20px', fontSize: '1rem', outline: 'none', boxSizing: 'border-box' }}
+                                style={{ width: '100%', padding: '12px', border: '1px solid #cbd5e1', borderRadius: '10px', marginBottom: '14px', fontSize: '0.9rem', outline: 'none', boxSizing: 'border-box' }}
                             />
 
-                            <label style={{ fontSize: '0.9rem', fontWeight: 600, marginBottom: '8px', display: 'block' }}>
+                            <label style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: '6px', display: 'block' }}>
                                 Confirm Password
                             </label>
                             <input
@@ -226,22 +201,22 @@ export default function RegisterPage() {
                                 onChange={(e) => setConfirmPassword(e.target.value)}
                                 placeholder="Re-enter your password"
                                 required
-                                style={{ width: '100%', padding: '16px', border: '1px solid #cbd5e1', borderRadius: '12px', marginBottom: '20px', fontSize: '1rem', outline: 'none', boxSizing: 'border-box' }}
+                                style={{ width: '100%', padding: '12px', border: '1px solid #cbd5e1', borderRadius: '10px', marginBottom: '14px', fontSize: '0.9rem', outline: 'none', boxSizing: 'border-box' }}
                             />
 
-                            <div style={{ background: '#f0f5ff', padding: '15px', borderRadius: '12px', marginBottom: '25px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-                                <span style={{ fontSize: '1.2rem' }}>📈</span>
-                                <span style={{ fontSize: '0.85rem', color: '#0052ff', fontWeight: 600, lineHeight: 1.4 }}>
+                            <div style={{ background: '#f0f5ff', padding: '10px 12px', borderRadius: '10px', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                <span style={{ fontSize: '1rem' }}>📈</span>
+                                <span style={{ fontSize: '0.75rem', color: '#0052ff', fontWeight: 600, lineHeight: 1.3 }}>
                                     Deposit $10 today and see your first earnings tomorrow.
                                 </span>
                             </div>
 
-                            {error && <p style={{ color: '#dc2626', fontSize: '0.85rem', marginBottom: '15px' }}>{error}</p>}
+                            {error && <p style={{ color: '#dc2626', fontSize: '0.75rem', marginBottom: '12px' }}>{error}</p>}
 
                             <button
                                 type="submit"
                                 disabled={isLoading}
-                                style={{ width: '100%', padding: '18px', background: '#0052ff', color: 'white', border: 'none', borderRadius: '12px', fontSize: '1.1rem', fontWeight: 700, cursor: 'pointer', opacity: isLoading ? 0.8 : 1 }}
+                                style={{ width: '100%', padding: '14px', background: '#0052ff', color: 'white', border: 'none', borderRadius: '10px', fontSize: '0.95rem', fontWeight: 700, cursor: 'pointer', opacity: isLoading ? 0.8 : 1 }}
                             >
                                 {isLoading ? "Sending code..." : "Grow my $10"}
                             </button>
@@ -251,18 +226,17 @@ export default function RegisterPage() {
             );
         }
 
-        // OTP verification step
         return (
             <>
-                <h1 style={{ fontSize: '1.8rem', fontWeight: 800, marginBottom: '12px', letterSpacing: '-0.5px' }}>
+                <h1 style={{ fontSize: '1.4rem', fontWeight: 800, marginBottom: '8px', letterSpacing: '-0.3px' }}>
                     Check your email
                 </h1>
-                <p style={{ fontSize: '1rem', color: '#64748b', marginBottom: '30px', lineHeight: 1.5 }}>
+                <p style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '20px', lineHeight: 1.4 }}>
                     We sent a code to <strong style={{ color: '#1e293b' }}>{email}</strong>
                 </p>
-                <div style={{ background: 'white', padding: '30px', borderRadius: '24px', boxShadow: '0 20px 40px rgba(0,0,0,0.05)', border: '1px solid #e2e8f0', textAlign: 'left' }}>
+                <div style={{ background: 'white', padding: '20px', borderRadius: '16px', boxShadow: '0 10px 25px rgba(0,0,0,0.04)', border: '1px solid #e2e8f0', textAlign: 'left' }}>
                     <form onSubmit={handleVerifyOTP}>
-                        <label style={{ fontSize: '0.9rem', fontWeight: 600, marginBottom: '8px', display: 'block' }}>
+                        <label style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: '6px', display: 'block' }}>
                             Verification Code
                         </label>
                         <input
@@ -271,33 +245,24 @@ export default function RegisterPage() {
                             onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
                             placeholder="Enter 6-digit code"
                             required
-                            style={{ width: '100%', padding: '16px', border: '1px solid #cbd5e1', borderRadius: '12px', marginBottom: '20px', fontSize: '1.5rem', outline: 'none', boxSizing: 'border-box', textAlign: 'center', letterSpacing: '8px', fontWeight: 700 }}
+                            style={{ width: '100%', padding: '12px', border: '1px solid #cbd5e1', borderRadius: '10px', marginBottom: '14px', fontSize: '1.2rem', outline: 'none', boxSizing: 'border-box', textAlign: 'center', letterSpacing: '6px', fontWeight: 700 }}
                         />
 
-                        {error && <p style={{ color: '#dc2626', fontSize: '0.85rem', marginBottom: '15px' }}>{error}</p>}
+                        {error && <p style={{ color: '#dc2626', fontSize: '0.75rem', marginBottom: '12px' }}>{error}</p>}
 
                         <button
                             type="submit"
                             disabled={isLoading}
-                            style={{ width: '100%', padding: '18px', background: '#0052ff', color: 'white', border: 'none', borderRadius: '12px', fontSize: '1.1rem', fontWeight: 700, cursor: 'pointer', opacity: isLoading ? 0.8 : 1 }}
+                            style={{ width: '100%', padding: '14px', background: '#0052ff', color: 'white', border: 'none', borderRadius: '10px', fontSize: '0.95rem', fontWeight: 700, cursor: 'pointer', opacity: isLoading ? 0.8 : 1 }}
                         >
                             {isLoading ? "Verifying..." : "Verify & Continue"}
                         </button>
 
-                        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '15px' }}>
-                            <button
-                                type="button"
-                                onClick={goBack}
-                                style={{ background: 'transparent', color: '#64748b', border: 'none', fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer' }}
-                            >
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '12px' }}>
+                            <button type="button" onClick={goBack} style={{ background: 'transparent', color: '#64748b', border: 'none', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer' }}>
                                 ← Back
                             </button>
-                            <button
-                                type="button"
-                                onClick={resendOTP}
-                                disabled={isLoading}
-                                style={{ background: 'transparent', color: '#0052ff', border: 'none', fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer' }}
-                            >
+                            <button type="button" onClick={resendOTP} disabled={isLoading} style={{ background: 'transparent', color: '#0052ff', border: 'none', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer' }}>
                                 Resend code
                             </button>
                         </div>
@@ -309,26 +274,24 @@ export default function RegisterPage() {
 
     return (
         <div style={{ minHeight: '100vh', background: 'linear-gradient(180deg, #f0f5ff 0%, #ffffff 100%)', display: 'flex', justifyContent: 'center', alignItems: 'center', fontFamily: "'Plus Jakarta Sans', sans-serif", color: '#1e293b' }}>
-            <div style={{ width: '90%', maxWidth: '480px', textAlign: 'center', padding: '20px' }}>
+            <div style={{ width: '90%', maxWidth: '380px', textAlign: 'center', padding: '16px' }}>
                 {/* Logo */}
-                <div style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-                    <div style={{ width: '32px', height: '32px', background: '#0052ff', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 900 }}>S</div>
+                <div style={{ fontSize: '1.2rem', fontWeight: 800, marginBottom: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+                    <div style={{ width: '26px', height: '26px', background: '#0052ff', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 900, fontSize: '0.85rem' }}>S</div>
                     smart<span style={{ color: '#0052ff' }}>Invest</span>
                 </div>
 
                 {renderStep()}
 
-                {/* Footer */}
-                <p style={{ marginTop: '20px', fontSize: '0.85rem', color: '#64748b' }}>
+                <p style={{ marginTop: '16px', fontSize: '0.75rem', color: '#64748b' }}>
                     Already have an account?{" "}
                     <Link href="/login" style={{ color: '#0052ff', textDecoration: 'none', fontWeight: 600 }}>
                         Log in
                     </Link>
                 </p>
 
-                {/* Security Badge */}
-                <div style={{ marginTop: '30px', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '6px', fontSize: '0.75rem', color: '#059669', fontWeight: 600 }}>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '5px', fontSize: '0.65rem', color: '#059669', fontWeight: 600 }}>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
                     </svg>
                     Your money is safe and insured
