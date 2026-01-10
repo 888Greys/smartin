@@ -9,6 +9,7 @@ type Step = 'register' | 'otp';
 interface RegistrationState {
     step: Step;
     email: string;
+    password: string;
     timestamp: number;
 }
 
@@ -23,8 +24,14 @@ export default function RegisterPage() {
     const [error, setError] = useState('');
     const [isHydrated, setIsHydrated] = useState(false);
 
-    // Restore state from localStorage on mount
     useEffect(() => {
+        // Check if already logged in
+        const token = localStorage.getItem('smartinvest_token');
+        if (token) {
+            router.push('/dashboard');
+            return;
+        }
+
         const saved = localStorage.getItem('smartinvest_registration');
         if (saved) {
             try {
@@ -32,6 +39,7 @@ export default function RegisterPage() {
                 if (Date.now() - state.timestamp < 10 * 60 * 1000) {
                     setStep(state.step);
                     setEmail(state.email);
+                    setPassword(state.password);
                 } else {
                     localStorage.removeItem('smartinvest_registration');
                 }
@@ -40,14 +48,14 @@ export default function RegisterPage() {
             }
         }
         setIsHydrated(true);
-    }, []);
+    }, [router]);
 
     useEffect(() => {
-        if (step === 'otp' && email) {
-            const state: RegistrationState = { step, email, timestamp: Date.now() };
+        if (step === 'otp' && email && password) {
+            const state: RegistrationState = { step, email, password, timestamp: Date.now() };
             localStorage.setItem('smartinvest_registration', JSON.stringify(state));
         }
-    }, [step, email]);
+    }, [step, email, password]);
 
     const clearSavedState = () => {
         localStorage.removeItem('smartinvest_registration');
@@ -100,16 +108,32 @@ export default function RegisterPage() {
 
         setIsLoading(true);
         try {
-            const res = await fetch('/api/verify-otp', {
+            // Verify OTP
+            const otpRes = await fetch('/api/verify-otp', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, otp }),
             });
-            const data = await res.json();
-            if (!res.ok) {
-                setError(data.error || 'Invalid code');
+            const otpData = await otpRes.json();
+            if (!otpRes.ok) {
+                setError(otpData.error || 'Invalid code');
                 return;
             }
+
+            // Create account
+            const registerRes = await fetch('/api/auth/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password }),
+            });
+            const registerData = await registerRes.json();
+            if (!registerRes.ok) {
+                setError(registerData.error || 'Failed to create account');
+                return;
+            }
+
+            // Save token and redirect
+            localStorage.setItem('smartinvest_token', registerData.token);
             clearSavedState();
             router.push('/dashboard');
         } catch {
@@ -168,56 +192,23 @@ export default function RegisterPage() {
                     </p>
                     <div style={{ background: 'white', padding: '20px', borderRadius: '16px', boxShadow: '0 10px 25px rgba(0,0,0,0.04)', border: '1px solid #e2e8f0', textAlign: 'left' }}>
                         <form onSubmit={handleRegister}>
-                            <label style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: '6px', display: 'block' }}>
-                                Your Email
-                            </label>
-                            <input
-                                type="email"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                placeholder="e.g. name@mail.com"
-                                required
-                                style={{ width: '100%', padding: '12px', border: '1px solid #cbd5e1', borderRadius: '10px', marginBottom: '14px', fontSize: '0.9rem', outline: 'none', boxSizing: 'border-box' }}
-                            />
+                            <label style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: '6px', display: 'block' }}>Your Email</label>
+                            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="e.g. name@mail.com" required style={{ width: '100%', padding: '12px', border: '1px solid #cbd5e1', borderRadius: '10px', marginBottom: '14px', fontSize: '0.9rem', outline: 'none', boxSizing: 'border-box' }} />
 
-                            <label style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: '6px', display: 'block' }}>
-                                Create Password
-                            </label>
-                            <input
-                                type="password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                placeholder="At least 8 characters"
-                                required
-                                style={{ width: '100%', padding: '12px', border: '1px solid #cbd5e1', borderRadius: '10px', marginBottom: '14px', fontSize: '0.9rem', outline: 'none', boxSizing: 'border-box' }}
-                            />
+                            <label style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: '6px', display: 'block' }}>Create Password</label>
+                            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="At least 8 characters" required style={{ width: '100%', padding: '12px', border: '1px solid #cbd5e1', borderRadius: '10px', marginBottom: '14px', fontSize: '0.9rem', outline: 'none', boxSizing: 'border-box' }} />
 
-                            <label style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: '6px', display: 'block' }}>
-                                Confirm Password
-                            </label>
-                            <input
-                                type="password"
-                                value={confirmPassword}
-                                onChange={(e) => setConfirmPassword(e.target.value)}
-                                placeholder="Re-enter your password"
-                                required
-                                style={{ width: '100%', padding: '12px', border: '1px solid #cbd5e1', borderRadius: '10px', marginBottom: '14px', fontSize: '0.9rem', outline: 'none', boxSizing: 'border-box' }}
-                            />
+                            <label style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: '6px', display: 'block' }}>Confirm Password</label>
+                            <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Re-enter your password" required style={{ width: '100%', padding: '12px', border: '1px solid #cbd5e1', borderRadius: '10px', marginBottom: '14px', fontSize: '0.9rem', outline: 'none', boxSizing: 'border-box' }} />
 
                             <div style={{ background: '#f0f5ff', padding: '10px 12px', borderRadius: '10px', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '10px' }}>
                                 <span style={{ fontSize: '1rem' }}>📈</span>
-                                <span style={{ fontSize: '0.75rem', color: '#0052ff', fontWeight: 600, lineHeight: 1.3 }}>
-                                    Deposit $10 today and see your first earnings tomorrow.
-                                </span>
+                                <span style={{ fontSize: '0.75rem', color: '#0052ff', fontWeight: 600, lineHeight: 1.3 }}>Deposit $10 today and see your first earnings tomorrow.</span>
                             </div>
 
                             {error && <p style={{ color: '#dc2626', fontSize: '0.75rem', marginBottom: '12px' }}>{error}</p>}
 
-                            <button
-                                type="submit"
-                                disabled={isLoading}
-                                style={{ width: '100%', padding: '14px', background: '#0052ff', color: 'white', border: 'none', borderRadius: '10px', fontSize: '0.95rem', fontWeight: 700, cursor: 'pointer', opacity: isLoading ? 0.8 : 1 }}
-                            >
+                            <button type="submit" disabled={isLoading} style={{ width: '100%', padding: '14px', background: '#0052ff', color: 'white', border: 'none', borderRadius: '10px', fontSize: '0.95rem', fontWeight: 700, cursor: 'pointer', opacity: isLoading ? 0.8 : 1 }}>
                                 {isLoading ? "Sending code..." : "Grow my $10"}
                             </button>
                         </form>
@@ -228,43 +219,22 @@ export default function RegisterPage() {
 
         return (
             <>
-                <h1 style={{ fontSize: '1.4rem', fontWeight: 800, marginBottom: '8px', letterSpacing: '-0.3px' }}>
-                    Check your email
-                </h1>
-                <p style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '20px', lineHeight: 1.4 }}>
-                    We sent a code to <strong style={{ color: '#1e293b' }}>{email}</strong>
-                </p>
+                <h1 style={{ fontSize: '1.4rem', fontWeight: 800, marginBottom: '8px', letterSpacing: '-0.3px' }}>Check your email</h1>
+                <p style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '20px', lineHeight: 1.4 }}>We sent a code to <strong style={{ color: '#1e293b' }}>{email}</strong></p>
                 <div style={{ background: 'white', padding: '20px', borderRadius: '16px', boxShadow: '0 10px 25px rgba(0,0,0,0.04)', border: '1px solid #e2e8f0', textAlign: 'left' }}>
                     <form onSubmit={handleVerifyOTP}>
-                        <label style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: '6px', display: 'block' }}>
-                            Verification Code
-                        </label>
-                        <input
-                            type="text"
-                            value={otp}
-                            onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                            placeholder="Enter 6-digit code"
-                            required
-                            style={{ width: '100%', padding: '12px', border: '1px solid #cbd5e1', borderRadius: '10px', marginBottom: '14px', fontSize: '1.2rem', outline: 'none', boxSizing: 'border-box', textAlign: 'center', letterSpacing: '6px', fontWeight: 700 }}
-                        />
+                        <label style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: '6px', display: 'block' }}>Verification Code</label>
+                        <input type="text" value={otp} onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))} placeholder="Enter 6-digit code" required style={{ width: '100%', padding: '12px', border: '1px solid #cbd5e1', borderRadius: '10px', marginBottom: '14px', fontSize: '1.2rem', outline: 'none', boxSizing: 'border-box', textAlign: 'center', letterSpacing: '6px', fontWeight: 700 }} />
 
                         {error && <p style={{ color: '#dc2626', fontSize: '0.75rem', marginBottom: '12px' }}>{error}</p>}
 
-                        <button
-                            type="submit"
-                            disabled={isLoading}
-                            style={{ width: '100%', padding: '14px', background: '#0052ff', color: 'white', border: 'none', borderRadius: '10px', fontSize: '0.95rem', fontWeight: 700, cursor: 'pointer', opacity: isLoading ? 0.8 : 1 }}
-                        >
-                            {isLoading ? "Verifying..." : "Verify & Continue"}
+                        <button type="submit" disabled={isLoading} style={{ width: '100%', padding: '14px', background: '#0052ff', color: 'white', border: 'none', borderRadius: '10px', fontSize: '0.95rem', fontWeight: 700, cursor: 'pointer', opacity: isLoading ? 0.8 : 1 }}>
+                            {isLoading ? "Creating account..." : "Verify & Continue"}
                         </button>
 
                         <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '12px' }}>
-                            <button type="button" onClick={goBack} style={{ background: 'transparent', color: '#64748b', border: 'none', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer' }}>
-                                ← Back
-                            </button>
-                            <button type="button" onClick={resendOTP} disabled={isLoading} style={{ background: 'transparent', color: '#0052ff', border: 'none', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer' }}>
-                                Resend code
-                            </button>
+                            <button type="button" onClick={goBack} style={{ background: 'transparent', color: '#64748b', border: 'none', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer' }}>← Back</button>
+                            <button type="button" onClick={resendOTP} disabled={isLoading} style={{ background: 'transparent', color: '#0052ff', border: 'none', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer' }}>Resend code</button>
                         </div>
                     </form>
                 </div>
@@ -275,7 +245,6 @@ export default function RegisterPage() {
     return (
         <div style={{ minHeight: '100vh', background: 'linear-gradient(180deg, #f0f5ff 0%, #ffffff 100%)', display: 'flex', justifyContent: 'center', alignItems: 'center', fontFamily: "'Plus Jakarta Sans', sans-serif", color: '#1e293b' }}>
             <div style={{ width: '90%', maxWidth: '380px', textAlign: 'center', padding: '16px' }}>
-                {/* Logo */}
                 <div style={{ fontSize: '1.2rem', fontWeight: 800, marginBottom: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
                     <div style={{ width: '26px', height: '26px', background: '#0052ff', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 900, fontSize: '0.85rem' }}>S</div>
                     smart<span style={{ color: '#0052ff' }}>Invest</span>
@@ -285,9 +254,7 @@ export default function RegisterPage() {
 
                 <p style={{ marginTop: '16px', fontSize: '0.75rem', color: '#64748b' }}>
                     Already have an account?{" "}
-                    <Link href="/login" style={{ color: '#0052ff', textDecoration: 'none', fontWeight: 600 }}>
-                        Log in
-                    </Link>
+                    <Link href="/login" style={{ color: '#0052ff', textDecoration: 'none', fontWeight: 600 }}>Log in</Link>
                 </p>
 
                 <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '5px', fontSize: '0.65rem', color: '#059669', fontWeight: 600 }}>

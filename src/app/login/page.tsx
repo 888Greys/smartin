@@ -1,20 +1,63 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 export default function LoginPage() {
     const router = useRouter();
-    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState('');
+    const [isHydrated, setIsHydrated] = useState(false);
 
-    const handleSubmit = (e: React.FormEvent) => {
+    useEffect(() => {
+        // Check if already logged in
+        const token = localStorage.getItem('smartinvest_token');
+        if (token) {
+            router.push('/dashboard');
+            return;
+        }
+        setIsHydrated(true);
+    }, [router]);
+
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setIsSubmitting(true);
-        setTimeout(() => {
-            router.push("/dashboard");
-        }, 1200);
+        setError('');
+        setIsLoading(true);
+
+        try {
+            const res = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password }),
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                setError(data.error || 'Login failed');
+                return;
+            }
+
+            // Save token and redirect
+            localStorage.setItem('smartinvest_token', data.token);
+            router.push('/dashboard');
+        } catch {
+            setError('Something went wrong. Please try again.');
+        } finally {
+            setIsLoading(false);
+        }
     };
+
+    if (!isHydrated) {
+        return (
+            <div style={{ minHeight: '100vh', background: 'linear-gradient(180deg, #f0f5ff 0%, #ffffff 100%)', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <div style={{ width: '24px', height: '24px', background: '#0052ff', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 900, fontSize: '0.75rem' }}>S</div>
+            </div>
+        );
+    }
 
     return (
         <div style={{ minHeight: '100vh', background: 'linear-gradient(180deg, #f0f5ff 0%, #ffffff 100%)', display: 'flex', justifyContent: 'center', alignItems: 'center', fontFamily: "'Plus Jakarta Sans', sans-serif", color: '#1e293b' }}>
@@ -39,7 +82,8 @@ export default function LoginPage() {
                         </label>
                         <input
                             type="email"
-                            name="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
                             placeholder="Enter your email"
                             required
                             style={{ width: '100%', padding: '12px', border: '1px solid #cbd5e1', borderRadius: '10px', marginBottom: '14px', fontSize: '0.9rem', outline: 'none', boxSizing: 'border-box' }}
@@ -50,7 +94,8 @@ export default function LoginPage() {
                         </label>
                         <input
                             type="password"
-                            name="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
                             placeholder="Enter your password"
                             required
                             style={{ width: '100%', padding: '12px', border: '1px solid #cbd5e1', borderRadius: '10px', marginBottom: '6px', fontSize: '0.9rem', outline: 'none', boxSizing: 'border-box' }}
@@ -60,12 +105,14 @@ export default function LoginPage() {
                             Forgot password?
                         </a>
 
+                        {error && <p style={{ color: '#dc2626', fontSize: '0.75rem', marginBottom: '12px' }}>{error}</p>}
+
                         <button
                             type="submit"
-                            disabled={isSubmitting}
-                            style={{ width: '100%', padding: '14px', background: '#0052ff', color: 'white', border: 'none', borderRadius: '10px', fontSize: '0.95rem', fontWeight: 700, cursor: 'pointer', marginBottom: '12px', opacity: isSubmitting ? 0.8 : 1 }}
+                            disabled={isLoading}
+                            style={{ width: '100%', padding: '14px', background: '#0052ff', color: 'white', border: 'none', borderRadius: '10px', fontSize: '0.95rem', fontWeight: 700, cursor: 'pointer', marginBottom: '12px', opacity: isLoading ? 0.8 : 1 }}
                         >
-                            {isSubmitting ? "Logging in..." : "Log In"}
+                            {isLoading ? "Logging in..." : "Log In"}
                         </button>
 
                         <button

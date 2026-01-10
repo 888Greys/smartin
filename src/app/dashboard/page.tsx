@@ -1,35 +1,83 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 
-export default function DashboardPage() {
-    const [balance, setBalance] = useState(10.67);
-    const [earnings] = useState(0.67);
+interface User {
+    id: string;
+    email: string;
+    balance: number;
+    totalEarnings: number;
+}
 
-    // Simple ticker animation
+export default function DashboardPage() {
+    const router = useRouter();
+    const [user, setUser] = useState<User | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [earnings, setEarnings] = useState(0.67);
+
     useEffect(() => {
+        const fetchUser = async () => {
+            const token = localStorage.getItem('smartinvest_token');
+
+            if (!token) {
+                router.push('/login');
+                return;
+            }
+
+            try {
+                const res = await fetch('/api/auth/me', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!res.ok) {
+                    localStorage.removeItem('smartinvest_token');
+                    router.push('/login');
+                    return;
+                }
+
+                const data = await res.json();
+                setUser(data.user);
+                setEarnings(data.user.totalEarnings || 0.67);
+            } catch {
+                localStorage.removeItem('smartinvest_token');
+                router.push('/login');
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchUser();
+    }, [router]);
+
+    // Ticker animation
+    useEffect(() => {
+        if (!user) return;
         const interval = setInterval(() => {
-            setBalance(prev => {
-                const newVal = prev + 0.000005;
-                return Math.round(newVal * 100) / 100;
-            });
+            setEarnings(prev => Math.round((prev + 0.000005) * 100) / 100);
         }, 2000);
         return () => clearInterval(interval);
-    }, []);
+    }, [user]);
 
-    const progressOffset = 150; // Simulates progress (lower = more filled)
+    const handleLogout = () => {
+        localStorage.removeItem('smartinvest_token');
+        router.push('/login');
+    };
+
+    if (isLoading) {
+        return (
+            <div style={{ minHeight: '100vh', background: 'radial-gradient(at top left, #f0f5ff 0%, #ffffff 100%)', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <div style={{ width: '24px', height: '24px', background: '#0052ff', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 900, fontSize: '0.8rem' }}>s</div>
+            </div>
+        );
+    }
+
+    const balance = user ? user.balance + earnings : 10.67;
+    const progressOffset = 150;
 
     return (
-        <div style={{
-            minHeight: '100vh',
-            background: 'radial-gradient(at top left, #f0f5ff 0%, #ffffff 100%)',
-            display: 'flex',
-            justifyContent: 'center',
-            padding: '20px',
-            fontFamily: "'Plus Jakarta Sans', sans-serif",
-            color: '#0f172a'
-        }}>
+        <div style={{ minHeight: '100vh', background: 'radial-gradient(at top left, #f0f5ff 0%, #ffffff 100%)', display: 'flex', justifyContent: 'center', padding: '20px', fontFamily: "'Plus Jakarta Sans', sans-serif", color: '#0f172a' }}>
             <div style={{ width: '100%', maxWidth: '400px', textAlign: 'center' }}>
                 {/* Header */}
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', gap: '8px', marginBottom: '30px' }}>
@@ -47,16 +95,7 @@ export default function DashboardPage() {
                 <div style={{ position: 'relative', width: '220px', height: '220px', margin: '0 auto 30px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
                     <svg style={{ position: 'absolute', top: 0, left: 0, transform: 'rotate(-90deg)' }} width="200" height="200">
                         <circle cx="100" cy="100" r="90" fill="none" stroke="#f1f5f9" strokeWidth="12" />
-                        <circle
-                            cx="100" cy="100" r="90"
-                            fill="none"
-                            stroke="#0052ff"
-                            strokeWidth="12"
-                            strokeLinecap="round"
-                            strokeDasharray="565.48"
-                            strokeDashoffset={progressOffset}
-                            style={{ filter: 'drop-shadow(0 0 8px rgba(0, 82, 255, 0.15))' }}
-                        />
+                        <circle cx="100" cy="100" r="90" fill="none" stroke="#0052ff" strokeWidth="12" strokeLinecap="round" strokeDasharray="565.48" strokeDashoffset={progressOffset} style={{ filter: 'drop-shadow(0 0 8px rgba(0, 82, 255, 0.15))' }} />
                     </svg>
                     <div style={{ position: 'relative', zIndex: 1, textAlign: 'center' }}>
                         <h2 style={{ color: '#00c853', fontSize: '2rem', fontWeight: 800 }}>+${earnings.toFixed(2)}</h2>
@@ -66,7 +105,7 @@ export default function DashboardPage() {
 
                 {/* Promise Pill */}
                 <div style={{ background: '#f0f7ff', color: '#0052ff', padding: '12px 20px', borderRadius: '50px', fontSize: '0.85rem', fontWeight: 700, marginBottom: '25px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-                    💰 You&apos;re earning $0.50 daily on your $10 deposit
+                    💰 You&apos;re earning $0.50 daily on your ${user?.balance.toFixed(0) || '10'} deposit
                 </div>
 
                 {/* Stats Grid */}
@@ -100,9 +139,9 @@ export default function DashboardPage() {
 
                 {/* Footer */}
                 <p style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '15px' }}>Your funds are protected and insured</p>
-                <Link href="/login" style={{ display: 'block', marginTop: '15px', color: '#0052ff', fontWeight: 700, textDecoration: 'none', fontSize: '0.9rem' }}>
+                <button onClick={handleLogout} style={{ display: 'block', margin: '15px auto 0', background: 'transparent', border: 'none', color: '#0052ff', fontWeight: 700, fontSize: '0.9rem', cursor: 'pointer' }}>
                     Log out
-                </Link>
+                </button>
             </div>
 
             <style jsx>{`
