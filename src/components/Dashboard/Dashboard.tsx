@@ -8,7 +8,7 @@ import AIStatus from "./AIStatus";
 export default function Dashboard() {
     return (
         <motion.div
-            className="min-h-screen px-5 py-6 max-w-md mx-auto"
+            className="min-h-screen px-5 py-8 w-full max-w-md mx-auto flex flex-col pt-12"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}

@@ -82,10 +82,10 @@ export default function PortfolioWidget({ initialBalance = 10.0 }: PortfolioWidg
                 +{todayYield}% Today
             </span>
 
-            {/* Countdown in widget */}
-            <div className="absolute bottom-[-60px] text-center">
-                <span className="text-xs text-[var(--text-dim)] uppercase tracking-wider">Next Drop In</span>
-                <p className="text-lg font-semibold mt-1">{formatTime(seconds)}</p>
+            {/* Countdown in widget - Fixed positioning */}
+            <div className="absolute -bottom-12 text-center w-full">
+                <span className="text-[10px] text-[var(--text-dim)] uppercase tracking-wider block mb-1">Next Drop In</span>
+                <p className="text-xl font-mono font-semibold text-white tracking-widest">{formatTime(seconds)}</p>
             </div>
         </motion.div>
     );

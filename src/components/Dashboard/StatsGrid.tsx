@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 export default function StatsGrid() {
     return (
         <motion.div
-            className="grid grid-cols-2 gap-4 mt-20 px-4"
+            className="grid grid-cols-2 gap-4 mt-24 px-2"
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.3, duration: 0.5 }}
