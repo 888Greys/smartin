@@ -16,6 +16,7 @@
   --glass-border: var(--border);
   --surface: var(--glass);
   --success: #10b981;
+  --input-bg: white;
 }
 
 [data-theme='dark'] {
@@ -33,6 +34,7 @@
   --glass-border: var(--border);
   --surface: var(--glass);
   --success: #00ff88;
+  --input-bg: rgba(0, 0, 0, 0.2);
 }
 
 @theme inline {
@@ -221,8 +223,7 @@ body:not([data-theme='dark']) {
 .vault-input {
   width: 100%;
   padding: 18px 20px;
-  background: white;
-  /* White input for light mode */
+  background: var(--input-bg);
   border: 1px solid var(--border);
   border-radius: 18px;
   color: var(--text);
