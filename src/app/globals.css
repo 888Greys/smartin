@@ -1,18 +1,22 @@
 @import "tailwindcss";
 
 :root {
-  --bg: #020408;
-  --accent: #00f2ff;
-  --accent-glow: rgba(0, 242, 255, 0.3);
-  --glass: rgba(255, 255, 255, 0.03);
-  --border: rgba(255, 255, 255, 0.08);
-  --text: #f0f2f5;
-  --primary: #00f2ff;
+  --bg: #f8fafc;
+  --accent: #0066ff;
+  /* Arctic Blue */
+  --accent-soft: rgba(0, 102, 255, 0.1);
+  --accent-glow: rgba(0, 102, 255, 0.4);
+  --text: #0f172a;
+  /* Dark Slate */
+  --glass: rgba(255, 255, 255, 0.7);
+  --border: rgba(0, 0, 0, 0.08);
+  /* Darker border for light mode */
+  --primary: #0066ff;
   --secondary: #7000ff;
-  --text-dim: #a0a0a0;
+  --text-dim: #64748b;
   --glass-border: var(--border);
   --surface: var(--glass);
-  --success: #00ff88;
+  --success: #10b981;
 }
 
 @theme inline {
@@ -36,10 +40,83 @@
 
 body {
   background-color: var(--bg);
+  /* Soft mesh gradient for 2026 feel */
+  background-image:
+    radial-gradient(at 0% 0%, rgba(0, 102, 255, 0.05) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(112, 0, 255, 0.05) 0px, transparent 50%);
   color: var(--text);
   font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
   overflow-x: hidden;
   min-height: 100vh;
+}
+
+/* Animations */
+@keyframes float {
+  from {
+    transform: translate(-20%, -20%);
+  }
+
+  to {
+    transform: translate(20%, 20%);
+  }
+}
+
+@keyframes rotateLogo {
+  0% {
+    transform: rotate(0deg);
+    border-radius: 20px;
+  }
+
+  50% {
+    border-radius: 35%;
+  }
+
+  100% {
+    transform: rotate(360deg);
+    border-radius: 20px;
+  }
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(2.5);
+  }
+}
+
+@keyframes breathe {
+
+  0%,
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.8;
+  }
+
+  50% {
+    transform: translate(-50%, -50%) scale(1.3);
+    opacity: 1;
+  }
+}
+
+.orb-float {
+  animation: float 10s infinite alternate;
+}
+
+.logo-spin {
+  animation: rotateLogo 8s linear infinite;
+}
+
+.dot-pulse {
+  animation: pulse 1.5s infinite;
+}
+
+.core-center-breathe {
+  animation: breathe 2s ease-in-out infinite;
 }
 
 /* --- VAULT DESIGN STRICT CSS --- */
@@ -101,7 +178,8 @@ body {
   border: 1px solid var(--border);
   border-radius: 40px;
   text-align: center;
-  box-shadow: 0 40px 100px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 40px 100px rgba(0, 0, 0, 0.05);
+  /* Softer shadow */
   position: relative;
   margin: 0 auto;
   /* Ensure centering */
@@ -116,17 +194,18 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 0 20px var(--accent-glow);
+  box-shadow: 0 0 20px var(--accent-soft);
   animation: rotateLogo 8s linear infinite;
 }
 
 .vault-input {
   width: 100%;
   padding: 18px 20px;
-  background: rgba(0, 0, 0, 0.2);
+  background: white;
+  /* White input for light mode */
   border: 1px solid var(--border);
   border-radius: 18px;
-  color: white;
+  color: var(--text);
   outline: none;
   transition: 0.3s;
   font-size: 0.95rem;
@@ -135,7 +214,7 @@ body {
 
 .vault-input:focus {
   border-color: var(--accent);
-  box-shadow: 0 0 15px var(--accent-glow);
+  box-shadow: 0 0 15px var(--accent-soft);
 }
 
 .vault-btn {
@@ -158,14 +237,14 @@ body {
 
 .vault-btn:hover {
   transform: scale(1.02);
-  filter: brightness(1.1);
+  box-shadow: 0 10px 20px var(--accent-soft);
 }
 
 .vault-status {
   margin-top: 25px;
   font-size: 0.75rem;
   color: var(--accent);
-  background: rgba(0, 242, 255, 0.05);
+  background: var(--accent-soft);
   padding: 10px;
   border-radius: 12px;
   display: flex;
@@ -190,7 +269,7 @@ body {
 .progress-ring__circle {
   transition: stroke-dashoffset 0.35s;
   transform-origin: 50% 50%;
-  filter: drop-shadow(0 0 8px var(--primary));
+  filter: drop-shadow(0 0 8px var(--accent));
 }
 
 .glass-card {
@@ -198,6 +277,7 @@ body {
   backdrop-filter: blur(20px);
   border: 1px solid var(--glass-border);
   border-radius: 24px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
 }
 
 .dot-blink {
@@ -223,7 +303,7 @@ body {
   }
 
   50% {
-    border-radius: 70% 30% 30% 70% / 70% 70% 30% 30%;
+    border-radius: 60% 40% 70% 30% / 50% 60% 40% 50%;
   }
 
   100% {
@@ -264,25 +344,27 @@ body {
 
 .core-container {
   position: relative;
-  width: 120px;
-  height: 120px;
+  width: 140px;
+  height: 140px;
 }
 
 .core-ring {
   position: absolute;
   width: 100%;
   height: 100%;
-  border: 2px solid var(--accent);
+  background: var(--glass);
+  backdrop-filter: blur(10px);
+  border: 1.5px solid rgba(0, 102, 255, 0.2);
   border-radius: 38% 62% 63% 37% / 41% 44% 56% 59%;
-  animation: morph-ring 4s linear infinite, rotate-ring 10s linear infinite;
-  box-shadow: 0 0 30px var(--accent-glow), inset 0 0 20px var(--accent-glow);
+  animation: morph-ring 5s linear infinite, rotate-ring 12s linear infinite;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
 }
 
 .core-ring:nth-child(2) {
-  animation-delay: -2s;
+  animation-delay: -2.5s;
   opacity: 0.5;
-  border-color: #7000ff;
-  box-shadow: 0 0 30px rgba(112, 0, 255, 0.3);
+  border-color: rgba(112, 0, 255, 0.1);
+  background: rgba(255, 255, 255, 0.3);
 }
 
 .core-center {
@@ -290,29 +372,30 @@ body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 12px;
-  height: 12px;
-  background: white;
+  width: 16px;
+  height: 16px;
+  background: var(--accent);
   border-radius: 50%;
-  box-shadow: 0 0 15px white;
-  animation: pulse-center 2s ease-in-out infinite;
+  box-shadow: 0 0 20px var(--accent);
+  animation: breathe 2s ease-in-out infinite;
 }
 
 .splash-brand {
   font-weight: 800;
-  font-size: 2rem;
-  letter-spacing: 4px;
-  color: white;
+  font-size: 2.2rem;
+  letter-spacing: -1px;
+  color: var(--text);
   opacity: 0;
-  transform: translateY(20px);
-  animation: fadeInUp 0.8s ease forwards 0.5s;
+  transform: translateY(15px);
+  animation: fadeInUp 0.8s ease forwards 0.3s;
 }
 
 .splash-status {
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   font-family: monospace;
-  color: #444;
-  letter-spacing: 1px;
+  color: var(--text-dim);
+  letter-spacing: 0.5px;
   text-transform: uppercase;
   height: 20px;
+  font-weight: 600;
 }

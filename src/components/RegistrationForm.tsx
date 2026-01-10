@@ -54,7 +54,7 @@ export default function RegistrationForm({ onSubmit }: RegistrationFormProps) {
                 </div>
 
                 <h1 className="font-extrabold text-[1.8rem] tracking-[-0.5px] mb-2">
-                    smart<span className="text-[var(--accent)]">Invest</span>
+                    smart<span className="bg-gradient-to-br from-[#0066ff] to-[#7000ff] bg-clip-text text-transparent">Invest</span>
                 </h1>
                 <p className="text-[#888] text-sm mb-9">
                     Autonomous yield for the agentic era.
