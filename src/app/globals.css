@@ -182,7 +182,7 @@ body {
   animation: pulse 1.5s infinite;
 }
 
-/* Dashboard Styles Helper */
+/* --- DASHBOARD VIEW (HIDDEN INITIALLY) --- */
 .progress-ring {
   transform: rotate(-90deg);
 }
@@ -214,4 +214,105 @@ body {
   50% {
     opacity: 0.3;
   }
+}
+
+/* --- SPLASH SCREEN ANIMATIONS --- */
+@keyframes morph-ring {
+  0% {
+    border-radius: 38% 62% 63% 37% / 41% 44% 56% 59%;
+  }
+
+  50% {
+    border-radius: 70% 30% 30% 70% / 70% 70% 30% 30%;
+  }
+
+  100% {
+    border-radius: 38% 62% 63% 37% / 41% 44% 56% 59%;
+  }
+}
+
+@keyframes rotate-ring {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse-center {
+
+  0%,
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.8;
+  }
+
+  50% {
+    transform: translate(-50%, -50%) scale(1.5);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.core-container {
+  position: relative;
+  width: 120px;
+  height: 120px;
+}
+
+.core-ring {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border: 2px solid var(--accent);
+  border-radius: 38% 62% 63% 37% / 41% 44% 56% 59%;
+  animation: morph-ring 4s linear infinite, rotate-ring 10s linear infinite;
+  box-shadow: 0 0 30px var(--accent-glow), inset 0 0 20px var(--accent-glow);
+}
+
+.core-ring:nth-child(2) {
+  animation-delay: -2s;
+  opacity: 0.5;
+  border-color: #7000ff;
+  box-shadow: 0 0 30px rgba(112, 0, 255, 0.3);
+}
+
+.core-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 12px;
+  height: 12px;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 0 15px white;
+  animation: pulse-center 2s ease-in-out infinite;
+}
+
+.splash-brand {
+  font-weight: 800;
+  font-size: 2rem;
+  letter-spacing: 4px;
+  color: white;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.8s ease forwards 0.5s;
+}
+
+.splash-status {
+  font-size: 0.7rem;
+  font-family: monospace;
+  color: #444;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  height: 20px;
 }
