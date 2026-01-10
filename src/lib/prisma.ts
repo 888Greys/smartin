@@ -1,11 +1,18 @@
 import { PrismaClient } from '@prisma/client';
+import { PrismaPg } from '@prisma/adapter-pg';
+import { Pool } from 'pg';
 
 declare global {
     // eslint-disable-next-line no-var
     var prisma: PrismaClient | undefined;
 }
 
-const prisma = global.prisma || new PrismaClient();
+const connectionString = process.env.DATABASE_URL || 'postgresql://smartinvest:smartinvest123@localhost:5432/smartinvest';
+
+const pool = new Pool({ connectionString });
+const adapter = new PrismaPg(pool);
+
+const prisma = global.prisma || new PrismaClient({ adapter });
 
 if (process.env.NODE_ENV !== 'production') {
     global.prisma = prisma;
