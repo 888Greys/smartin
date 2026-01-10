@@ -7,7 +7,7 @@ declare global {
     var prisma: PrismaClient | undefined;
 }
 
-const connectionString = process.env.DATABASE_URL || 'postgresql://smartinvest:smartinvest123@localhost:5432/smartinvest';
+const connectionString = process.env.DATABASE_URL || 'postgresql://postgres@localhost:5432/smartinvest';
 
 const pool = new Pool({ connectionString });
 const adapter = new PrismaPg(pool);

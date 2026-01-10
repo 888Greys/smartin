@@ -7,6 +7,6 @@ export default defineConfig({
     path: "prisma/migrations",
   },
   datasource: {
-    url: process.env.DATABASE_URL || "postgresql://smartinvest:smartinvest123@localhost:5432/smartinvest",
+    url: process.env.DATABASE_URL || "postgresql://postgres@localhost:5432/smartinvest",
   },
 });
