@@ -52,7 +52,7 @@ export default function PortfolioWidget({ initialBalance = 10.0 }: PortfolioWidg
                 <circle
                     className="progress-ring__circle"
                     strokeWidth="4"
-                    stroke="rgba(255,255,255,0.1)"
+                    stroke="var(--glass-border)"
                     fill="transparent"
                     r="130"
                     cx="140"
@@ -75,7 +75,7 @@ export default function PortfolioWidget({ initialBalance = 10.0 }: PortfolioWidg
             <span className="text-xs text-[var(--text-dim)] tracking-[2px] uppercase">
                 Portfolio
             </span>
-            <span className="text-4xl font-bold mt-1">
+            <span className="text-4xl font-bold mt-1 text-[var(--text)]">
                 ${balance.toFixed(6)}
             </span>
             <span className="mt-2 bg-[rgba(0,255,136,0.1)] text-[var(--success)] px-3 py-1 rounded-full text-xs font-semibold">
@@ -85,7 +85,7 @@ export default function PortfolioWidget({ initialBalance = 10.0 }: PortfolioWidg
             {/* Countdown in widget - Fixed positioning */}
             <div className="absolute -bottom-12 text-center w-full">
                 <span className="text-[10px] text-[var(--text-dim)] uppercase tracking-wider block mb-1">Next Drop In</span>
-                <p className="text-xl font-mono font-semibold text-white tracking-widest">{formatTime(seconds)}</p>
+                <p className="text-xl font-mono font-semibold text-[var(--text)] tracking-widest">{formatTime(seconds)}</p>
             </div>
         </motion.div>
     );

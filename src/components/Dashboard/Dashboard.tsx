@@ -32,7 +32,7 @@ export default function Dashboard() {
 
             {/* Deposit Button */}
             <motion.button
-                className="w-full mt-8 py-4 glass-card text-white font-bold cursor-pointer hover:bg-[rgba(255,255,255,0.1)] transition-all"
+                className="w-full mt-8 py-4 glass-card text-[var(--text)] font-bold cursor-pointer hover:bg-[var(--accent-soft)] transition-all"
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.7, duration: 0.5 }}
