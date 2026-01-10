@@ -17,6 +17,7 @@ model User {
   updatedAt     DateTime @updatedAt
 
   transactions Transaction[]
+  passkeys     Passkey[]
 }
 
 model Transaction {
@@ -27,6 +28,18 @@ model Transaction {
   status    String   @default("pending")
   reference String?
   createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model Passkey {
+  id                  String   @id @default(cuid())
+  userId              String
+  credentialId        String   @unique
+  credentialPublicKey Bytes
+  counter             BigInt
+  transports          String[] @default([])
+  createdAt           DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id])
 }
