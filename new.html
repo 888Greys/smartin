@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>smartInvest | My Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #fdfdfe;
+            --brand-blue: #0052ff;
+            --brand-glow: rgba(0, 82, 255, 0.15);
+            --text-main: #0f172a;
+            --text-soft: #64748b;
+            --success: #00c853;
+            --glass: rgba(255, 255, 255, 0.7);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+
+        body {
+            background-color: var(--bg);
+            background: radial-gradient(at top left, #f0f5ff 0%, #ffffff 100%);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .dashboard {
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        /* --- LOGO --- */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 8px;
+            margin-bottom: 30px;
+        }
+        .logo-s {
+            width: 24px; height: 24px;
+            background: var(--brand-blue);
+            color: white; border-radius: 6px;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 900; font-size: 0.8rem;
+        }
+        .header h3 { font-size: 1.1rem; font-weight: 800; }
+        .header span { color: var(--brand-blue); }
+
+        /* --- BALANCE SECTION --- */
+        .balance-box { margin-bottom: 30px; text-align: left; padding-left: 10px; }
+        .balance-label { color: var(--text-soft); font-size: 0.9rem; font-weight: 600; }
+        .balance-amount { font-size: 3rem; font-weight: 800; letter-spacing: -1px; }
+
+        /* --- THE HERO CIRCLE --- */
+        .circle-container {
+            position: relative;
+            width: 220px;
+            height: 220px;
+            margin: 0 auto 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .progress-ring {
+            position: absolute;
+            top: 0; left: 0;
+            transform: rotate(-90deg);
+        }
+
+        .ring-bg { fill: none; stroke: #f1f5f9; stroke-width: 12; }
+        .ring-fill {
+            fill: none;
+            stroke: var(--brand-blue);
+            stroke-width: 12;
+            stroke-linecap: round;
+            stroke-dasharray: 565.48;
+            stroke-dashoffset: 400; /* Simulates progress */
+            filter: drop-shadow(0 0 8px var(--brand-glow));
+            animation: progressIn 2s ease-out forwards;
+        }
+
+        .circle-content h2 { color: var(--success); font-size: 2rem; font-weight: 800; }
+        .circle-content p { color: var(--text-soft); font-size: 0.8rem; font-weight: 700; text-transform: uppercase; }
+
+        /* --- PROMISE PILL --- */
+        .promise-pill {
+            background: #f0f7ff;
+            color: var(--brand-blue);
+            padding: 12px 20px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        /* --- STATS GRID --- */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border-radius: 20px;
+            border: 1px solid #f1f5f9;
+            text-align: left;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+        }
+
+        .stat-card label { display: block; font-size: 0.75rem; color: var(--text-soft); margin-bottom: 4px; font-weight: 600; }
+        .stat-card div { font-size: 1.1rem; font-weight: 800; }
+        .stat-card .active-tag { color: var(--brand-blue); display: flex; align-items: center; gap: 5px; }
+        .dot { width: 6px; height: 6px; background: var(--brand-blue); border-radius: 50%; animation: blink 1.5s infinite; }
+
+        /* --- GROWING BANNER --- */
+        .growth-banner {
+            font-size: 0.85rem;
+            color: var(--text-soft);
+            margin-bottom: 25px;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .growth-banner .green-dot { width: 8px; height: 8px; background: #00c853; border-radius: 50%; }
+
+        /* --- BUTTONS --- */
+        .btn {
+            width: 100%;
+            padding: 18px;
+            border-radius: 16px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-bottom: 12px;
+        }
+
+        .btn-deposit { background: var(--brand-blue); color: white; border: none; }
+        .btn-deposit:hover { background: #0044d6; box-shadow: 0 10px 20px var(--brand-glow); }
+
+        .btn-withdraw { background: white; color: var(--text-main); border: 1.5px solid #e2e8f0; }
+        .btn-withdraw:hover { border-color: var(--brand-blue); color: var(--brand-blue); }
+
+        .footer-info { font-size: 0.75rem; color: #94a3b8; margin-top: 15px; }
+        .logout-link { display: block; margin-top: 15px; color: var(--brand-blue); font-weight: 700; text-decoration: none; font-size: 0.9rem; }
+
+        @keyframes progressIn { from { stroke-dashoffset: 565.48; } to { stroke-dashoffset: 150; } }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard">
+        <!-- Logo -->
+        <div class="header">
+            <div class="logo-s">s</div>
+            <h3>smart<span>Invest</span></h3>
+        </div>
+
+        <!-- Balance -->
+        <div class="balance-box">
+            <p class="balance-label">Your Balance</p>
+            <h1 class="balance-amount">$<span id="ticker">10.67</span></h1>
+        </div>
+
+        <!-- The Circle -->
+        <div class="circle-container">
+            <svg class="progress-ring" width="200" height="200">
+                <circle class="ring-bg" cx="100" cy="100" r="90" />
+                <circle class="ring-fill" cx="100" cy="100" r="90" />
+            </svg>
+            <div class="circle-content">
+                <h2>+$0.67</h2>
+                <p>Earnings</p>
+            </div>
+        </div>
+
+        <!-- Promise Pill -->
+        <div class="promise-pill">
+            💰 You're earning $0.50 daily on your $10 deposit
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <label>Daily Profit</label>
+                <div style="color: #00c853;">5.0%</div>
+            </div>
+            <div class="stat-card">
+                <label>Status</label>
+                <div class="active-tag">
+                    <div class="dot"></div> Active
+                </div>
+            </div>
+        </div>
+
+        <!-- Auto-Growth Message -->
+        <div class="growth-banner">
+            <div class="green-dot"></div> Your money is growing automatically
+        </div>
+
+        <!-- Actions -->
+        <button class="btn btn-deposit">Deposit More</button>
+        <button class="btn btn-withdraw">Withdraw Earnings</button>
+
+        <p class="footer-info">Your funds are protected and insured</p>
+        <a href="#" class="logout-link">Log out</a>
+    </div>
+
+    <script>
+        // Simple ticker animation to make it feel alive
+        let val = 10.670000;
+        const ticker = document.getElementById('ticker');
+        setInterval(() => {
+            val += 0.000005;
+            ticker.innerText = val.toFixed(2);
+        }, 2000);
+    </script>
+</body>
+</html>

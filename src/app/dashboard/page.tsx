@@ -4,129 +4,113 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 
 export default function DashboardPage() {
-    const [balance, setBalance] = useState(10.00);
-    const [earnings, setEarnings] = useState(0.00);
+    const [balance, setBalance] = useState(10.67);
+    const [earnings] = useState(0.67);
 
-    // Simulate earnings growth
+    // Simple ticker animation
     useEffect(() => {
         const interval = setInterval(() => {
-            setEarnings(prev => {
-                const newEarnings = prev + 0.01;
-                return Math.round(newEarnings * 100) / 100;
+            setBalance(prev => {
+                const newVal = prev + 0.000005;
+                return Math.round(newVal * 100) / 100;
             });
-        }, 3000);
-
+        }, 2000);
         return () => clearInterval(interval);
     }, []);
 
-    const totalBalance = balance + earnings;
-    const progressPercent = Math.min((earnings / 0.50) * 100, 100);
+    const progressOffset = 150; // Simulates progress (lower = more filled)
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-[#f0f5ff] to-white p-5">
-            <div className="max-w-md mx-auto pt-8">
+        <div style={{
+            minHeight: '100vh',
+            background: 'radial-gradient(at top left, #f0f5ff 0%, #ffffff 100%)',
+            display: 'flex',
+            justifyContent: 'center',
+            padding: '20px',
+            fontFamily: "'Plus Jakarta Sans', sans-serif",
+            color: '#0f172a'
+        }}>
+            <div style={{ width: '100%', maxWidth: '400px', textAlign: 'center' }}>
                 {/* Header */}
-                <nav className="flex justify-between items-center mb-8">
-                    <div className="flex items-center gap-2">
-                        <div className="w-7 h-7 bg-[#0052ff] rounded-lg flex items-center justify-center text-white font-black text-xs">
-                            S
-                        </div>
-                        <span className="text-lg font-extrabold text-[#1e293b]">
-                            smart<span className="text-[#0052ff]">Invest</span>
-                        </span>
-                    </div>
-                    <div className="w-2 h-2 bg-[#059669] rounded-full animate-pulse" />
-                </nav>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', gap: '8px', marginBottom: '30px' }}>
+                    <div style={{ width: '24px', height: '24px', background: '#0052ff', color: 'white', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, fontSize: '0.8rem' }}>s</div>
+                    <h3 style={{ fontSize: '1.1rem', fontWeight: 800 }}>smart<span style={{ color: '#0052ff' }}>Invest</span></h3>
+                </div>
 
-                {/* Portfolio Card */}
-                <div className="bg-white p-8 rounded-3xl shadow-[0_20px_40px_rgba(0,0,0,0.05)] border border-[#e2e8f0] mb-6">
-                    <p className="text-sm text-[#64748b] mb-2">Your Balance</p>
-                    <h2 className="text-4xl font-extrabold text-[#1e293b] mb-6">
-                        ${totalBalance.toFixed(2)}
-                    </h2>
+                {/* Balance */}
+                <div style={{ marginBottom: '30px', textAlign: 'left', paddingLeft: '10px' }}>
+                    <p style={{ color: '#64748b', fontSize: '0.9rem', fontWeight: 600 }}>Your Balance</p>
+                    <h1 style={{ fontSize: '3rem', fontWeight: 800, letterSpacing: '-1px' }}>${balance.toFixed(2)}</h1>
+                </div>
 
-                    {/* Progress Ring */}
-                    <div className="flex items-center justify-center mb-6">
-                        <div className="relative w-32 h-32">
-                            <svg className="w-full h-full -rotate-90" viewBox="0 0 120 120">
-                                <circle
-                                    cx="60"
-                                    cy="60"
-                                    r="50"
-                                    fill="none"
-                                    stroke="#e2e8f0"
-                                    strokeWidth="10"
-                                />
-                                <circle
-                                    cx="60"
-                                    cy="60"
-                                    r="50"
-                                    fill="none"
-                                    stroke="#0052ff"
-                                    strokeWidth="10"
-                                    strokeLinecap="round"
-                                    strokeDasharray={`${progressPercent * 3.14} 314`}
-                                    className="transition-all duration-500"
-                                />
-                            </svg>
-                            <div className="absolute inset-0 flex flex-col items-center justify-center">
-                                <span className="text-2xl font-bold text-[#059669]">+${earnings.toFixed(2)}</span>
-                                <span className="text-xs text-[#64748b]">Earnings</span>
-                            </div>
-                        </div>
+                {/* Progress Circle */}
+                <div style={{ position: 'relative', width: '220px', height: '220px', margin: '0 auto 30px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+                    <svg style={{ position: 'absolute', top: 0, left: 0, transform: 'rotate(-90deg)' }} width="200" height="200">
+                        <circle cx="100" cy="100" r="90" fill="none" stroke="#f1f5f9" strokeWidth="12" />
+                        <circle
+                            cx="100" cy="100" r="90"
+                            fill="none"
+                            stroke="#0052ff"
+                            strokeWidth="12"
+                            strokeLinecap="round"
+                            strokeDasharray="565.48"
+                            strokeDashoffset={progressOffset}
+                            style={{ filter: 'drop-shadow(0 0 8px rgba(0, 82, 255, 0.15))' }}
+                        />
+                    </svg>
+                    <div style={{ position: 'relative', zIndex: 1, textAlign: 'center' }}>
+                        <h2 style={{ color: '#00c853', fontSize: '2rem', fontWeight: 800 }}>+${earnings.toFixed(2)}</h2>
+                        <p style={{ color: '#64748b', fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase' }}>Earnings</p>
                     </div>
+                </div>
 
-                    {/* Daily Earnings Info */}
-                    <div className="bg-[#f0f5ff] p-4 rounded-xl flex items-center gap-3">
-                        <span className="text-xl">💰</span>
-                        <span className="text-sm text-[#0052ff] font-semibold">
-                            You&apos;re earning $0.50 daily on your $10 deposit
-                        </span>
-                    </div>
+                {/* Promise Pill */}
+                <div style={{ background: '#f0f7ff', color: '#0052ff', padding: '12px 20px', borderRadius: '50px', fontSize: '0.85rem', fontWeight: 700, marginBottom: '25px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                    💰 You&apos;re earning $0.50 daily on your $10 deposit
                 </div>
 
                 {/* Stats Grid */}
-                <div className="grid grid-cols-2 gap-4 mb-6">
-                    <div className="bg-white p-5 rounded-2xl border border-[#e2e8f0]">
-                        <p className="text-xs text-[#64748b] mb-1">Daily Profit</p>
-                        <p className="text-xl font-bold text-[#059669]">5.0%</p>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginBottom: '25px' }}>
+                    <div style={{ background: 'white', padding: '15px', borderRadius: '20px', border: '1px solid #f1f5f9', textAlign: 'left', boxShadow: '0 4px 12px rgba(0,0,0,0.02)' }}>
+                        <label style={{ display: 'block', fontSize: '0.75rem', color: '#64748b', marginBottom: '4px', fontWeight: 600 }}>Daily Profit</label>
+                        <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#00c853' }}>5.0%</div>
                     </div>
-                    <div className="bg-white p-5 rounded-2xl border border-[#e2e8f0]">
-                        <p className="text-xs text-[#64748b] mb-1">Status</p>
-                        <p className="text-xl font-bold text-[#0052ff]">Active</p>
+                    <div style={{ background: 'white', padding: '15px', borderRadius: '20px', border: '1px solid #f1f5f9', textAlign: 'left', boxShadow: '0 4px 12px rgba(0,0,0,0.02)' }}>
+                        <label style={{ display: 'block', fontSize: '0.75rem', color: '#64748b', marginBottom: '4px', fontWeight: 600 }}>Status</label>
+                        <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#0052ff', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                            <div style={{ width: '6px', height: '6px', background: '#0052ff', borderRadius: '50%', animation: 'blink 1.5s infinite' }} />
+                            Active
+                        </div>
                     </div>
                 </div>
 
-                {/* AI Status */}
-                <div className="bg-white p-4 rounded-2xl border border-[#e2e8f0] mb-6 flex items-center gap-3">
-                    <div className="w-2 h-2 bg-[#059669] rounded-full animate-pulse" />
-                    <span className="text-sm text-[#64748b]">
-                        Your money is growing automatically
-                    </span>
+                {/* Growth Banner */}
+                <div style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '25px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                    <div style={{ width: '8px', height: '8px', background: '#00c853', borderRadius: '50%' }} />
+                    Your money is growing automatically
                 </div>
 
-                {/* Deposit Button */}
-                <Link href="/deposit" className="block w-full py-4 bg-[#0052ff] text-white rounded-xl text-base font-bold text-center hover:bg-[#0044d6] transition-colors mb-4">
+                {/* Buttons */}
+                <Link href="/deposit" style={{ display: 'block', width: '100%', padding: '18px', borderRadius: '16px', fontSize: '1rem', fontWeight: 700, background: '#0052ff', color: 'white', textAlign: 'center', textDecoration: 'none', marginBottom: '12px' }}>
                     Deposit More
                 </Link>
-
-                {/* Withdraw Button */}
-                <button className="w-full py-4 bg-[#f1f5f9] text-[#1e293b] rounded-xl text-base font-semibold hover:bg-[#e2e8f0] transition-colors mb-6">
+                <button style={{ width: '100%', padding: '18px', borderRadius: '16px', fontSize: '1rem', fontWeight: 700, background: 'white', color: '#0f172a', border: '1.5px solid #e2e8f0', cursor: 'pointer', marginBottom: '12px' }}>
                     Withdraw Earnings
                 </button>
 
-                {/* Security Footer */}
-                <p className="text-center text-xs text-[#94a3b8]">
-                    Your funds are protected and insured
-                </p>
-
-                {/* Logout Link */}
-                <p className="text-center text-sm text-[#64748b] mt-4">
-                    <Link href="/login" className="text-[#0052ff] font-semibold hover:underline">
-                        Log out
-                    </Link>
-                </p>
+                {/* Footer */}
+                <p style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '15px' }}>Your funds are protected and insured</p>
+                <Link href="/login" style={{ display: 'block', marginTop: '15px', color: '#0052ff', fontWeight: 700, textDecoration: 'none', fontSize: '0.9rem' }}>
+                    Log out
+                </Link>
             </div>
+
+            <style jsx>{`
+                @keyframes blink {
+                    0%, 100% { opacity: 1; }
+                    50% { opacity: 0.3; }
+                }
+            `}</style>
         </div>
     );
 }
