@@ -5,53 +5,132 @@ import { useRouter } from "next/navigation";
 
 export default function Home() {
   const router = useRouter();
-  const [status, setStatus] = useState("Initializing...");
+  const [status, setStatus] = useState("Starting up...");
+  const [fadeOut, setFadeOut] = useState(false);
 
-  const statuses = [
-    "Connecting to servers...",
-    "Preparing your experience...",
+  const messages = [
+    "Setting things up...",
+    "Checking your savings...",
     "Almost ready...",
-    "Welcome!",
   ];
 
   useEffect(() => {
     let i = 0;
     const interval = setInterval(() => {
-      if (i < statuses.length) {
-        setStatus(statuses[i]);
+      if (i < messages.length) {
+        setStatus(messages[i]);
         i++;
       } else {
         clearInterval(interval);
         setTimeout(() => {
-          router.push("/register");
+          setFadeOut(true);
+          setTimeout(() => {
+            router.push("/register");
+          }, 800);
         }, 500);
       }
-    }, 700);
+    }, 1000);
 
     return () => clearInterval(interval);
   }, [router]);
 
   return (
-    <div className="fixed inset-0 bg-gradient-to-b from-[#f0f5ff] to-white flex flex-col justify-center items-center gap-8">
-      {/* Animated Core */}
-      <div className="relative w-32 h-32">
-        {/* Outer ring */}
-        <div className="absolute inset-0 border-2 border-[#0052ff]/20 rounded-[38%_62%_63%_37%/41%_44%_56%_59%] animate-[morph_5s_linear_infinite,spin_12s_linear_infinite]" />
-        {/* Inner ring */}
-        <div className="absolute inset-2 border border-[#0052ff]/10 rounded-[60%_40%_70%_30%/50%_60%_40%_50%] animate-[morph_5s_linear_infinite_reverse,spin_10s_linear_infinite_reverse]" />
-        {/* Center dot */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-[#0052ff] rounded-full shadow-[0_0_20px_#0052ff] animate-pulse" />
+    <div
+      style={{
+        minHeight: '100vh',
+        background: `
+          radial-gradient(at 0% 0%, rgba(0, 82, 255, 0.03) 0px, transparent 50%),
+          radial-gradient(at 100% 100%, rgba(0, 82, 255, 0.03) 0px, transparent 50%)
+        `,
+        backgroundColor: '#ffffff',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        overflow: 'hidden',
+        fontFamily: "'Plus Jakarta Sans', sans-serif",
+        opacity: fadeOut ? 0 : 1,
+        transition: 'opacity 0.8s ease',
+      }}
+    >
+      <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        {/* Logo with Pulse */}
+        <div style={{ position: 'relative', marginBottom: '25px' }}>
+          {/* Pulse Circle */}
+          <div
+            style={{
+              position: 'absolute',
+              width: '80px',
+              height: '80px',
+              background: '#0052ff',
+              borderRadius: '20px',
+              zIndex: 1,
+              opacity: 0.4,
+              animation: 'friendlyPulse 3s ease-out infinite',
+            }}
+          />
+          {/* Logo Box */}
+          <div
+            style={{
+              width: '80px',
+              height: '80px',
+              background: '#0052ff',
+              borderRadius: '20px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'white',
+              fontSize: '2.5rem',
+              fontWeight: 900,
+              boxShadow: '0 20px 40px rgba(0, 82, 255, 0.2)',
+              position: 'relative',
+              zIndex: 2,
+            }}
+          >
+            S
+          </div>
+        </div>
+
+        {/* Brand Name */}
+        <h1
+          style={{
+            fontSize: '1.8rem',
+            fontWeight: 800,
+            color: '#1e293b',
+            letterSpacing: '-0.5px',
+            marginBottom: '10px',
+            animation: 'fadeInUp 0.6s forwards 0.3s',
+            opacity: 0,
+            transform: 'translateY(10px)',
+          }}
+        >
+          smart<span style={{ color: '#0052ff' }}>Invest</span>
+        </h1>
+
+        {/* Status Text */}
+        <p
+          style={{
+            fontSize: '0.95rem',
+            fontWeight: 600,
+            color: '#64748b',
+            height: '20px',
+            animation: 'fadeInUp 0.6s forwards 0.5s',
+            opacity: 0,
+          }}
+        >
+          {status}
+        </p>
       </div>
 
-      {/* Brand */}
-      <h1 className="text-3xl font-extrabold text-[#1e293b] tracking-tight animate-fade-in">
-        SMART<span className="text-[#0052ff]">INVEST</span>
-      </h1>
-
-      {/* Status */}
-      <p className="text-sm text-[#64748b] font-medium uppercase tracking-wider">
-        {status}
-      </p>
+      {/* Keyframe animations */}
+      <style jsx>{`
+        @keyframes friendlyPulse {
+          0% { transform: scale(1); opacity: 0.4; }
+          100% { transform: scale(2.5); opacity: 0; }
+        }
+        @keyframes fadeInUp {
+          to { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
     </div>
   );
 }
