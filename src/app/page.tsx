@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 
 export default function LandingPage() {
   const [liveVal, setLiveVal] = useState(1402.92);
   const [revealed, setRevealed] = useState<Set<number>>(new Set());
-  const refs = useRef<(HTMLDivElement | null)[]>([]);
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  const elementsRef = useRef<Map<number, HTMLElement>>(new Map());
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -16,11 +17,12 @@ export default function LandingPage() {
   }, []);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
+    observerRef.current = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            const idx = refs.current.indexOf(entry.target as HTMLDivElement);
+            const target = entry.target as HTMLElement;
+            const idx = parseInt(target.dataset.revealIdx || '-1');
             if (idx !== -1) {
               setRevealed(prev => new Set(prev).add(idx));
             }
@@ -30,15 +32,26 @@ export default function LandingPage() {
       { threshold: 0.1 }
     );
 
-    refs.current.forEach(ref => {
-      if (ref) observer.observe(ref);
+    elementsRef.current.forEach(el => {
+      if (el) observerRef.current?.observe(el);
     });
 
-    return () => observer.disconnect();
+    return () => observerRef.current?.disconnect();
   }, []);
 
-  const revealClass = (idx: number) =>
-    revealed.has(idx) ? { opacity: 1, transform: 'translateY(0)' } : { opacity: 0, transform: 'translateY(30px)' };
+  const setRef = useCallback((idx: number) => (el: HTMLElement | null) => {
+    if (el) {
+      el.dataset.revealIdx = String(idx);
+      elementsRef.current.set(idx, el);
+      observerRef.current?.observe(el);
+    }
+  }, []);
+
+  const revealStyle = (idx: number): React.CSSProperties => ({
+    opacity: revealed.has(idx) ? 1 : 0,
+    transform: revealed.has(idx) ? 'translateY(0)' : 'translateY(30px)',
+    transition: '1s ease-out',
+  });
 
   return (
     <div style={{ background: '#ffffff', color: '#0f172a', fontFamily: "'Plus Jakarta Sans', sans-serif", overflowX: 'hidden' }}>
@@ -55,14 +68,14 @@ export default function LandingPage() {
 
       {/* Hero Section */}
       <section style={{ padding: '100px 5% 60px', textAlign: 'center', maxWidth: '1200px', margin: '0 auto' }}>
-        <h1 ref={el => { refs.current[0] = el; }} style={{ fontSize: 'clamp(2.5rem, 8vw, 4.5rem)', fontWeight: 800, lineHeight: 1.1, marginBottom: '25px', letterSpacing: '-2px', transition: '1s ease-out', ...revealClass(0) }}>
+        <h1 ref={setRef(0)} style={{ fontSize: 'clamp(2.5rem, 8vw, 4.5rem)', fontWeight: 800, lineHeight: 1.1, marginBottom: '25px', letterSpacing: '-2px', ...revealStyle(0) }}>
           Make your money <span style={{ background: 'linear-gradient(135deg, #0052ff, #00f2ff)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>move</span> while you sleep.
         </h1>
-        <p ref={el => { refs.current[1] = el; }} style={{ fontSize: '1.2rem', color: '#64748b', maxWidth: '600px', margin: '0 auto 40px', lineHeight: 1.6, transition: '1s ease-out', ...revealClass(1) }}>
+        <p ref={setRef(1)} style={{ fontSize: '1.2rem', color: '#64748b', maxWidth: '600px', margin: '0 auto 40px', lineHeight: 1.6, ...revealStyle(1) }}>
           Put in $10 today. Watch it grow by tomorrow. No complex math, no hidden fees, just simple daily profits.
         </p>
 
-        <div ref={el => { refs.current[2] = el; }} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '15px', transition: '1s ease-out', ...revealClass(2) }}>
+        <div ref={setRef(2)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '15px', ...revealStyle(2) }}>
           <Link href="/register" style={{ background: '#0f172a', color: 'white', padding: '22px 45px', borderRadius: '20px', fontSize: '1.2rem', fontWeight: 800, textDecoration: 'none', boxShadow: '0 20px 40px rgba(0,0,0,0.1)', transition: '0.3s' }}>
             Start with just $10
           </Link>
@@ -75,31 +88,31 @@ export default function LandingPage() {
 
       {/* Bento Grid */}
       <section style={{ padding: '60px 5%', maxWidth: '1200px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px' }}>
-        <div ref={el => { refs.current[3] = el; }} style={{ background: '#eff6ff', borderRadius: '32px', padding: '40px', border: '1px solid #eee', position: 'relative', overflow: 'hidden', gridColumn: 'span 2', minHeight: '300px', transition: '1s ease-out', ...revealClass(3) }}>
+        <div ref={setRef(3)} style={{ background: '#eff6ff', borderRadius: '32px', padding: '40px', border: '1px solid #eee', position: 'relative', overflow: 'hidden', gridColumn: 'span 2', minHeight: '300px', ...revealStyle(3) }}>
           <h2 style={{ fontSize: '1.8rem', fontWeight: 800, marginBottom: '15px' }}>The 24-Hour Promise</h2>
           <p style={{ color: '#64748b', fontWeight: 600, lineHeight: 1.5 }}>Every dollar you add starts working immediately. By this time tomorrow, you&apos;ll see your first profit. It&apos;s that simple.</p>
           <div style={{ fontSize: '5rem', position: 'absolute', bottom: '-10px', right: '10px', opacity: 0.1 }}>🕒</div>
         </div>
 
-        <div ref={el => { refs.current[4] = el; }} style={{ background: '#f8faff', borderRadius: '32px', padding: '40px', border: '1px solid #eee', transition: '1s ease-out', ...revealClass(4) }}>
+        <div ref={setRef(4)} style={{ background: '#f8faff', borderRadius: '32px', padding: '40px', border: '1px solid #eee', ...revealStyle(4) }}>
           <h2 style={{ fontSize: '1.8rem', fontWeight: 800, marginBottom: '15px' }}>5% Daily</h2>
           <p style={{ color: '#64748b', fontWeight: 600, lineHeight: 1.5 }}>Industry-leading returns powered by SmartAgent.</p>
         </div>
 
-        <div ref={el => { refs.current[5] = el; }} style={{ background: '#0f172a', color: 'white', borderRadius: '32px', padding: '40px', border: '1px solid #eee', minHeight: '300px', transition: '1s ease-out', ...revealClass(5) }}>
+        <div ref={setRef(5)} style={{ background: '#0f172a', color: 'white', borderRadius: '32px', padding: '40px', border: '1px solid #eee', minHeight: '300px', ...revealStyle(5) }}>
           <h2 style={{ fontSize: '1.8rem', fontWeight: 800, marginBottom: '15px', color: 'white' }}>Bank-Grade Safety</h2>
           <p style={{ color: '#94a3b8', fontWeight: 600, lineHeight: 1.5 }}>Your money is protected by the same security used by the world&apos;s biggest banks. Sleep easy knowing you&apos;re covered.</p>
           <div style={{ fontSize: '4rem', marginTop: '40px' }}>🛡️</div>
         </div>
 
-        <div ref={el => { refs.current[6] = el; }} style={{ background: '#f8faff', borderRadius: '32px', padding: '40px', border: '1px solid #eee', gridColumn: 'span 2', transition: '1s ease-out', ...revealClass(6) }}>
+        <div ref={setRef(6)} style={{ background: '#f8faff', borderRadius: '32px', padding: '40px', border: '1px solid #eee', gridColumn: 'span 2', ...revealStyle(6) }}>
           <h2 style={{ fontSize: '1.8rem', fontWeight: 800, marginBottom: '15px' }}>No Tech Skills Needed</h2>
           <p style={{ color: '#64748b', fontWeight: 600, lineHeight: 1.5 }}>If you can send a text, you can use smartInvest. We handle the hard part; you just watch the numbers go up.</p>
         </div>
       </section>
 
       {/* Trust Section */}
-      <section ref={el => { refs.current[7] = el; }} style={{ padding: '80px 5%', textAlign: 'center', transition: '1s ease-out', ...revealClass(7) }}>
+      <section ref={setRef(7)} style={{ padding: '80px 5%', textAlign: 'center', ...revealStyle(7) }}>
         <h3 style={{ fontSize: '1.2rem', fontWeight: 700, color: '#64748b' }}>Trusted by 50,000+ everyday investors</h3>
         <div style={{ display: 'flex', justifyContent: 'center', gap: '40px', opacity: 0.4, filter: 'grayscale(1)', marginTop: '30px', flexWrap: 'wrap' }}>
           <div style={{ fontWeight: 900, fontSize: '1.5rem' }}>Forbes</div>

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { verifyAuthenticationResponse, type VerifiedAuthenticationResponse } from '@simplewebauthn/server';
+import { verifyAuthenticationResponse, type VerifiedAuthenticationResponse, type AuthenticatorTransportFuture } from '@simplewebauthn/server';
 import jwt from 'jsonwebtoken';
 import prisma from '@/lib/prisma';
 
@@ -11,7 +11,6 @@ export async function POST(request: NextRequest) {
     try {
         const { response, challenge, userId } = await request.json();
 
-        // Find the passkey
         const passkey = await prisma.passkey.findFirst({
             where: {
                 credentialId: response.id,
@@ -35,7 +34,7 @@ export async function POST(request: NextRequest) {
                     id: passkey.credentialId,
                     publicKey: passkey.credentialPublicKey,
                     counter: Number(passkey.counter),
-                    transports: passkey.transports as AuthenticatorTransport[],
+                    transports: passkey.transports as AuthenticatorTransportFuture[],
                 },
             });
         } catch (error) {
@@ -49,13 +48,11 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'Authentication failed' }, { status: 401 });
         }
 
-        // Update counter
         await prisma.passkey.update({
             where: { id: passkey.id },
             data: { counter: BigInt(authenticationInfo.newCounter) }
         });
 
-        // Generate JWT token
         const token = jwt.sign(
             { userId: passkey.user.id, email: passkey.user.email },
             JWT_SECRET,
@@ -64,7 +61,7 @@ export async function POST(request: NextRequest) {
 
         return NextResponse.json({
             success: true,
-            message: 'Face ID login successful',
+            message: 'Biometrics login successful',
             token,
             user: {
                 id: passkey.user.id,

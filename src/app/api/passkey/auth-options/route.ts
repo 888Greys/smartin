@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { generateAuthenticationOptions } from '@simplewebauthn/server';
+import { generateAuthenticationOptions, type AuthenticatorTransportFuture } from '@simplewebauthn/server';
 import prisma from '@/lib/prisma';
 
 const RP_ID = process.env.RP_ID || 'localhost';
@@ -18,14 +18,14 @@ export async function POST(request: NextRequest) {
         });
 
         if (!user || user.passkeys.length === 0) {
-            return NextResponse.json({ error: 'No Face ID registered for this account' }, { status: 404 });
+            return NextResponse.json({ error: 'No biometrics registered for this account' }, { status: 404 });
         }
 
         const options = await generateAuthenticationOptions({
             rpID: RP_ID,
             allowCredentials: user.passkeys.map(pk => ({
                 id: pk.credentialId,
-                transports: pk.transports as AuthenticatorTransport[],
+                transports: pk.transports as AuthenticatorTransportFuture[],
             })),
             userVerification: 'preferred',
         });

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { generateRegistrationOptions } from '@simplewebauthn/server';
+import { generateRegistrationOptions, type AuthenticatorTransportFuture } from '@simplewebauthn/server';
 import jwt from 'jsonwebtoken';
 import prisma from '@/lib/prisma';
 
@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
             attestationType: 'none',
             excludeCredentials: user.passkeys.map(pk => ({
                 id: pk.credentialId,
-                transports: pk.transports as AuthenticatorTransport[],
+                transports: pk.transports as AuthenticatorTransportFuture[],
             })),
             authenticatorSelection: {
                 residentKey: 'preferred',
