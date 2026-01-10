@@ -50,7 +50,7 @@ export default function LoginPage() {
         }
     };
 
-    const handleFaceID = async () => {
+    const handleBiometrics = async () => {
         if (!email) {
             setError('Please enter your email first');
             return;
@@ -60,7 +60,6 @@ export default function LoginPage() {
         setIsLoading(true);
 
         try {
-            // Get authentication options
             const optionsRes = await fetch('/api/passkey/auth-options', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -70,14 +69,12 @@ export default function LoginPage() {
             const optionsData = await optionsRes.json();
 
             if (!optionsRes.ok) {
-                setError(optionsData.error || 'Face ID not available');
+                setError(optionsData.error || 'Biometrics not available for this account');
                 return;
             }
 
-            // Start authentication
             const authResponse = await startAuthentication({ optionsJSON: optionsData.options });
 
-            // Verify with server
             const verifyRes = await fetch('/api/passkey/authenticate', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -91,15 +88,15 @@ export default function LoginPage() {
             const verifyData = await verifyRes.json();
 
             if (!verifyRes.ok) {
-                setError(verifyData.error || 'Face ID authentication failed');
+                setError(verifyData.error || 'Biometrics authentication failed');
                 return;
             }
 
             localStorage.setItem('smartinvest_token', verifyData.token);
             router.push('/dashboard');
         } catch (err) {
-            console.error('Face ID error:', err);
-            setError('Face ID not available or cancelled');
+            console.error('Biometrics error:', err);
+            setError('Biometrics not available or cancelled');
         } finally {
             setIsLoading(false);
         }
@@ -140,13 +137,13 @@ export default function LoginPage() {
                             {isLoading ? "Logging in..." : "Log In"}
                         </button>
 
-                        <button type="button" onClick={handleFaceID} disabled={isLoading} style={{ width: '100%', padding: '12px', background: '#f1f5f9', color: '#1e293b', border: 'none', borderRadius: '10px', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                        <button type="button" onClick={handleBiometrics} disabled={isLoading} style={{ width: '100%', padding: '12px', background: '#f1f5f9', color: '#1e293b', border: 'none', borderRadius: '10px', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                 <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
                                 <circle cx="12" cy="10" r="3"></circle>
                                 <path d="M7 21v-2a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v2"></path>
                             </svg>
-                            Use Face ID
+                            Use Biometrics
                         </button>
                     </form>
                 </div>

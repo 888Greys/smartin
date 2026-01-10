@@ -10,6 +10,7 @@ interface User {
     email: string;
     balance: number;
     totalEarnings: number;
+    hasBiometrics?: boolean;
 }
 
 export default function DashboardPage() {
@@ -17,7 +18,7 @@ export default function DashboardPage() {
     const [user, setUser] = useState<User | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [earnings, setEarnings] = useState(0.67);
-    const [faceIdStatus, setFaceIdStatus] = useState<'none' | 'setting' | 'done'>('none');
+    const [biometricsStatus, setBiometricsStatus] = useState<'none' | 'setting' | 'done'>('none');
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -41,6 +42,10 @@ export default function DashboardPage() {
                 const data = await res.json();
                 setUser(data.user);
                 setEarnings(data.user.totalEarnings || 0.67);
+                // Set biometrics status based on existing passkeys
+                if (data.user.hasBiometrics) {
+                    setBiometricsStatus('done');
+                }
             } catch {
                 localStorage.removeItem('smartinvest_token');
                 router.push('/login');
@@ -60,14 +65,13 @@ export default function DashboardPage() {
         return () => clearInterval(interval);
     }, [user]);
 
-    const handleSetupFaceID = async () => {
+    const handleSetupBiometrics = async () => {
         const token = localStorage.getItem('smartinvest_token');
         if (!token) return;
 
-        setFaceIdStatus('setting');
+        setBiometricsStatus('setting');
 
         try {
-            // Get registration options
             const optionsRes = await fetch('/api/passkey/register-options', {
                 method: 'POST',
                 headers: { 'Authorization': `Bearer ${token}` },
@@ -76,15 +80,13 @@ export default function DashboardPage() {
             const optionsData = await optionsRes.json();
 
             if (!optionsRes.ok) {
-                alert(optionsData.error || 'Failed to setup Face ID');
-                setFaceIdStatus('none');
+                alert(optionsData.error || 'Failed to setup biometrics');
+                setBiometricsStatus('none');
                 return;
             }
 
-            // Start registration
             const regResponse = await startRegistration({ optionsJSON: optionsData.options });
 
-            // Verify with server
             const verifyRes = await fetch('/api/passkey/register', {
                 method: 'POST',
                 headers: {
@@ -100,17 +102,17 @@ export default function DashboardPage() {
             const verifyData = await verifyRes.json();
 
             if (!verifyRes.ok) {
-                alert(verifyData.error || 'Face ID setup failed');
-                setFaceIdStatus('none');
+                alert(verifyData.error || 'Biometrics setup failed');
+                setBiometricsStatus('none');
                 return;
             }
 
-            setFaceIdStatus('done');
-            alert('✅ Face ID setup complete! You can now use Face ID to log in.');
+            setBiometricsStatus('done');
+            alert('✅ Biometrics setup complete! You can now use Face ID or fingerprint to log in.');
         } catch (err) {
-            console.error('Face ID setup error:', err);
-            alert('Face ID setup cancelled or not supported');
-            setFaceIdStatus('none');
+            console.error('Biometrics setup error:', err);
+            alert('Biometrics setup cancelled or not supported');
+            setBiometricsStatus('none');
         }
     };
 
@@ -177,17 +179,25 @@ export default function DashboardPage() {
                     </div>
                 </div>
 
-                {/* Face ID Setup */}
-                <button onClick={handleSetupFaceID} disabled={faceIdStatus === 'setting'} style={{ width: '100%', padding: '14px', borderRadius: '12px', fontSize: '0.9rem', fontWeight: 700, background: faceIdStatus === 'done' ? '#059669' : '#f0f7ff', color: faceIdStatus === 'done' ? 'white' : '#0052ff', border: 'none', cursor: 'pointer', marginBottom: '15px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
-                        <circle cx="12" cy="10" r="3"></circle>
-                        <path d="M7 21v-2a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v2"></path>
-                    </svg>
-                    {faceIdStatus === 'none' && 'Setup Face ID'}
-                    {faceIdStatus === 'setting' && 'Setting up...'}
-                    {faceIdStatus === 'done' && '✓ Face ID Enabled'}
-                </button>
+                {/* Biometrics Setup - only show if not already set up */}
+                {biometricsStatus !== 'done' && (
+                    <button onClick={handleSetupBiometrics} disabled={biometricsStatus === 'setting'} style={{ width: '100%', padding: '14px', borderRadius: '12px', fontSize: '0.9rem', fontWeight: 700, background: '#f0f7ff', color: '#0052ff', border: 'none', cursor: 'pointer', marginBottom: '15px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                            <path d="M7 21v-2a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v2"></path>
+                        </svg>
+                        {biometricsStatus === 'none' && 'Enable Biometrics Login'}
+                        {biometricsStatus === 'setting' && 'Setting up...'}
+                    </button>
+                )}
+
+                {/* Biometrics enabled badge */}
+                {biometricsStatus === 'done' && (
+                    <div style={{ padding: '10px 14px', borderRadius: '12px', fontSize: '0.8rem', fontWeight: 700, background: '#dcfce7', color: '#059669', marginBottom: '15px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+                        ✓ Biometrics Enabled
+                    </div>
+                )}
 
                 {/* Growth Banner */}
                 <div style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '25px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
