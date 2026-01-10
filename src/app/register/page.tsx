@@ -37,7 +37,7 @@ export default function RegisterPage() {
                 color: '#1e293b'
             }}
         >
-            <div style={{ width: '90%', maxWidth: '400px', textAlign: 'center', padding: '20px' }}>
+            <div style={{ width: '90%', maxWidth: '480px', textAlign: 'center', padding: '20px' }}>
                 {/* Logo */}
                 <div style={{
                     fontSize: '1.5rem',

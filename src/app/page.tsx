@@ -25,7 +25,7 @@ export default function Home() {
         setTimeout(() => {
           setFadeOut(true);
           setTimeout(() => {
-            router.push("/register");
+            router.push("/login");
           }, 800);
         }, 500);
       }
@@ -38,11 +38,7 @@ export default function Home() {
     <div
       style={{
         minHeight: '100vh',
-        background: `
-          radial-gradient(at 0% 0%, rgba(0, 82, 255, 0.03) 0px, transparent 50%),
-          radial-gradient(at 100% 100%, rgba(0, 82, 255, 0.03) 0px, transparent 50%)
-        `,
-        backgroundColor: '#ffffff',
+        background: 'linear-gradient(180deg, #f0f5ff 0%, #ffffff 100%)',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',

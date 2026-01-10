@@ -21,68 +21,72 @@ export default function LoginPage() {
         <div
             style={{
                 minHeight: '100vh',
-                background: 'radial-gradient(circle at top, #f0f5ff 0%, #fdfdfe 100%)',
+                background: 'linear-gradient(180deg, #f0f5ff 0%, #ffffff 100%)',
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
                 fontFamily: "'Plus Jakarta Sans', sans-serif",
-                color: '#1e293b',
-                padding: '20px'
+                color: '#1e293b'
             }}
         >
-            {/* Login Card */}
-            <div style={{
-                width: '100%',
-                maxWidth: '400px',
-                background: 'white',
-                padding: '40px 30px',
-                borderRadius: '32px',
-                boxShadow: '0 10px 40px rgba(0, 82, 255, 0.05)',
-                border: '1px solid #e2e8f0',
-                textAlign: 'center'
-            }}>
+            <div style={{ width: '90%', maxWidth: '480px', textAlign: 'center', padding: '20px' }}>
                 {/* Logo */}
                 <div style={{
-                    fontSize: '1.4rem',
+                    fontSize: '1.5rem',
                     fontWeight: 800,
-                    marginBottom: '30px',
+                    marginBottom: '40px',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     gap: '8px'
                 }}>
                     <div style={{
-                        width: '28px',
-                        height: '28px',
+                        width: '32px',
+                        height: '32px',
                         background: '#0052ff',
                         borderRadius: '8px',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         color: 'white',
-                        fontWeight: 900,
-                        fontSize: '0.9rem'
+                        fontWeight: 900
                     }}>S</div>
                     smart<span style={{ color: '#0052ff' }}>Invest</span>
                 </div>
 
                 {/* Headline */}
-                <h1 style={{ fontSize: '1.6rem', fontWeight: 800, marginBottom: '8px' }}>
+                <h1 style={{
+                    fontSize: '1.8rem',
+                    fontWeight: 800,
+                    marginBottom: '12px',
+                    letterSpacing: '-0.5px'
+                }}>
                     Welcome back
                 </h1>
-                <p style={{ fontSize: '0.95rem', color: '#64748b', marginBottom: '32px' }}>
+                <p style={{
+                    fontSize: '1rem',
+                    color: '#64748b',
+                    marginBottom: '30px',
+                    lineHeight: 1.5
+                }}>
                     Check your earnings and manage your money.
                 </p>
 
-                <form onSubmit={handleSubmit}>
-                    {/* Email */}
-                    <div style={{ textAlign: 'left', marginBottom: '20px' }}>
+                {/* Card */}
+                <div style={{
+                    background: 'white',
+                    padding: '30px',
+                    borderRadius: '24px',
+                    boxShadow: '0 20px 40px rgba(0,0,0,0.05)',
+                    border: '1px solid #e2e8f0',
+                    textAlign: 'left'
+                }}>
+                    <form onSubmit={handleSubmit}>
                         <label style={{
-                            display: 'block',
-                            fontSize: '0.85rem',
+                            fontSize: '0.9rem',
                             fontWeight: 600,
                             marginBottom: '8px',
-                            color: '#1e293b'
+                            display: 'block'
                         }}>
                             Email Address
                         </label>
@@ -94,23 +98,20 @@ export default function LoginPage() {
                             style={{
                                 width: '100%',
                                 padding: '16px',
-                                border: '1.5px solid #e2e8f0',
-                                borderRadius: '14px',
+                                border: '1px solid #cbd5e1',
+                                borderRadius: '12px',
+                                marginBottom: '20px',
                                 fontSize: '1rem',
                                 outline: 'none',
                                 boxSizing: 'border-box'
                             }}
                         />
-                    </div>
 
-                    {/* Password */}
-                    <div style={{ textAlign: 'left', marginBottom: '20px' }}>
                         <label style={{
-                            display: 'block',
-                            fontSize: '0.85rem',
+                            fontSize: '0.9rem',
                             fontWeight: 600,
                             marginBottom: '8px',
-                            color: '#1e293b'
+                            display: 'block'
                         }}>
                             Password
                         </label>
@@ -122,100 +123,99 @@ export default function LoginPage() {
                             style={{
                                 width: '100%',
                                 padding: '16px',
-                                border: '1.5px solid #e2e8f0',
-                                borderRadius: '14px',
+                                border: '1px solid #cbd5e1',
+                                borderRadius: '12px',
+                                marginBottom: '8px',
                                 fontSize: '1rem',
                                 outline: 'none',
                                 boxSizing: 'border-box'
                             }}
                         />
-                    </div>
 
-                    {/* Forgot Password */}
-                    <a
-                        href="#"
-                        style={{
-                            display: 'block',
-                            textAlign: 'right',
-                            fontSize: '0.85rem',
-                            color: '#0052ff',
-                            textDecoration: 'none',
-                            fontWeight: 600,
-                            marginTop: '-12px',
-                            marginBottom: '25px'
-                        }}
-                    >
-                        Forgot password?
-                    </a>
+                        {/* Forgot Password */}
+                        <a
+                            href="#"
+                            style={{
+                                display: 'block',
+                                textAlign: 'right',
+                                fontSize: '0.85rem',
+                                color: '#0052ff',
+                                textDecoration: 'none',
+                                fontWeight: 600,
+                                marginBottom: '25px'
+                            }}
+                        >
+                            Forgot password?
+                        </a>
 
-                    {/* Login Button */}
-                    <button
-                        type="submit"
-                        disabled={isSubmitting}
-                        style={{
-                            width: '100%',
-                            padding: '18px',
-                            background: '#0052ff',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '14px',
-                            fontSize: '1rem',
-                            fontWeight: 700,
-                            cursor: 'pointer',
-                            marginBottom: '15px',
-                            opacity: isSubmitting ? 0.7 : 1
-                        }}
-                    >
-                        {isSubmitting ? "Logging in..." : "Log In"}
-                    </button>
+                        <button
+                            type="submit"
+                            disabled={isSubmitting}
+                            style={{
+                                width: '100%',
+                                padding: '18px',
+                                background: '#0052ff',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '12px',
+                                fontSize: '1.1rem',
+                                fontWeight: 700,
+                                cursor: 'pointer',
+                                marginBottom: '15px',
+                                opacity: isSubmitting ? 0.8 : 1
+                            }}
+                        >
+                            {isSubmitting ? "Logging in..." : "Log In"}
+                        </button>
 
-                    {/* Face ID Button */}
-                    <button
-                        type="button"
-                        style={{
-                            width: '100%',
-                            padding: '14px',
-                            background: '#f1f5f9',
-                            color: '#1e293b',
-                            border: 'none',
-                            borderRadius: '14px',
-                            fontSize: '0.9rem',
-                            fontWeight: 600,
-                            cursor: 'pointer',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            gap: '10px',
-                            marginBottom: '25px'
-                        }}
-                    >
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
-                            <path d="M8 7v7m8-7v7M8 11h8"></path>
-                        </svg>
-                        Use Face ID
-                    </button>
-                </form>
+                        {/* Face ID Button */}
+                        <button
+                            type="button"
+                            style={{
+                                width: '100%',
+                                padding: '14px',
+                                background: '#f1f5f9',
+                                color: '#1e293b',
+                                border: 'none',
+                                borderRadius: '12px',
+                                fontSize: '0.9rem',
+                                fontWeight: 600,
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: '10px'
+                            }}
+                        >
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+                                <path d="M8 7v7m8-7v7M8 11h8"></path>
+                            </svg>
+                            Use Face ID
+                        </button>
+                    </form>
+                </div>
 
                 {/* Footer */}
-                <p style={{ fontSize: '0.9rem', color: '#64748b' }}>
+                <p style={{ marginTop: '20px', fontSize: '0.85rem', color: '#64748b' }}>
                     New to smartInvest?{" "}
-                    <Link href="/register" style={{ color: '#0052ff', textDecoration: 'none', fontWeight: 700 }}>
+                    <Link href="/register" style={{ color: '#0052ff', textDecoration: 'none', fontWeight: 600 }}>
                         Create account
                     </Link>
                 </p>
 
-                {/* Security Note */}
+                {/* Security Badge */}
                 <div style={{
                     marginTop: '30px',
-                    fontSize: '0.75rem',
-                    color: '#94a3b8',
                     display: 'flex',
-                    alignItems: 'center',
                     justifyContent: 'center',
-                    gap: '5px'
+                    alignItems: 'center',
+                    gap: '6px',
+                    fontSize: '0.75rem',
+                    color: '#059669',
+                    fontWeight: 600
                 }}>
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                         <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
                         <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                     </svg>
