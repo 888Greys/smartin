@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
                 expectedOrigin: ORIGIN,
                 expectedRPID: RP_ID,
                 credential: {
-                    id: Buffer.from(passkey.credentialId, 'base64url'),
+                    id: passkey.credentialId,
                     publicKey: passkey.credentialPublicKey,
                     counter: Number(passkey.counter),
                     transports: passkey.transports as AuthenticatorTransport[],

@@ -43,8 +43,7 @@ export async function POST(request: NextRequest) {
             userName: user.email,
             attestationType: 'none',
             excludeCredentials: user.passkeys.map(pk => ({
-                id: Buffer.from(pk.credentialId, 'base64url'),
-                type: 'public-key' as const,
+                id: pk.credentialId,
                 transports: pk.transports as AuthenticatorTransport[],
             })),
             authenticatorSelection: {
@@ -53,8 +52,6 @@ export async function POST(request: NextRequest) {
             },
         });
 
-        // Store challenge temporarily (in production, use Redis or session)
-        // For now, we'll include it in the response and verify it client-side
         return NextResponse.json({
             success: true,
             options,
