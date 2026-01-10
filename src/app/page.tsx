@@ -74,33 +74,37 @@ export default function LandingPage() {
       <div style={{ background: '#ffffff', color: '#0f172a', fontFamily: "'Plus Jakarta Sans', sans-serif", overflowX: 'hidden' }}>
         {/* Navigation */}
         <nav className="nav-container" style={{ padding: '20px 5%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'sticky', top: 0, background: 'rgba(255,255,255,0.9)', backdropFilter: 'blur(10px)', zIndex: 100 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 800, fontSize: '1.1rem' }}>
-            <div style={{ width: '28px', height: '28px', background: '#0052ff', borderRadius: '7px', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.9rem' }}>S</div>
-            smartInvest
-          </div>
-
-          {/* Hamburger Menu */}
+          {/* Hamburger Menu - Left */}
           <div style={{ position: 'relative' }}>
-            <button onClick={() => setMenuOpen(!menuOpen)} style={{ background: 'transparent', border: 'none', cursor: 'pointer', padding: '8px', display: 'flex', flexDirection: 'column', gap: '5px' }}>
-              <span style={{ width: '24px', height: '2px', background: '#0f172a', borderRadius: '2px', transition: '0.3s', transform: menuOpen ? 'rotate(45deg) translateY(7px)' : 'none' }}></span>
-              <span style={{ width: '24px', height: '2px', background: '#0f172a', borderRadius: '2px', transition: '0.3s', opacity: menuOpen ? 0 : 1 }}></span>
-              <span style={{ width: '24px', height: '2px', background: '#0f172a', borderRadius: '2px', transition: '0.3s', transform: menuOpen ? 'rotate(-45deg) translateY(-7px)' : 'none' }}></span>
+            <button onClick={() => setMenuOpen(!menuOpen)} style={{ background: menuOpen ? '#f1f5f9' : 'white', border: '1px solid #e2e8f0', borderRadius: '50px', cursor: 'pointer', padding: '10px 16px', display: 'flex', alignItems: 'center', gap: '8px', boxShadow: '0 2px 8px rgba(0,0,0,0.06)', transition: '0.2s' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                <span style={{ width: '18px', height: '2px', background: '#0f172a', borderRadius: '2px', transition: '0.3s', transform: menuOpen ? 'rotate(45deg) translateY(6px)' : 'none' }}></span>
+                <span style={{ width: '18px', height: '2px', background: '#0f172a', borderRadius: '2px', transition: '0.3s', opacity: menuOpen ? 0 : 1 }}></span>
+                <span style={{ width: '18px', height: '2px', background: '#0f172a', borderRadius: '2px', transition: '0.3s', transform: menuOpen ? 'rotate(-45deg) translateY(-6px)' : 'none' }}></span>
+              </div>
+              <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#64748b' }}>Menu</span>
             </button>
 
             {/* Dropdown Menu */}
             {menuOpen && (
-              <div style={{ position: 'absolute', top: '50px', right: 0, background: 'white', borderRadius: '16px', boxShadow: '0 15px 40px rgba(0,0,0,0.12)', border: '1px solid #e2e8f0', minWidth: '200px', overflow: 'hidden' }}>
-                <Link href="/contact" onClick={() => setMenuOpen(false)} style={{ display: 'block', padding: '14px 20px', color: '#0f172a', textDecoration: 'none', fontWeight: 600, fontSize: '0.95rem', borderBottom: '1px solid #f1f5f9' }}>
-                  📧 Contact Us
+              <div style={{ position: 'absolute', top: '55px', left: 0, background: 'white', borderRadius: '16px', boxShadow: '0 15px 40px rgba(0,0,0,0.12)', border: '1px solid #e2e8f0', minWidth: '220px', overflow: 'hidden' }}>
+                <Link href="/contact" onClick={() => setMenuOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '16px 20px', color: '#0f172a', textDecoration: 'none', fontWeight: 600, fontSize: '0.95rem', borderBottom: '1px solid #f1f5f9', transition: '0.2s' }}>
+                  <span style={{ fontSize: '1.1rem' }}>📧</span> Contact Us
                 </Link>
-                <Link href="/faqs" onClick={() => setMenuOpen(false)} style={{ display: 'block', padding: '14px 20px', color: '#0f172a', textDecoration: 'none', fontWeight: 600, fontSize: '0.95rem', borderBottom: '1px solid #f1f5f9' }}>
-                  ❓ FAQs
+                <Link href="/faqs" onClick={() => setMenuOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '16px 20px', color: '#0f172a', textDecoration: 'none', fontWeight: 600, fontSize: '0.95rem', borderBottom: '1px solid #f1f5f9', transition: '0.2s' }}>
+                  <span style={{ fontSize: '1.1rem' }}>❓</span> FAQs
                 </Link>
-                <Link href="/terms" onClick={() => setMenuOpen(false)} style={{ display: 'block', padding: '14px 20px', color: '#0f172a', textDecoration: 'none', fontWeight: 600, fontSize: '0.95rem' }}>
-                  📄 Terms & Conditions
+                <Link href="/terms" onClick={() => setMenuOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '16px 20px', color: '#0f172a', textDecoration: 'none', fontWeight: 600, fontSize: '0.95rem', transition: '0.2s' }}>
+                  <span style={{ fontSize: '1.1rem' }}>📄</span> Terms & Conditions
                 </Link>
               </div>
             )}
+          </div>
+
+          {/* Logo - Right */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 800, fontSize: '1.1rem' }}>
+            <div style={{ width: '28px', height: '28px', background: '#0052ff', borderRadius: '7px', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.9rem' }}>S</div>
+            smartInvest
           </div>
         </nav>
 
