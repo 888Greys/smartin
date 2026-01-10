@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 
 export default function LandingPage() {
-  const [liveVal, setLiveVal] = useState(1402.92);
+  const [liveVal, setLiveVal] = useState(140292);
   const [revealed, setRevealed] = useState<Set<number>>(new Set());
   const [menuOpen, setMenuOpen] = useState(false);
   const observerRef = useRef<IntersectionObserver | null>(null);
@@ -12,7 +12,7 @@ export default function LandingPage() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setLiveVal(prev => prev + Math.random() * 0.05);
+      setLiveVal(prev => prev + Math.random() * 5);
     }, 1500);
     return () => clearInterval(interval);
   }, []);
@@ -110,7 +110,7 @@ export default function LandingPage() {
             Make your money <span style={{ background: 'linear-gradient(135deg, #0052ff, #00f2ff)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>move</span> while you sleep.
           </h1>
           <p ref={setRef(1)} className="hero-desc" style={{ fontSize: '1.1rem', color: '#64748b', maxWidth: '550px', margin: '0 auto 35px', lineHeight: 1.6, ...revealStyle(1) }}>
-            Put in $10 today. Watch it grow by tomorrow. No complex math, no hidden fees, just simple daily profits.
+            Deposit as little as Ksh 500 today. Watch it grow by tomorrow. No complex math, no hidden fees, just simple daily profits.
           </p>
 
           <div ref={setRef(2)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '15px', ...revealStyle(2) }}>
@@ -119,7 +119,7 @@ export default function LandingPage() {
             </Link>
             <div style={{ marginTop: '15px', background: 'white', padding: '18px 25px', borderRadius: '20px', boxShadow: '0 8px 25px rgba(0,0,0,0.06)', border: '1px solid #f1f5f9' }}>
               <p style={{ fontSize: '0.75rem', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', marginBottom: '5px' }}>Live Network Growth</p>
-              <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#0052ff' }}>${liveVal.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
+              <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#0052ff' }}>Ksh {liveVal.toLocaleString(undefined, { minimumFractionDigits: 0 })}</div>
             </div>
           </div>
         </section>

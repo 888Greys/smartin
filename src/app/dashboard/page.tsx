@@ -17,7 +17,7 @@ export default function DashboardPage() {
     const router = useRouter();
     const [user, setUser] = useState<User | null>(null);
     const [isLoading, setIsLoading] = useState(true);
-    const [earnings, setEarnings] = useState(0.67);
+    const [earnings, setEarnings] = useState(0);
     const [biometricsStatus, setBiometricsStatus] = useState<'none' | 'setting' | 'done'>('none');
 
     useEffect(() => {
@@ -41,7 +41,7 @@ export default function DashboardPage() {
 
                 const data = await res.json();
                 setUser(data.user);
-                setEarnings(data.user.totalEarnings || 0.67);
+                setEarnings(data.user.totalEarnings || 0);
                 // Set biometrics status based on existing passkeys
                 if (data.user.hasBiometrics) {
                     setBiometricsStatus('done');
@@ -129,7 +129,7 @@ export default function DashboardPage() {
         );
     }
 
-    const balance = user ? user.balance + earnings : 10.67;
+    const balance = user ? user.balance + earnings : 0;
     const progressOffset = 150;
 
     return (
@@ -144,7 +144,7 @@ export default function DashboardPage() {
                 {/* Balance */}
                 <div style={{ marginBottom: '30px', textAlign: 'left', paddingLeft: '10px' }}>
                     <p style={{ color: '#64748b', fontSize: '0.9rem', fontWeight: 600 }}>Your Balance</p>
-                    <h1 style={{ fontSize: '3rem', fontWeight: 800, letterSpacing: '-1px' }}>${balance.toFixed(2)}</h1>
+                    <h1 style={{ fontSize: '3rem', fontWeight: 800, letterSpacing: '-1px' }}>Ksh {balance.toFixed(2)}</h1>
                 </div>
 
                 {/* Progress Circle */}
@@ -154,14 +154,14 @@ export default function DashboardPage() {
                         <circle cx="100" cy="100" r="90" fill="none" stroke="#0052ff" strokeWidth="12" strokeLinecap="round" strokeDasharray="565.48" strokeDashoffset={progressOffset} style={{ filter: 'drop-shadow(0 0 8px rgba(0, 82, 255, 0.15))' }} />
                     </svg>
                     <div style={{ position: 'relative', zIndex: 1, textAlign: 'center' }}>
-                        <h2 style={{ color: '#00c853', fontSize: '2rem', fontWeight: 800 }}>+${earnings.toFixed(2)}</h2>
+                        <h2 style={{ color: '#00c853', fontSize: '2rem', fontWeight: 800 }}>+Ksh {earnings.toFixed(2)}</h2>
                         <p style={{ color: '#64748b', fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase' }}>Earnings</p>
                     </div>
                 </div>
 
                 {/* Promise Pill */}
                 <div style={{ background: '#f0f7ff', color: '#0052ff', padding: '12px 20px', borderRadius: '50px', fontSize: '0.85rem', fontWeight: 700, marginBottom: '25px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-                    💰 You&apos;re earning $0.50 daily on your ${user?.balance.toFixed(0) || '10'} deposit
+                    💰 Earn 5% daily on your Ksh {user?.balance.toFixed(0) || '0'} deposit
                 </div>
 
                 {/* Stats Grid */}

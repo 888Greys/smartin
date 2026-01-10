@@ -10,7 +10,7 @@ model User {
   id            String   @id @default(cuid())
   email         String   @unique
   passwordHash  String
-  balance       Float    @default(10.00)
+  balance       Float    @default(0.00)
   totalEarnings Float    @default(0.00)
   isVerified    Boolean  @default(false)
   createdAt     DateTime @default(now())
