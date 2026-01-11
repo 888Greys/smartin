@@ -21,8 +21,15 @@ export default function DashboardPage() {
     const [balance, setBalance] = useState(0);
     const [activeSection, setActiveSection] = useState<Section>('home');
     const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-    const [toggleY, setToggleY] = useState(50); // percentage from top
+    const [toggleY, setToggleY] = useState(50);
     const [isDragging, setIsDragging] = useState(false);
+
+    // Deposit form state
+    const [depositPhone, setDepositPhone] = useState('');
+    const [depositAmount, setDepositAmount] = useState('');
+    const [depositLoading, setDepositLoading] = useState(false);
+    const [depositError, setDepositError] = useState('');
+    const [depositSuccess, setDepositSuccess] = useState(false);
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -406,8 +413,8 @@ export default function DashboardPage() {
                 {/* WALLET SECTION */}
                 {activeSection === 'wallet' && (
                     <div style={{ animation: 'fadeIn 0.3s ease', maxWidth: '500px' }}>
-                        <div style={{ background: '#effef4', border: '1px solid var(--emerald)', padding: '20px', borderRadius: '20px', display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '25px' }}>
-                            <div style={{ background: 'var(--emerald)', color: 'white', fontWeight: 900, padding: '8px 14px', borderRadius: '8px', fontSize: '1.1rem' }}>M</div>
+                        <div style={{ background: '#effef4', border: '1px solid #10b981', padding: '20px', borderRadius: '20px', display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '25px' }}>
+                            <div style={{ background: '#10b981', color: 'white', fontWeight: 900, padding: '8px 14px', borderRadius: '8px', fontSize: '1.1rem' }}>M</div>
                             <div>
                                 <h4 style={{ color: '#059669', fontSize: '1rem' }}>M-Pesa Connected</h4>
                                 <p style={{ fontSize: '0.8rem', color: '#059669' }}>Instant Deposit & Withdrawal</p>
@@ -419,14 +426,105 @@ export default function DashboardPage() {
                             <h2 style={{ fontSize: '2.5rem', fontWeight: 800 }}>Ksh {balance.toLocaleString(undefined, { minimumFractionDigits: 2 })}</h2>
                         </div>
 
-                        <div style={{ display: 'flex', gap: '15px' }}>
-                            <button style={{ flex: 1, padding: '18px', borderRadius: '15px', border: 'none', fontWeight: 800, fontSize: '1rem', cursor: 'pointer', background: 'var(--navy)', color: 'white' }}>
-                                Deposit via M-Pesa
-                            </button>
-                            <button style={{ flex: 1, padding: '18px', borderRadius: '15px', fontWeight: 800, fontSize: '1rem', cursor: 'pointer', background: 'white', border: '2px solid #e2e8f0' }}>
-                                Withdraw
-                            </button>
-                        </div>
+                        {/* Deposit Form */}
+                        {depositSuccess ? (
+                            <div style={{ background: 'white', padding: '30px', borderRadius: '24px', border: '1px solid #e2e8f0', textAlign: 'center' }}>
+                                <div style={{ fontSize: '3rem', marginBottom: '15px' }}>📱</div>
+                                <h3 style={{ fontSize: '1.2rem', fontWeight: 800, marginBottom: '10px' }}>Check your phone!</h3>
+                                <p style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '20px' }}>
+                                    We've sent an M-Pesa prompt to <strong>{depositPhone}</strong>. Enter your PIN to complete the deposit of <strong>Ksh {depositAmount}</strong>.
+                                </p>
+                                <button
+                                    onClick={() => { setDepositSuccess(false); setDepositPhone(''); setDepositAmount(''); }}
+                                    style={{ padding: '14px 30px', background: '#0052ff', color: 'white', border: 'none', borderRadius: '12px', fontWeight: 700, cursor: 'pointer' }}
+                                >
+                                    Make Another Deposit
+                                </button>
+                            </div>
+                        ) : (
+                            <div style={{ background: 'white', padding: '25px', borderRadius: '24px', border: '1px solid #e2e8f0' }}>
+                                <h3 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: '20px' }}>Deposit via M-Pesa</h3>
+
+                                <label style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: '6px', display: 'block' }}>M-Pesa Phone Number</label>
+                                <input
+                                    type="tel"
+                                    value={depositPhone}
+                                    onChange={(e) => setDepositPhone(e.target.value.replace(/\D/g, '').slice(0, 12))}
+                                    placeholder="07XXXXXXXX"
+                                    style={{ width: '100%', padding: '14px', border: '1px solid #e2e8f0', borderRadius: '12px', marginBottom: '15px', fontSize: '1rem', outline: 'none', boxSizing: 'border-box' }}
+                                />
+
+                                <label style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: '6px', display: 'block' }}>Amount (Ksh)</label>
+                                <input
+                                    type="number"
+                                    value={depositAmount}
+                                    onChange={(e) => setDepositAmount(e.target.value)}
+                                    placeholder="Minimum Ksh 10"
+                                    min="10"
+                                    style={{ width: '100%', padding: '14px', border: '1px solid #e2e8f0', borderRadius: '12px', marginBottom: '15px', fontSize: '1rem', outline: 'none', boxSizing: 'border-box' }}
+                                />
+
+                                {/* Quick amounts */}
+                                <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
+                                    {[100, 500, 1000, 5000].map((amt) => (
+                                        <button
+                                            key={amt}
+                                            type="button"
+                                            onClick={() => setDepositAmount(amt.toString())}
+                                            style={{
+                                                flex: 1,
+                                                padding: '10px',
+                                                background: depositAmount === amt.toString() ? '#0052ff' : '#f1f5f9',
+                                                color: depositAmount === amt.toString() ? 'white' : '#64748b',
+                                                border: 'none',
+                                                borderRadius: '10px',
+                                                fontSize: '0.85rem',
+                                                fontWeight: 700,
+                                                cursor: 'pointer'
+                                            }}
+                                        >
+                                            {amt.toLocaleString()}
+                                        </button>
+                                    ))}
+                                </div>
+
+                                <div style={{ background: '#f0f7ff', padding: '12px 14px', borderRadius: '12px', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                    <span style={{ fontSize: '1rem' }}>🔒</span>
+                                    <span style={{ fontSize: '0.8rem', color: '#0052ff', fontWeight: 600 }}>Secure M-Pesa payment. You'll receive an STK push.</span>
+                                </div>
+
+                                {depositError && <p style={{ color: '#dc2626', fontSize: '0.85rem', marginBottom: '15px' }}>{depositError}</p>}
+
+                                <button
+                                    onClick={async () => {
+                                        setDepositError('');
+                                        const amountNum = parseInt(depositAmount);
+                                        if (amountNum < 10) { setDepositError('Minimum deposit is Ksh 10'); return; }
+                                        if (depositPhone.length < 9) { setDepositError('Please enter a valid phone number'); return; }
+
+                                        setDepositLoading(true);
+                                        try {
+                                            const res = await fetch('/api/mpesa/initiate', {
+                                                method: 'POST',
+                                                headers: { 'Content-Type': 'application/json' },
+                                                body: JSON.stringify({ phone: depositPhone, amount: amountNum }),
+                                            });
+                                            const data = await res.json();
+                                            if (!res.ok) { setDepositError(data.error || 'Failed to send payment request'); return; }
+                                            setDepositSuccess(true);
+                                        } catch {
+                                            setDepositError('Something went wrong. Please try again.');
+                                        } finally {
+                                            setDepositLoading(false);
+                                        }
+                                    }}
+                                    disabled={depositLoading}
+                                    style={{ width: '100%', padding: '16px', background: '#059669', color: 'white', border: 'none', borderRadius: '12px', fontSize: '1rem', fontWeight: 800, cursor: 'pointer', opacity: depositLoading ? 0.7 : 1 }}
+                                >
+                                    {depositLoading ? 'Sending request...' : `Deposit ${depositAmount ? `Ksh ${parseInt(depositAmount).toLocaleString()}` : ''}`}
+                                </button>
+                            </div>
+                        )}
                     </div>
                 )}
 
