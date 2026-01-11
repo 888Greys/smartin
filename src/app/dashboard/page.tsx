@@ -54,6 +54,7 @@ export default function DashboardPage() {
     const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
     const [profileSaving, setProfileSaving] = useState(false);
     const [profileMessage, setProfileMessage] = useState('');
+    const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -126,11 +127,11 @@ export default function DashboardPage() {
     }
 
     const navItems = [
-        { id: 'home', icon: '🏠', label: 'Home' },
-        { id: 'market', icon: '🎯', label: 'Market' },
-        { id: 'investments', icon: '⛏️', label: 'Mining' },
-        { id: 'wallet', icon: '💳', label: 'Wallet' },
-        { id: 'profile', icon: '👤', label: 'Profile' },
+        { id: 'home', label: 'Dashboard' },
+        { id: 'market', label: 'Market' },
+        { id: 'investments', label: 'Mining' },
+        { id: 'wallet', label: 'Wallet' },
+        { id: 'profile', label: 'Profile' },
     ];
 
     const sidebarWidth = 260;
@@ -151,46 +152,34 @@ export default function DashboardPage() {
                 transition: 'left 0.3s ease'
             }}></div>
 
-            {/* FLOATING TOGGLE BUTTON - visible when collapsed */}
+            {/* FLOATING HAMBURGER - visible when collapsed */}
             {sidebarCollapsed && (
-                <div
-                    onMouseDown={(e) => {
-                        setIsDragging(true);
-                        e.preventDefault();
-                    }}
-                    onMouseMove={(e) => {
-                        if (isDragging) {
-                            const newY = (e.clientY / window.innerHeight) * 100;
-                            setToggleY(Math.max(10, Math.min(90, newY)));
-                        }
-                    }}
-                    onMouseUp={() => setIsDragging(false)}
-                    onMouseLeave={() => setIsDragging(false)}
-                    onClick={() => !isDragging && setSidebarCollapsed(false)}
+                <button
+                    onClick={() => setSidebarCollapsed(false)}
                     style={{
                         position: 'fixed',
-                        left: '12px',
-                        top: `${toggleY}%`,
-                        transform: 'translateY(-50%)',
-                        width: '40px',
-                        height: '40px',
-                        background: 'linear-gradient(135deg, #94a3b8, #64748b)',
-                        border: 'none',
-                        borderRadius: '10px',
-                        cursor: isDragging ? 'grabbing' : 'grab',
+                        left: '15px',
+                        top: '15px',
+                        width: '45px',
+                        height: '45px',
+                        background: 'white',
+                        border: '1px solid #e2e8f0',
+                        borderRadius: '12px',
+                        cursor: 'pointer',
                         display: 'flex',
+                        flexDirection: 'column',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        color: 'white',
-                        fontSize: '1rem',
+                        gap: '5px',
                         zIndex: 200,
-                        boxShadow: '0 4px 15px rgba(0,0,0,0.15)',
-                        transition: isDragging ? 'none' : 'box-shadow 0.2s',
-                        userSelect: 'none'
+                        boxShadow: '0 4px 15px rgba(0,0,0,0.1)',
+                        transition: '0.2s'
                     }}
                 >
-                    →
-                </div>
+                    <span style={{ width: '22px', height: '2.5px', background: '#0f172a', borderRadius: '2px' }}></span>
+                    <span style={{ width: '22px', height: '2.5px', background: '#0f172a', borderRadius: '2px' }}></span>
+                    <span style={{ width: '22px', height: '2.5px', background: '#0f172a', borderRadius: '2px' }}></span>
+                </button>
             )}
 
             {/* OVERLAY - click to close sidebar */}
@@ -281,7 +270,6 @@ export default function DashboardPage() {
                                 color: activeSection === item.id ? 'white' : 'rgba(255,255,255,0.6)',
                             }}
                         >
-                            <span style={{ fontSize: '1.2rem' }}>{item.icon}</span>
                             {item.label}
                         </button>
                     ))}
@@ -577,32 +565,53 @@ export default function DashboardPage() {
                         <div style={{ background: 'white', padding: '25px', borderRadius: '24px', border: '1px solid #e2e8f0', marginBottom: '25px' }}>
                             <h3 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: '20px' }}>Edit Profile</h3>
 
-                            <label style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: '6px', display: 'block' }}>Full Name</label>
+                            <label style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: '6px', display: 'block' }}>Full Name <span style={{ color: '#dc2626' }}>*</span></label>
                             <input
                                 type="text"
                                 value={profileName}
-                                onChange={(e) => setProfileName(e.target.value)}
+                                onChange={(e) => {
+                                    setProfileName(e.target.value);
+                                    if (validationErrors.fullName) {
+                                        setValidationErrors(prev => ({ ...prev, fullName: '' }));
+                                    }
+                                }}
                                 placeholder={user?.fullName || 'Enter your full name'}
-                                style={{ width: '100%', padding: '14px', border: '1px solid #e2e8f0', borderRadius: '12px', marginBottom: '15px', fontSize: '1rem', outline: 'none', boxSizing: 'border-box' }}
+                                style={{ width: '100%', padding: '14px', border: validationErrors.fullName ? '2px solid #dc2626' : '1px solid #e2e8f0', borderRadius: '12px', marginBottom: '5px', fontSize: '1rem', outline: 'none', boxSizing: 'border-box' }}
                             />
+                            {validationErrors.fullName && <p style={{ color: '#dc2626', fontSize: '0.75rem', marginBottom: '15px' }}>{validationErrors.fullName}</p>}
+                            {!validationErrors.fullName && <div style={{ marginBottom: '15px' }} />}
 
-                            <label style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: '6px', display: 'block' }}>Phone Number</label>
+                            <label style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: '6px', display: 'block' }}>Phone Number <span style={{ color: '#dc2626' }}>*</span></label>
                             <input
                                 type="tel"
                                 value={profilePhone}
-                                onChange={(e) => setProfilePhone(e.target.value.replace(/\D/g, '').slice(0, 12))}
+                                onChange={(e) => {
+                                    setProfilePhone(e.target.value.replace(/\D/g, '').slice(0, 12));
+                                    if (validationErrors.phone) {
+                                        setValidationErrors(prev => ({ ...prev, phone: '' }));
+                                    }
+                                }}
                                 placeholder={user?.phone || '07XXXXXXXX'}
-                                style={{ width: '100%', padding: '14px', border: '1px solid #e2e8f0', borderRadius: '12px', marginBottom: '15px', fontSize: '1rem', outline: 'none', boxSizing: 'border-box' }}
+                                style={{ width: '100%', padding: '14px', border: validationErrors.phone ? '2px solid #dc2626' : '1px solid #e2e8f0', borderRadius: '12px', marginBottom: '5px', fontSize: '1rem', outline: 'none', boxSizing: 'border-box' }}
                             />
+                            {validationErrors.phone && <p style={{ color: '#dc2626', fontSize: '0.75rem', marginBottom: '15px' }}>{validationErrors.phone}</p>}
+                            {!validationErrors.phone && <div style={{ marginBottom: '15px' }} />}
 
-                            <label style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: '6px', display: 'block' }}>ID Number (for verification)</label>
+                            <label style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: '6px', display: 'block' }}>ID Number <span style={{ color: '#94a3b8' }}>(for verification)</span></label>
                             <input
                                 type="text"
                                 value={profileIdNumber}
-                                onChange={(e) => setProfileIdNumber(e.target.value.replace(/\D/g, '').slice(0, 8))}
+                                onChange={(e) => {
+                                    setProfileIdNumber(e.target.value.replace(/\D/g, '').slice(0, 8));
+                                    if (validationErrors.idNumber) {
+                                        setValidationErrors(prev => ({ ...prev, idNumber: '' }));
+                                    }
+                                }}
                                 placeholder={user?.idNumber || 'National ID Number'}
-                                style={{ width: '100%', padding: '14px', border: '1px solid #e2e8f0', borderRadius: '12px', marginBottom: '15px', fontSize: '1rem', outline: 'none', boxSizing: 'border-box' }}
+                                style={{ width: '100%', padding: '14px', border: validationErrors.idNumber ? '2px solid #dc2626' : '1px solid #e2e8f0', borderRadius: '12px', marginBottom: '5px', fontSize: '1rem', outline: 'none', boxSizing: 'border-box' }}
                             />
+                            {validationErrors.idNumber && <p style={{ color: '#dc2626', fontSize: '0.75rem', marginBottom: '15px' }}>{validationErrors.idNumber}</p>}
+                            {!validationErrors.idNumber && <div style={{ marginBottom: '15px' }} />}
 
                             <label style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: '6px', display: 'block' }}>Date of Birth</label>
                             <input
@@ -653,8 +662,33 @@ export default function DashboardPage() {
                                     const token = localStorage.getItem('smartinvest_token');
                                     if (!token) return;
 
+                                    // Validation
+                                    const errors: Record<string, string> = {};
+                                    
+                                    const nameToValidate = profileName || user?.fullName;
+                                    if (!nameToValidate || nameToValidate.trim().length < 3) {
+                                        errors.fullName = 'Full name must be at least 3 characters';
+                                    }
+                                    
+                                    const phoneToValidate = profilePhone || user?.phone;
+                                    if (!phoneToValidate || phoneToValidate.length < 10) {
+                                        errors.phone = 'Please enter a valid phone number (at least 10 digits)';
+                                    }
+                                    
+                                    const idToValidate = profileIdNumber || user?.idNumber;
+                                    if (idToValidate && idToValidate.length > 0 && idToValidate.length < 7) {
+                                        errors.idNumber = 'ID number must be at least 7 digits';
+                                    }
+
+                                    if (Object.keys(errors).length > 0) {
+                                        setValidationErrors(errors);
+                                        setProfileMessage('Please fix the errors above');
+                                        return;
+                                    }
+
                                     setProfileSaving(true);
                                     setProfileMessage('');
+                                    setValidationErrors({});
 
                                     try {
                                         const res = await fetch('/api/profile', {
@@ -673,21 +707,30 @@ export default function DashboardPage() {
                                         });
                                         const data = await res.json();
                                         if (res.ok) {
-                                            setProfileMessage('Profile updated successfully!');
+                                            setProfileMessage('✅ Profile updated successfully!');
                                             setUser(prev => prev ? { ...prev, ...data.profile } : null);
+                                            // Clear form
+                                            setProfileName('');
+                                            setProfilePhone('');
+                                            setProfileIdNumber('');
+                                            setProfileDateOfBirth('');
+                                            setProfileGender('');
+                                            setProfileOccupation('');
+                                            setProfileAddress('');
+                                            setProfilePhoto(null);
                                         } else {
-                                            setProfileMessage(data.error || 'Failed to update profile');
+                                            setProfileMessage('❌ ' + (data.error || 'Failed to update profile'));
                                         }
                                     } catch {
-                                        setProfileMessage('Something went wrong');
+                                        setProfileMessage('❌ Something went wrong');
                                     } finally {
                                         setProfileSaving(false);
                                     }
                                 }}
                                 disabled={profileSaving}
-                                style={{ width: '100%', padding: '16px', background: '#0052ff', color: 'white', border: 'none', borderRadius: '12px', fontSize: '1rem', fontWeight: 800, cursor: 'pointer', opacity: profileSaving ? 0.7 : 1 }}
+                                style={{ width: '100%', padding: '16px', background: profileSaving ? '#94a3b8' : '#0052ff', color: 'white', border: 'none', borderRadius: '12px', fontSize: '1rem', fontWeight: 800, cursor: profileSaving ? 'not-allowed' : 'pointer', opacity: profileSaving ? 0.7 : 1, transition: '0.2s' }}
                             >
-                                {profileSaving ? 'Saving...' : 'Save Profile'}
+                                {profileSaving ? '💾 Saving...' : '💾 Save Profile'}
                             </button>
                         </div>
 
