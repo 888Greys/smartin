@@ -10,6 +10,18 @@ interface User {
     balance: number;
     totalEarnings: number;
     hasBiometrics?: boolean;
+    fullName?: string;
+    phone?: string;
+    idNumber?: string;
+    dateOfBirth?: string;
+    profilePhoto?: string;
+    gender?: string;
+    occupation?: string;
+    address?: string;
+    tier?: string;
+    referralCode?: string;
+    referralCount?: number;
+    referralEarnings?: number;
 }
 
 type Section = 'home' | 'market' | 'investments' | 'wallet' | 'profile';
@@ -30,6 +42,18 @@ export default function DashboardPage() {
     const [depositLoading, setDepositLoading] = useState(false);
     const [depositError, setDepositError] = useState('');
     const [depositSuccess, setDepositSuccess] = useState(false);
+
+    // Profile form state
+    const [profileName, setProfileName] = useState('');
+    const [profilePhone, setProfilePhone] = useState('');
+    const [profileIdNumber, setProfileIdNumber] = useState('');
+    const [profileDateOfBirth, setProfileDateOfBirth] = useState('');
+    const [profileGender, setProfileGender] = useState('');
+    const [profileOccupation, setProfileOccupation] = useState('');
+    const [profileAddress, setProfileAddress] = useState('');
+    const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
+    const [profileSaving, setProfileSaving] = useState(false);
+    const [profileMessage, setProfileMessage] = useState('');
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -266,7 +290,9 @@ export default function DashboardPage() {
                 {/* User & Logout */}
                 <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '20px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '15px' }}>
-                        <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem' }}>👤</div>
+                        <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: user?.profilePhoto || profilePhoto ? 'transparent' : 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem', overflow: 'hidden', backgroundImage: user?.profilePhoto || profilePhoto ? `url(${user?.profilePhoto || profilePhoto})` : 'none', backgroundSize: 'cover', backgroundPosition: 'center' }}>
+                            {!user?.profilePhoto && !profilePhoto && '👤'}
+                        </div>
                         <div>
                             <div style={{ color: 'white', fontWeight: 700, fontSize: '0.9rem' }}>{user?.email?.split('@')[0] || 'User'}</div>
                             <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.75rem' }}>Premium Member</div>
@@ -530,19 +556,175 @@ export default function DashboardPage() {
 
                 {/* PROFILE SECTION */}
                 {activeSection === 'profile' && (
-                    <div style={{ animation: 'fadeIn 0.3s ease', maxWidth: '500px' }}>
+                    <div style={{ animation: 'fadeIn 0.3s ease', maxWidth: '600px' }}>
+                        {/* Profile Header */}
                         <div style={{ background: 'white', padding: '30px', borderRadius: '24px', border: '1px solid #e2e8f0', textAlign: 'center', marginBottom: '25px' }}>
-                            <div style={{ width: '100px', height: '100px', background: '#e2e8f0', borderRadius: '50%', margin: '0 auto 20px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2.5rem' }}>👤</div>
-                            <h2 style={{ fontSize: '1.5rem', fontWeight: 800 }}>{user?.email?.split('@')[0] || 'User'}</h2>
+                            <div style={{ width: '100px', height: '100px', background: profilePhoto || user?.profilePhoto ? 'transparent' : 'linear-gradient(135deg, #0052ff, #00a3ff)', borderRadius: '50%', margin: '0 auto 20px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2.5rem', color: 'white', fontWeight: 800, overflow: 'hidden', border: '3px solid #e2e8f0' }}>
+                                {profilePhoto || user?.profilePhoto ? (
+                                    <img src={profilePhoto || user?.profilePhoto} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                ) : (
+                                    user?.fullName ? user.fullName.charAt(0).toUpperCase() : user?.email?.charAt(0).toUpperCase() || '?'
+                                )}
+                            </div>
+                            <h2 style={{ fontSize: '1.5rem', fontWeight: 800 }}>{user?.fullName || user?.email?.split('@')[0] || 'User'}</h2>
                             <p style={{ color: '#64748b', fontSize: '0.9rem' }}>{user?.email}</p>
-                            <div style={{ display: 'inline-block', background: '#f0f7ff', color: 'var(--primary)', padding: '6px 16px', borderRadius: '20px', fontSize: '0.8rem', fontWeight: 700, marginTop: '10px' }}>Premium Member</div>
+                            <div style={{ display: 'inline-block', background: user?.tier === 'vip' ? '#fef3c7' : user?.tier === 'premium' ? '#e0f2fe' : '#f0f7ff', color: user?.tier === 'vip' ? '#b45309' : '#0052ff', padding: '6px 16px', borderRadius: '20px', fontSize: '0.8rem', fontWeight: 700, marginTop: '10px', textTransform: 'capitalize' }}>
+                                {user?.tier || 'Basic'} Member
+                            </div>
                         </div>
 
-                        <div style={{ background: '#f0f7ff', padding: '25px', borderRadius: '20px', border: '1px dashed var(--primary)' }}>
-                            <p style={{ fontSize: '0.8rem', fontWeight: 800, color: 'var(--primary)', marginBottom: '12px' }}>REFERRAL CODE</p>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                <code style={{ fontSize: '1.4rem', fontWeight: 800, background: 'white', padding: '10px 20px', borderRadius: '10px' }}>SMART-{user?.id?.slice(-4).toUpperCase() || '0000'}</code>
-                                <button style={{ background: 'var(--primary)', color: 'white', border: 'none', padding: '12px 24px', borderRadius: '10px', fontWeight: 700, cursor: 'pointer' }}>Copy</button>
+                        {/* Edit Profile Form */}
+                        <div style={{ background: 'white', padding: '25px', borderRadius: '24px', border: '1px solid #e2e8f0', marginBottom: '25px' }}>
+                            <h3 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: '20px' }}>Edit Profile</h3>
+
+                            <label style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: '6px', display: 'block' }}>Full Name</label>
+                            <input
+                                type="text"
+                                value={profileName}
+                                onChange={(e) => setProfileName(e.target.value)}
+                                placeholder={user?.fullName || 'Enter your full name'}
+                                style={{ width: '100%', padding: '14px', border: '1px solid #e2e8f0', borderRadius: '12px', marginBottom: '15px', fontSize: '1rem', outline: 'none', boxSizing: 'border-box' }}
+                            />
+
+                            <label style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: '6px', display: 'block' }}>Phone Number</label>
+                            <input
+                                type="tel"
+                                value={profilePhone}
+                                onChange={(e) => setProfilePhone(e.target.value.replace(/\D/g, '').slice(0, 12))}
+                                placeholder={user?.phone || '07XXXXXXXX'}
+                                style={{ width: '100%', padding: '14px', border: '1px solid #e2e8f0', borderRadius: '12px', marginBottom: '15px', fontSize: '1rem', outline: 'none', boxSizing: 'border-box' }}
+                            />
+
+                            <label style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: '6px', display: 'block' }}>ID Number (for verification)</label>
+                            <input
+                                type="text"
+                                value={profileIdNumber}
+                                onChange={(e) => setProfileIdNumber(e.target.value.replace(/\D/g, '').slice(0, 8))}
+                                placeholder={user?.idNumber || 'National ID Number'}
+                                style={{ width: '100%', padding: '14px', border: '1px solid #e2e8f0', borderRadius: '12px', marginBottom: '15px', fontSize: '1rem', outline: 'none', boxSizing: 'border-box' }}
+                            />
+
+                            <label style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: '6px', display: 'block' }}>Date of Birth</label>
+                            <input
+                                type="date"
+                                value={profileDateOfBirth}
+                                onChange={(e) => setProfileDateOfBirth(e.target.value)}
+                                placeholder={user?.dateOfBirth ? new Date(user.dateOfBirth).toISOString().split('T')[0] : ''}
+                                max={new Date().toISOString().split('T')[0]}
+                                style={{ width: '100%', padding: '14px', border: '1px solid #e2e8f0', borderRadius: '12px', marginBottom: '15px', fontSize: '1rem', outline: 'none', boxSizing: 'border-box' }}
+                            />
+
+                            <label style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: '6px', display: 'block' }}>Gender</label>
+                            <select
+                                value={profileGender}
+                                onChange={(e) => setProfileGender(e.target.value)}
+                                style={{ width: '100%', padding: '14px', border: '1px solid #e2e8f0', borderRadius: '12px', marginBottom: '15px', fontSize: '1rem', outline: 'none', boxSizing: 'border-box', background: 'white' }}
+                            >
+                                <option value="">{user?.gender || 'Select gender'}</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                                <option value="other">Other</option>
+                            </select>
+
+                            <label style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: '6px', display: 'block' }}>Occupation</label>
+                            <input
+                                type="text"
+                                value={profileOccupation}
+                                onChange={(e) => setProfileOccupation(e.target.value)}
+                                placeholder={user?.occupation || 'e.g., Software Engineer, Teacher'}
+                                style={{ width: '100%', padding: '14px', border: '1px solid #e2e8f0', borderRadius: '12px', marginBottom: '15px', fontSize: '1rem', outline: 'none', boxSizing: 'border-box' }}
+                            />
+
+                            <label style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: '6px', display: 'block' }}>Address</label>
+                            <textarea
+                                value={profileAddress}
+                                onChange={(e) => setProfileAddress(e.target.value)}
+                                placeholder={user?.address || 'Enter your full address'}
+                                rows={3}
+                                style={{ width: '100%', padding: '14px', border: '1px solid #e2e8f0', borderRadius: '12px', marginBottom: '20px', fontSize: '1rem', outline: 'none', boxSizing: 'border-box', resize: 'vertical', fontFamily: 'inherit' }}
+                            />
+
+                            {profileMessage && (
+                                <p style={{ color: profileMessage.includes('success') ? '#059669' : '#dc2626', fontSize: '0.85rem', marginBottom: '15px', textAlign: 'center' }}>{profileMessage}</p>
+                            )}
+
+                            <button
+                                onClick={async () => {
+                                    const token = localStorage.getItem('smartinvest_token');
+                                    if (!token) return;
+
+                                    setProfileSaving(true);
+                                    setProfileMessage('');
+
+                                    try {
+                                        const res = await fetch('/api/profile', {
+                                            method: 'PUT',
+                                            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                                            body: JSON.stringify({
+                                                fullName: profileName || undefined,
+                                                phone: profilePhone || undefined,
+                                                idNumber: profileIdNumber || undefined,
+                                                dateOfBirth: profileDateOfBirth || undefined,
+                                                gender: profileGender || undefined,
+                                                occupation: profileOccupation || undefined,
+                                                address: profileAddress || undefined,
+                                                profilePhoto: profilePhoto || undefined
+                                            }),
+                                        });
+                                        const data = await res.json();
+                                        if (res.ok) {
+                                            setProfileMessage('Profile updated successfully!');
+                                            setUser(prev => prev ? { ...prev, ...data.profile } : null);
+                                        } else {
+                                            setProfileMessage(data.error || 'Failed to update profile');
+                                        }
+                                    } catch {
+                                        setProfileMessage('Something went wrong');
+                                    } finally {
+                                        setProfileSaving(false);
+                                    }
+                                }}
+                                disabled={profileSaving}
+                                style={{ width: '100%', padding: '16px', background: '#0052ff', color: 'white', border: 'none', borderRadius: '12px', fontSize: '1rem', fontWeight: 800, cursor: 'pointer', opacity: profileSaving ? 0.7 : 1 }}
+                            >
+                                {profileSaving ? 'Saving...' : 'Save Profile'}
+                            </button>
+                        </div>
+
+                        {/* Referral Section */}
+                        <div style={{ background: '#f0f7ff', padding: '25px', borderRadius: '20px', border: '1px dashed #0052ff', marginBottom: '25px' }}>
+                            <p style={{ fontSize: '0.8rem', fontWeight: 800, color: '#0052ff', marginBottom: '12px' }}>REFERRAL CODE</p>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
+                                <code style={{ fontSize: '1.4rem', fontWeight: 800, background: 'white', padding: '10px 20px', borderRadius: '10px' }}>{user?.referralCode || 'SMART-0000'}</code>
+                                <button
+                                    onClick={() => { navigator.clipboard.writeText(user?.referralCode || ''); setProfileMessage('Referral code copied!'); }}
+                                    style={{ background: '#0052ff', color: 'white', border: 'none', padding: '12px 24px', borderRadius: '10px', fontWeight: 700, cursor: 'pointer' }}
+                                >Copy</button>
+                            </div>
+                            <div style={{ display: 'flex', gap: '20px' }}>
+                                <div>
+                                    <p style={{ fontSize: '0.75rem', color: '#64748b' }}>Referrals</p>
+                                    <p style={{ fontSize: '1.2rem', fontWeight: 800 }}>{user?.referralCount || 0}</p>
+                                </div>
+                                <div>
+                                    <p style={{ fontSize: '0.75rem', color: '#64748b' }}>Earnings</p>
+                                    <p style={{ fontSize: '1.2rem', fontWeight: 800, color: '#059669' }}>Ksh {(user?.referralEarnings || 0).toLocaleString()}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Account Stats */}
+                        <div style={{ background: 'white', padding: '25px', borderRadius: '24px', border: '1px solid #e2e8f0' }}>
+                            <h3 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: '20px' }}>Account Stats</h3>
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
+                                <div style={{ background: '#f8fafc', padding: '15px', borderRadius: '12px' }}>
+                                    <p style={{ fontSize: '0.75rem', color: '#64748b' }}>Total Balance</p>
+                                    <p style={{ fontSize: '1.1rem', fontWeight: 800 }}>Ksh {balance.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
+                                </div>
+                                <div style={{ background: '#f8fafc', padding: '15px', borderRadius: '12px' }}>
+                                    <p style={{ fontSize: '0.75rem', color: '#64748b' }}>Total Earned</p>
+                                    <p style={{ fontSize: '1.1rem', fontWeight: 800, color: '#059669' }}>Ksh {(user?.totalEarnings || 0).toLocaleString()}</p>
+                                </div>
                             </div>
                         </div>
                     </div>
