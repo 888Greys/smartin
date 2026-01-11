@@ -24,7 +24,7 @@ interface User {
     referralEarnings?: number;
 }
 
-type Section = 'home' | 'market' | 'investments' | 'wallet' | 'profile';
+type Section = 'home' | 'market' | 'investments' | 'trading' | 'staking' | 'pools' | 'wallet' | 'profile';
 
 export default function DashboardPage() {
     const router = useRouter();
@@ -33,6 +33,7 @@ export default function DashboardPage() {
     const [balance, setBalance] = useState(0);
     const [activeSection, setActiveSection] = useState<Section>('home');
     const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+    const [expandedMenu, setExpandedMenu] = useState<string | null>(null);
     const [toggleY, setToggleY] = useState(50);
     const [isDragging, setIsDragging] = useState(false);
 
@@ -128,8 +129,17 @@ export default function DashboardPage() {
 
     const navItems = [
         { id: 'home', label: 'Dashboard' },
-        { id: 'market', label: 'Market' },
-        { id: 'investments', label: 'Mining' },
+        { 
+            id: 'market', 
+            label: 'Market',
+            hasSubmenu: true,
+            submenu: [
+                { id: 'investments', label: 'Mining' },
+                { id: 'trading', label: 'Trading' },
+                { id: 'staking', label: 'Staking' },
+                { id: 'pools', label: 'Liquidity Pools' },
+            ]
+        },
         { id: 'wallet', label: 'Wallet' },
         { id: 'profile', label: 'Profile' },
     ];
@@ -247,31 +257,72 @@ export default function DashboardPage() {
                 {/* Navigation */}
                 <nav style={{ flex: 1 }}>
                     {navItems.map((item) => (
-                        <button
-                            key={item.id}
-                            onClick={() => {
-                                setActiveSection(item.id as Section);
-                                setSidebarCollapsed(true);
-                            }}
-                            style={{
-                                width: '100%',
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '14px',
-                                padding: '14px 18px',
-                                marginBottom: '8px',
-                                border: 'none',
-                                borderRadius: '12px',
-                                cursor: 'pointer',
-                                fontSize: '0.95rem',
-                                fontWeight: 600,
-                                transition: '0.2s',
-                                background: activeSection === item.id ? 'rgba(255,255,255,0.15)' : 'transparent',
-                                color: activeSection === item.id ? 'white' : 'rgba(255,255,255,0.6)',
-                            }}
-                        >
-                            {item.label}
-                        </button>
+                        <div key={item.id}>
+                            <button
+                                onClick={() => {
+                                    if (item.hasSubmenu) {
+                                        setExpandedMenu(expandedMenu === item.id ? null : item.id);
+                                    } else {
+                                        setActiveSection(item.id as Section);
+                                        setSidebarCollapsed(true);
+                                    }
+                                }}
+                                style={{
+                                    width: '100%',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'space-between',
+                                    padding: '14px 18px',
+                                    marginBottom: item.hasSubmenu && expandedMenu === item.id ? '8px' : '8px',
+                                    border: 'none',
+                                    borderRadius: '12px',
+                                    cursor: 'pointer',
+                                    fontSize: '0.95rem',
+                                    fontWeight: 600,
+                                    transition: '0.2s',
+                                    background: activeSection === item.id ? 'rgba(255,255,255,0.15)' : 'transparent',
+                                    color: activeSection === item.id || expandedMenu === item.id ? 'white' : 'rgba(255,255,255,0.6)',
+                                }}
+                            >
+                                {item.label}
+                                {item.hasSubmenu && (
+                                    <span style={{ fontSize: '0.8rem', transition: '0.2s', transform: expandedMenu === item.id ? 'rotate(180deg)' : 'rotate(0deg)' }}>▼</span>
+                                )}
+                            </button>
+                            
+                            {/* Submenu */}
+                            {item.hasSubmenu && item.submenu && expandedMenu === item.id && (
+                                <div style={{ paddingLeft: '12px', marginBottom: '8px' }}>
+                                    {item.submenu.map((subItem) => (
+                                        <button
+                                            key={subItem.id}
+                                            onClick={() => {
+                                                setActiveSection(subItem.id as Section);
+                                                setSidebarCollapsed(true);
+                                            }}
+                                            style={{
+                                                width: '100%',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                padding: '12px 18px',
+                                                marginBottom: '4px',
+                                                border: 'none',
+                                                borderLeft: '2px solid rgba(255,255,255,0.2)',
+                                                borderRadius: '0 8px 8px 0',
+                                                cursor: 'pointer',
+                                                fontSize: '0.85rem',
+                                                fontWeight: 500,
+                                                transition: '0.2s',
+                                                background: activeSection === subItem.id ? 'rgba(255,255,255,0.1)' : 'transparent',
+                                                color: activeSection === subItem.id ? 'white' : 'rgba(255,255,255,0.5)',
+                                            }}
+                                        >
+                                            {subItem.label}
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
                     ))}
                 </nav>
 
@@ -301,6 +352,9 @@ export default function DashboardPage() {
                             {activeSection === 'home' && 'Dashboard'}
                             {activeSection === 'market' && 'Mining Marketplace'}
                             {activeSection === 'investments' && 'Active Mining'}
+                            {activeSection === 'trading' && 'Trading'}
+                            {activeSection === 'staking' && 'Staking'}
+                            {activeSection === 'pools' && 'Liquidity Pools'}
                             {activeSection === 'wallet' && 'Wallet'}
                             {activeSection === 'profile' && 'Profile'}
                         </h1>
@@ -407,7 +461,7 @@ export default function DashboardPage() {
                     <div style={{ animation: 'fadeIn 0.3s ease' }}>
                         <div style={{ background: 'white', borderRadius: '24px', padding: '30px', border: '1px solid #e2e8f0', marginBottom: '20px' }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                <b style={{ fontSize: '1.1rem' }}>No Active Bots</b>
+                                <b style={{ fontSize: '1.1rem' }}>No Active Mining Bots</b>
                                 <span style={{ color: 'var(--emerald)', fontWeight: 800 }}>+Ksh 0.00 today</span>
                             </div>
                             <div style={{ height: '8px', background: '#f1f5f9', borderRadius: '10px', margin: '20px 0', overflow: 'hidden' }}>
@@ -421,6 +475,39 @@ export default function DashboardPage() {
                         <button style={{ padding: '18px 30px', borderRadius: '15px', border: 'none', fontWeight: 800, fontSize: '1rem', cursor: 'pointer', background: 'var(--navy)', color: 'white' }}>
                             Withdraw Earnings to Wallet
                         </button>
+                    </div>
+                )}
+
+                {/* TRADING SECTION */}
+                {activeSection === 'trading' && (
+                    <div style={{ animation: 'fadeIn 0.3s ease' }}>
+                        <div style={{ background: 'white', padding: '30px', borderRadius: '24px', border: '1px solid #e2e8f0', textAlign: 'center' }}>
+                            <div style={{ fontSize: '3rem', marginBottom: '20px' }}>📈</div>
+                            <h3 style={{ fontSize: '1.3rem', fontWeight: 800, marginBottom: '10px' }}>Trading Coming Soon</h3>
+                            <p style={{ color: '#64748b', fontSize: '0.95rem' }}>Spot and futures trading will be available soon.</p>
+                        </div>
+                    </div>
+                )}
+
+                {/* STAKING SECTION */}
+                {activeSection === 'staking' && (
+                    <div style={{ animation: 'fadeIn 0.3s ease' }}>
+                        <div style={{ background: 'white', padding: '30px', borderRadius: '24px', border: '1px solid #e2e8f0', textAlign: 'center' }}>
+                            <div style={{ fontSize: '3rem', marginBottom: '20px' }}>🔒</div>
+                            <h3 style={{ fontSize: '1.3rem', fontWeight: 800, marginBottom: '10px' }}>Staking Coming Soon</h3>
+                            <p style={{ color: '#64748b', fontSize: '0.95rem' }}>Earn passive income by staking your assets.</p>
+                        </div>
+                    </div>
+                )}
+
+                {/* LIQUIDITY POOLS SECTION */}
+                {activeSection === 'pools' && (
+                    <div style={{ animation: 'fadeIn 0.3s ease' }}>
+                        <div style={{ background: 'white', padding: '30px', borderRadius: '24px', border: '1px solid #e2e8f0', textAlign: 'center' }}>
+                            <div style={{ fontSize: '3rem', marginBottom: '20px' }}>💧</div>
+                            <h3 style={{ fontSize: '1.3rem', fontWeight: 800, marginBottom: '10px' }}>Liquidity Pools Coming Soon</h3>
+                            <p style={{ color: '#64748b', fontSize: '0.95rem' }}>Provide liquidity and earn trading fees.</p>
+                        </div>
                     </div>
                 )}
 
