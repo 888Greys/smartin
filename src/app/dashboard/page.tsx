@@ -295,7 +295,7 @@ export default function DashboardPage() {
             {/* MAIN CONTENT */}
             <main style={{ marginLeft: sidebarCollapsed ? 0 : sidebarWidth, padding: '30px', minHeight: '100vh', position: 'relative', zIndex: 1, transition: 'margin-left 0.3s ease' }}>
                 {/* Header */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px', paddingLeft: sidebarCollapsed ? '45px' : '0', transition: 'padding-left 0.3s ease' }}>
                     <div>
                         <h1 style={{ fontSize: '1.8rem', fontWeight: 800 }}>
                             {activeSection === 'home' && 'Dashboard'}
