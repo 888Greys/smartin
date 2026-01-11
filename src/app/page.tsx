@@ -87,25 +87,28 @@ export default function LandingPage() {
 
             {/* Dropdown Menu */}
             {menuOpen && (
-              <div style={{ position: 'absolute', top: '55px', left: 0, background: 'white', borderRadius: '16px', boxShadow: '0 15px 40px rgba(0,0,0,0.12)', border: '1px solid #e2e8f0', minWidth: '220px', overflow: 'hidden' }}>
-                <Link href="/contact" onClick={() => setMenuOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '16px 20px', color: '#0f172a', textDecoration: 'none', fontWeight: 600, fontSize: '0.95rem', borderBottom: '1px solid #f1f5f9', transition: '0.2s' }}>
-                  <span style={{ fontSize: '1.1rem' }}>📧</span> Contact Us
+              <div style={{ position: 'absolute', top: '55px', left: 0, background: 'white', borderRadius: '12px', boxShadow: '0 10px 50px rgba(0,0,0,0.15)', border: '1px solid #e2e8f0', minWidth: '200px', overflow: 'hidden' }}>
+                <Link href="/contact" onClick={() => setMenuOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '14px 18px', color: '#334155', textDecoration: 'none', fontWeight: 500, fontSize: '0.9rem', borderBottom: '1px solid #f1f5f9' }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#64748b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><polyline points="22,6 12,13 2,6" /></svg>
+                  Contact Us
                 </Link>
-                <Link href="/faqs" onClick={() => setMenuOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '16px 20px', color: '#0f172a', textDecoration: 'none', fontWeight: 600, fontSize: '0.95rem', borderBottom: '1px solid #f1f5f9', transition: '0.2s' }}>
-                  <span style={{ fontSize: '1.1rem' }}>❓</span> FAQs
+                <Link href="/faqs" onClick={() => setMenuOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '14px 18px', color: '#334155', textDecoration: 'none', fontWeight: 500, fontSize: '0.9rem', borderBottom: '1px solid #f1f5f9' }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#64748b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg>
+                  FAQs
                 </Link>
-                <Link href="/terms" onClick={() => setMenuOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '16px 20px', color: '#0f172a', textDecoration: 'none', fontWeight: 600, fontSize: '0.95rem', transition: '0.2s' }}>
-                  <span style={{ fontSize: '1.1rem' }}>📄</span> Terms & Conditions
+                <Link href="/terms" onClick={() => setMenuOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '14px 18px', color: '#334155', textDecoration: 'none', fontWeight: 500, fontSize: '0.9rem' }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#64748b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /><line x1="16" y1="13" x2="8" y2="13" /><line x1="16" y1="17" x2="8" y2="17" /></svg>
+                  Terms & Conditions
                 </Link>
               </div>
             )}
           </div>
 
           {/* Logo - Right */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 800, fontSize: '1.1rem' }}>
-            <div style={{ width: '28px', height: '28px', background: '#0052ff', borderRadius: '7px', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.9rem' }}>S</div>
-            smartInvest
-          </div>
+          <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none' }}>
+            <img src="/lion.png" alt="SmartInvest" style={{ height: '42px', objectFit: 'contain' }} />
+            <span style={{ fontWeight: 800, fontSize: '1.2rem', color: '#1e3a5f', letterSpacing: '1px' }}>SMARTINVEST</span>
+          </Link>
         </nav>
 
         {/* Hero Section */}

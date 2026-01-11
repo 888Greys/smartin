@@ -175,7 +175,7 @@ export default function RegisterPage() {
     if (!isHydrated) {
         return (
             <div style={{ minHeight: '100vh', background: 'linear-gradient(180deg, #f0f5ff 0%, #ffffff 100%)', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                <div style={{ width: '24px', height: '24px', background: '#0052ff', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 900, fontSize: '0.75rem' }}>S</div>
+                <img src="/lion.png" alt="SmartInvest" style={{ height: '40px', objectFit: 'contain' }} />
             </div>
         );
     }
@@ -245,9 +245,8 @@ export default function RegisterPage() {
     return (
         <div style={{ minHeight: '100vh', background: 'linear-gradient(180deg, #f0f5ff 0%, #ffffff 100%)', display: 'flex', justifyContent: 'center', alignItems: 'center', fontFamily: "'Plus Jakarta Sans', sans-serif", color: '#1e293b' }}>
             <div style={{ width: '90%', maxWidth: '380px', textAlign: 'center', padding: '16px' }}>
-                <div style={{ fontSize: '1.2rem', fontWeight: 800, marginBottom: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
-                    <div style={{ width: '26px', height: '26px', background: '#0052ff', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 900, fontSize: '0.85rem' }}>S</div>
-                    smart<span style={{ color: '#0052ff' }}>Invest</span>
+                <div style={{ marginBottom: '28px', display: 'flex', justifyContent: 'center' }}>
+                    <Link href="/"><img src="/lion.png" alt="SmartInvest" style={{ height: '60px', objectFit: 'contain', cursor: 'pointer' }} /></Link>
                 </div>
 
                 {renderStep()}
