@@ -39,6 +39,7 @@ export default function DashboardPage() {
     const [expandedMenu, setExpandedMenu] = useState<string | null>(null);
     const [toggleY, setToggleY] = useState(50);
     const [isDragging, setIsDragging] = useState(false);
+    const [showNotifications, setShowNotifications] = useState(false);
 
     // Deposit form state
     const [depositPhone, setDepositPhone] = useState('');
@@ -68,10 +69,13 @@ export default function DashboardPage() {
                 setUser({
                     id: 'demo123',
                     email: 'demo@smartinvest.com',
-                    balance: 5000,
-                    totalEarnings: 250,
+                    balance: 0,
+                    totalEarnings: 0,
+                    totalDeposits: 0,
+                    totalWithdrawals: 0,
+                    referralEarnings: 0,
                 });
-                setBalance(5000);
+                setBalance(0);
                 setIsLoading(false);
                 return;
             }
@@ -365,8 +369,65 @@ export default function DashboardPage() {
                         </h1>
                         <p style={{ color: '#64748b', fontSize: '0.9rem' }}>Welcome back, {user?.email?.split('@')[0] || 'User'}!</p>
                     </div>
-                    <div style={{ position: 'relative', fontSize: '1.4rem', cursor: 'pointer', background: 'white', padding: '12px', borderRadius: '12px', boxShadow: '0 2px 10px rgba(0,0,0,0.05)' }}>
-                        🔔<div style={{ position: 'absolute', top: '8px', right: '8px', width: '8px', height: '8px', background: 'red', borderRadius: '50%' }}></div>
+                    <div style={{ position: 'relative' }}>
+                        <div 
+                            onClick={() => setShowNotifications(!showNotifications)}
+                            style={{ position: 'relative', fontSize: '1.4rem', cursor: 'pointer', background: 'white', padding: '12px', borderRadius: '12px', boxShadow: '0 2px 10px rgba(0,0,0,0.05)' }}
+                        >
+                            🔔<div style={{ position: 'absolute', top: '8px', right: '8px', width: '8px', height: '8px', background: 'red', borderRadius: '50%' }}></div>
+                        </div>
+                        
+                        {/* Notifications Dropdown */}
+                        {showNotifications && (
+                            <div style={{
+                                position: 'absolute',
+                                top: '60px',
+                                right: 0,
+                                width: '350px',
+                                maxHeight: '400px',
+                                background: 'white',
+                                borderRadius: '16px',
+                                boxShadow: '0 10px 40px rgba(0,0,0,0.15)',
+                                border: '1px solid #e2e8f0',
+                                zIndex: 1000,
+                                overflow: 'hidden'
+                            }}>
+                                {/* Header */}
+                                <div style={{ padding: '20px', borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                    <h3 style={{ fontWeight: 700, fontSize: '1rem' }}>Notifications</h3>
+                                    <button 
+                                        onClick={() => setShowNotifications(false)}
+                                        style={{ background: 'none', border: 'none', fontSize: '1.2rem', cursor: 'pointer', color: '#64748b' }}
+                                    >
+                                        ×
+                                    </button>
+                                </div>
+                                
+                                {/* Notifications List */}
+                                <div style={{ maxHeight: '320px', overflowY: 'auto' }}>
+                                    {/* Welcome Notification */}
+                                    <div style={{ padding: '16px 20px', borderBottom: '1px solid #f1f5f9', cursor: 'pointer', transition: '0.2s' }}
+                                        onMouseEnter={(e) => e.currentTarget.style.background = '#f8fafc'}
+                                        onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                                    >
+                                        <div style={{ display: 'flex', gap: '12px' }}>
+                                            <div style={{ fontSize: '1.5rem' }}>👋</div>
+                                            <div style={{ flex: 1 }}>
+                                                <p style={{ fontWeight: 600, fontSize: '0.9rem', marginBottom: '4px' }}>Welcome to SmartInvest!</p>
+                                                <p style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '4px' }}>Start by making your first deposit to begin earning.</p>
+                                                <p style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Just now</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    {/* Empty State */}
+                                    <div style={{ padding: '40px 20px', textAlign: 'center' }}>
+                                        <div style={{ fontSize: '3rem', marginBottom: '10px', opacity: 0.3 }}>🔔</div>
+                                        <p style={{ color: '#94a3b8', fontSize: '0.9rem' }}>No more notifications</p>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
 
