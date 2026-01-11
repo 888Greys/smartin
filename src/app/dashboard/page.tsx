@@ -229,7 +229,10 @@ export default function DashboardPage() {
                     {navItems.map((item) => (
                         <button
                             key={item.id}
-                            onClick={() => setActiveSection(item.id as Section)}
+                            onClick={() => {
+                                setActiveSection(item.id as Section);
+                                setSidebarCollapsed(true);
+                            }}
                             style={{
                                 width: '100%',
                                 display: 'flex',
