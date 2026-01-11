@@ -136,8 +136,8 @@ export default function DashboardPage() {
 
     const navItems = [
         { id: 'home', label: 'Dashboard' },
-        { 
-            id: 'market', 
+        {
+            id: 'market',
             label: 'Market',
             hasSubmenu: true,
             submenu: [
@@ -157,7 +157,10 @@ export default function DashboardPage() {
         <>
             <style jsx global>{`
                 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-                body { background-color: #f8fafc; color: #0f172a; overflow-x: hidden; }
+                html, body { background-color: #f8fafc; color: #0f172a; overflow-x: hidden; height: 100%; }
+                aside { overscroll-behavior: none; touch-action: none; position: fixed !important; }
+                aside::-webkit-scrollbar { display: none; }
+                main { overscroll-behavior: contain; }
             `}</style>
 
             {/* GRID MESH BACKGROUND */}
@@ -231,8 +234,7 @@ export default function DashboardPage() {
                 zIndex: 100,
                 transition: 'left 0.3s ease',
                 boxShadow: sidebarCollapsed ? 'none' : '4px 0 30px rgba(0,0,0,0.1)',
-                overflowY: 'auto',
-                overflowX: 'hidden'
+                overflow: 'hidden'
             }}>
                 {/* Logo */}
                 <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none', marginBottom: '30px' }}>
@@ -298,7 +300,7 @@ export default function DashboardPage() {
                                     <span style={{ fontSize: '0.8rem', transition: '0.2s', transform: expandedMenu === item.id ? 'rotate(180deg)' : 'rotate(0deg)' }}>▼</span>
                                 )}
                             </button>
-                            
+
                             {/* Submenu */}
                             {item.hasSubmenu && item.submenu && expandedMenu === item.id && (
                                 <div style={{ paddingLeft: '12px', marginBottom: '8px' }}>
@@ -335,8 +337,8 @@ export default function DashboardPage() {
                     ))}
                 </nav>
 
-                {/* User & Logout */}
-                <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '20px' }}>
+                {/* User & Logout - always at bottom */}
+                <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '15px', flexGrow: 0, flexShrink: 0 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '15px' }}>
                         <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: user?.profilePhoto || profilePhoto ? 'transparent' : 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem', overflow: 'hidden', backgroundImage: user?.profilePhoto || profilePhoto ? `url(${user?.profilePhoto || profilePhoto})` : 'none', backgroundSize: 'cover', backgroundPosition: 'center' }}>
                             {!user?.profilePhoto && !profilePhoto && '👤'}
@@ -370,13 +372,13 @@ export default function DashboardPage() {
                         <p style={{ color: '#64748b', fontSize: '0.9rem' }}>Welcome back, {user?.email?.split('@')[0] || 'User'}!</p>
                     </div>
                     <div style={{ position: 'relative' }}>
-                        <div 
+                        <div
                             onClick={() => setShowNotifications(!showNotifications)}
                             style={{ position: 'relative', fontSize: '1.4rem', cursor: 'pointer', background: 'white', padding: '12px', borderRadius: '12px', boxShadow: '0 2px 10px rgba(0,0,0,0.05)' }}
                         >
                             🔔<div style={{ position: 'absolute', top: '8px', right: '8px', width: '8px', height: '8px', background: 'red', borderRadius: '50%' }}></div>
                         </div>
-                        
+
                         {/* Notifications Dropdown */}
                         {showNotifications && (
                             <div style={{
@@ -395,14 +397,14 @@ export default function DashboardPage() {
                                 {/* Header */}
                                 <div style={{ padding: '20px', borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                     <h3 style={{ fontWeight: 700, fontSize: '1rem' }}>Notifications</h3>
-                                    <button 
+                                    <button
                                         onClick={() => setShowNotifications(false)}
                                         style={{ background: 'none', border: 'none', fontSize: '1.2rem', cursor: 'pointer', color: '#64748b' }}
                                     >
                                         ×
                                     </button>
                                 </div>
-                                
+
                                 {/* Notifications List */}
                                 <div style={{ maxHeight: '320px', overflowY: 'auto' }}>
                                     {/* Welcome Notification */}
@@ -419,7 +421,7 @@ export default function DashboardPage() {
                                             </div>
                                         </div>
                                     </div>
-                                    
+
                                     {/* Empty State */}
                                     <div style={{ padding: '40px 20px', textAlign: 'center' }}>
                                         <div style={{ fontSize: '3rem', marginBottom: '10px', opacity: 0.3 }}>🔔</div>
@@ -441,7 +443,7 @@ export default function DashboardPage() {
                                 <p style={{ fontSize: '0.8rem', opacity: 0.7, marginBottom: '8px' }}>Total Portfolio</p>
                                 <h2 style={{ fontSize: '2rem', fontWeight: 800 }}>Ksh {balance.toLocaleString(undefined, { minimumFractionDigits: 2 })}</h2>
                             </div>
-                            
+
                             {/* Total Deposits */}
                             <div style={{ background: 'white', padding: '25px', borderRadius: '20px', border: '1px solid #e2e8f0' }}>
                                 <p style={{ fontSize: '0.8rem', color: '#64748b', marginBottom: '8px' }}>Total Deposits</p>
@@ -480,18 +482,18 @@ export default function DashboardPage() {
                             <div style={{ background: 'white', padding: '25px', borderRadius: '20px', border: '1px solid #e2e8f0' }}>
                                 <p style={{ fontSize: '0.8rem', color: '#64748b', marginBottom: '8px' }}>ROI Percentage</p>
                                 <h2 style={{ fontSize: '2rem', fontWeight: 800, color: '#8b5cf6' }}>
-                                    {user?.totalDeposits && user.totalDeposits > 0 
+                                    {user?.totalDeposits && user.totalDeposits > 0
                                         ? `${(((user?.totalEarnings || 0) / user.totalDeposits) * 100).toFixed(1)}%`
                                         : '0%'
                                     }
                                 </h2>
                             </div>
-                            
+
                             {/* Days Active */}
                             <div style={{ background: 'white', padding: '25px', borderRadius: '20px', border: '1px solid #e2e8f0' }}>
                                 <p style={{ fontSize: '0.8rem', color: '#64748b', marginBottom: '8px' }}>Days Active</p>
                                 <h2 style={{ fontSize: '2rem', fontWeight: 800, color: '#06b6d4' }}>
-                                    {user?.createdAt 
+                                    {user?.createdAt
                                         ? Math.floor((new Date().getTime() - new Date(user.createdAt).getTime()) / (1000 * 60 * 60 * 24))
                                         : 0
                                     } days
@@ -506,7 +508,7 @@ export default function DashboardPage() {
                                 <p style={{ fontSize: '0.8rem', opacity: 0.9, marginBottom: '8px' }}>Daily Profit</p>
                                 <h2 style={{ fontSize: '2rem', fontWeight: 800 }}>+Ksh {(balance * 0.05).toFixed(2)}</h2>
                             </div>
-                            
+
                             {/* Referral Earnings */}
                             <div style={{ background: 'linear-gradient(135deg, #f59e0b, #d97706)', color: 'white', padding: '25px', borderRadius: '20px', boxShadow: '0 10px 30px rgba(245, 158, 11, 0.2)' }}>
                                 <p style={{ fontSize: '0.8rem', opacity: 0.9, marginBottom: '8px' }}>Referral Earnings</p>
@@ -870,17 +872,17 @@ export default function DashboardPage() {
 
                                     // Validation
                                     const errors: Record<string, string> = {};
-                                    
+
                                     const nameToValidate = profileName || user?.fullName;
                                     if (!nameToValidate || nameToValidate.trim().length < 3) {
                                         errors.fullName = 'Full name must be at least 3 characters';
                                     }
-                                    
+
                                     const phoneToValidate = profilePhone || user?.phone;
                                     if (!phoneToValidate || phoneToValidate.length < 10) {
                                         errors.phone = 'Please enter a valid phone number (at least 10 digits)';
                                     }
-                                    
+
                                     const idToValidate = profileIdNumber || user?.idNumber;
                                     if (idToValidate && idToValidate.length > 0 && idToValidate.length < 7) {
                                         errors.idNumber = 'ID number must be at least 7 digits';
