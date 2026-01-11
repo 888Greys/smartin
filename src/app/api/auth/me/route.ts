@@ -33,7 +33,18 @@ export async function GET(request: NextRequest) {
                 email: true,
                 balance: true,
                 totalEarnings: true,
+                totalDeposits: true,
+                totalWithdrawals: true,
                 createdAt: true,
+                fullName: true,
+                phone: true,
+                idNumber: true,
+                dateOfBirth: true,
+                profilePhoto: true,
+                tier: true,
+                referralCode: true,
+                referralCount: true,
+                referralEarnings: true,
                 passkeys: {
                     select: { id: true }
                 }

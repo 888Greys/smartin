@@ -9,6 +9,9 @@ interface User {
     email: string;
     balance: number;
     totalEarnings: number;
+    totalDeposits?: number;
+    totalWithdrawals?: number;
+    createdAt?: string;
     hasBiometrics?: boolean;
     fullName?: string;
     phone?: string;
@@ -370,31 +373,84 @@ export default function DashboardPage() {
                 {/* HOME SECTION */}
                 {activeSection === 'home' && (
                     <div style={{ animation: 'fadeIn 0.3s ease' }}>
-                        {/* Stats Cards */}
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '20px', marginBottom: '30px' }}>
-                            <div style={{ background: 'var(--navy)', color: 'white', padding: '25px', borderRadius: '20px', boxShadow: '0 10px 30px rgba(15, 23, 42, 0.15)' }}>
+                        {/* Primary Stats - Balance & Money Flow */}
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '20px', marginBottom: '20px' }}>
+                            {/* Total Portfolio */}
+                            <div style={{ background: '#0f172a', color: 'white', padding: '25px', borderRadius: '20px', boxShadow: '0 10px 30px rgba(15, 23, 42, 0.15)' }}>
                                 <p style={{ fontSize: '0.8rem', opacity: 0.7, marginBottom: '8px' }}>Total Portfolio</p>
                                 <h2 style={{ fontSize: '2rem', fontWeight: 800 }}>Ksh {balance.toLocaleString(undefined, { minimumFractionDigits: 2 })}</h2>
                             </div>
+                            
+                            {/* Total Deposits */}
                             <div style={{ background: 'white', padding: '25px', borderRadius: '20px', border: '1px solid #e2e8f0' }}>
-                                <p style={{ fontSize: '0.8rem', color: '#64748b', marginBottom: '8px' }}>Daily Profit</p>
-                                <h2 style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--emerald)' }}>+Ksh {(balance * 0.05).toFixed(2)}</h2>
-                            </div>
-                            <div style={{ background: 'white', padding: '25px', borderRadius: '20px', border: '1px solid #e2e8f0' }}>
-                                <p style={{ fontSize: '0.8rem', color: '#64748b', marginBottom: '8px' }}>Active Bots</p>
-                                <h2 style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--primary)' }}>0 Bots</h2>
+                                <p style={{ fontSize: '0.8rem', color: '#64748b', marginBottom: '8px' }}>Total Deposits</p>
+                                <h2 style={{ fontSize: '2rem', fontWeight: 800, color: '#0052ff' }}>Ksh {(user?.totalDeposits || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</h2>
                             </div>
                         </div>
 
                         {/* Chart */}
-                        <div style={{ background: 'white', padding: '25px', borderRadius: '20px', border: '1px solid #e2e8f0' }}>
+                        <div style={{ background: 'white', padding: '25px', borderRadius: '20px', border: '1px solid #e2e8f0', marginBottom: '20px' }}>
                             <h3 style={{ marginBottom: '20px', fontWeight: 700 }}>Live Performance</h3>
                             <div style={{ height: '150px', display: 'flex', alignItems: 'flex-end', gap: '12px' }}>
                                 {[40, 60, 45, 80, 55, 90, 70].map((h, i) => (
-                                    <div key={i} style={{ height: `${h}%`, flex: 1, background: i === 5 ? 'var(--primary)' : '#e2e8f0', borderRadius: '6px', transition: '0.3s' }}></div>
+                                    <div key={i} style={{ height: `${h}%`, flex: 1, background: i === 5 ? '#0052ff' : '#e2e8f0', borderRadius: '6px', transition: '0.3s' }}></div>
                                 ))}
                             </div>
                             <p style={{ textAlign: 'center', fontSize: '0.8rem', color: '#94a3b8', marginTop: '15px' }}>Weekly Earnings Growth</p>
+                        </div>
+
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '20px', marginBottom: '20px' }}>
+                            {/* Total Withdrawals */}
+                            <div style={{ background: 'white', padding: '25px', borderRadius: '20px', border: '1px solid #e2e8f0' }}>
+                                <p style={{ fontSize: '0.8rem', color: '#64748b', marginBottom: '8px' }}>Total Withdrawals</p>
+                                <h2 style={{ fontSize: '2rem', fontWeight: 800, color: '#f59e0b' }}>Ksh {(user?.totalWithdrawals || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</h2>
+                            </div>
+
+                            {/* Net Profit */}
+                            <div style={{ background: 'white', padding: '25px', borderRadius: '20px', border: '1px solid #e2e8f0' }}>
+                                <p style={{ fontSize: '0.8rem', color: '#64748b', marginBottom: '8px' }}>Net Profit</p>
+                                <h2 style={{ fontSize: '2rem', fontWeight: 800, color: '#10b981' }}>Ksh {((user?.totalEarnings || 0) - (user?.totalWithdrawals || 0)).toLocaleString(undefined, { minimumFractionDigits: 2 })}</h2>
+                            </div>
+                        </div>
+
+                        {/* Performance Metrics */}
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '20px', marginBottom: '20px' }}>
+                            {/* ROI Percentage */}
+                            <div style={{ background: 'white', padding: '25px', borderRadius: '20px', border: '1px solid #e2e8f0' }}>
+                                <p style={{ fontSize: '0.8rem', color: '#64748b', marginBottom: '8px' }}>ROI Percentage</p>
+                                <h2 style={{ fontSize: '2rem', fontWeight: 800, color: '#8b5cf6' }}>
+                                    {user?.totalDeposits && user.totalDeposits > 0 
+                                        ? `${(((user?.totalEarnings || 0) / user.totalDeposits) * 100).toFixed(1)}%`
+                                        : '0%'
+                                    }
+                                </h2>
+                            </div>
+                            
+                            {/* Days Active */}
+                            <div style={{ background: 'white', padding: '25px', borderRadius: '20px', border: '1px solid #e2e8f0' }}>
+                                <p style={{ fontSize: '0.8rem', color: '#64748b', marginBottom: '8px' }}>Days Active</p>
+                                <h2 style={{ fontSize: '2rem', fontWeight: 800, color: '#06b6d4' }}>
+                                    {user?.createdAt 
+                                        ? Math.floor((new Date().getTime() - new Date(user.createdAt).getTime()) / (1000 * 60 * 60 * 24))
+                                        : 0
+                                    } days
+                                </h2>
+                            </div>
+                        </div>
+
+                        {/* Activity Stats */}
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '20px', marginBottom: '30px' }}>
+                            {/* Daily Profit */}
+                            <div style={{ background: 'linear-gradient(135deg, #10b981, #059669)', color: 'white', padding: '25px', borderRadius: '20px', boxShadow: '0 10px 30px rgba(16, 185, 129, 0.2)' }}>
+                                <p style={{ fontSize: '0.8rem', opacity: 0.9, marginBottom: '8px' }}>Daily Profit</p>
+                                <h2 style={{ fontSize: '2rem', fontWeight: 800 }}>+Ksh {(balance * 0.05).toFixed(2)}</h2>
+                            </div>
+                            
+                            {/* Referral Earnings */}
+                            <div style={{ background: 'linear-gradient(135deg, #f59e0b, #d97706)', color: 'white', padding: '25px', borderRadius: '20px', boxShadow: '0 10px 30px rgba(245, 158, 11, 0.2)' }}>
+                                <p style={{ fontSize: '0.8rem', opacity: 0.9, marginBottom: '8px' }}>Referral Earnings</p>
+                                <h2 style={{ fontSize: '2rem', fontWeight: 800 }}>Ksh {(user?.referralEarnings || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</h2>
+                            </div>
                         </div>
                     </div>
                 )}

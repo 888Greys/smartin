@@ -12,6 +12,8 @@ model User {
   passwordHash  String
   balance       Float    @default(0.00)
   totalEarnings Float    @default(0.00)
+  totalDeposits Float    @default(0.00)
+  totalWithdrawals Float @default(0.00)
   isVerified    Boolean  @default(false)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
