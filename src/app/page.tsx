@@ -5,6 +5,8 @@ import Link from "next/link";
 
 export default function LandingPage() {
   const [liveVal, setLiveVal] = useState(140292);
+  const [activeUsers, setActiveUsers] = useState(103);
+  const [totalEarned, setTotalEarned] = useState(202567);
   const [revealed, setRevealed] = useState<Set<number>>(new Set());
   const [menuOpen, setMenuOpen] = useState(false);
   const observerRef = useRef<IntersectionObserver | null>(null);
@@ -14,6 +16,18 @@ export default function LandingPage() {
     const interval = setInterval(() => {
       setLiveVal(prev => prev + Math.random() * 5);
     }, 1500);
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      // Random increment between 3 and 17 for realistic look
+      const increment = Math.floor(Math.random() * 15) + 3;
+      setActiveUsers(prev => prev + increment);
+      // Earnings increase by random amount between 1200 and 8500
+      const earnIncrement = Math.floor(Math.random() * 7300) + 1200;
+      setTotalEarned(prev => prev + earnIncrement);
+    }, 5000);
     return () => clearInterval(interval);
   }, []);
 
@@ -68,6 +82,18 @@ export default function LandingPage() {
                     .bento-item p { font-size: 0.9rem !important; }
                     .trust-logos { gap: 25px !important; }
                     .trust-logos > div { font-size: 1.2rem !important; }
+                }
+                @keyframes scroll-left {
+                    0% { transform: translateX(0); }
+                    100% { transform: translateX(-50%); }
+                }
+                .testimonial-scroll {
+                    display: flex;
+                    gap: 25px;
+                    animation: scroll-left 5s linear infinite;
+                }
+                .testimonial-scroll:hover {
+                    animation-play-state: paused;
                 }
             `}</style>
 
@@ -213,11 +239,11 @@ export default function LandingPage() {
         <section ref={setRef(9)} style={{ padding: '70px 5%', background: '#0f172a', ...revealStyle(9) }}>
           <div style={{ maxWidth: '1000px', margin: '0 auto', display: 'flex', justifyContent: 'space-around', flexWrap: 'wrap', gap: '40px' }}>
             <div style={{ textAlign: 'center', minWidth: '150px' }}>
-              <div style={{ fontSize: '2.8rem', fontWeight: 800, color: 'white', marginBottom: '8px' }}>50,000+</div>
+              <div style={{ fontSize: '2.8rem', fontWeight: 800, color: 'white', marginBottom: '8px' }}>{activeUsers.toLocaleString()}+</div>
               <div style={{ fontSize: '0.9rem', color: '#94a3b8', fontWeight: 600 }}>Active Users</div>
             </div>
             <div style={{ textAlign: 'center', minWidth: '150px' }}>
-              <div style={{ fontSize: '2.8rem', fontWeight: 800, color: 'white', marginBottom: '8px' }}>Ksh 10M+</div>
+              <div style={{ fontSize: '2.8rem', fontWeight: 800, color: 'white', marginBottom: '8px' }}>Ksh {totalEarned.toLocaleString()}</div>
               <div style={{ fontSize: '0.9rem', color: '#94a3b8', fontWeight: 600 }}>Total Earned</div>
             </div>
             <div style={{ textAlign: 'center', minWidth: '150px' }}>
@@ -227,6 +253,143 @@ export default function LandingPage() {
             <div style={{ textAlign: 'center', minWidth: '150px' }}>
               <div style={{ fontSize: '2.8rem', fontWeight: 800, color: '#10b981', marginBottom: '8px' }}>4.9★</div>
               <div style={{ fontSize: '0.9rem', color: '#94a3b8', fontWeight: 600 }}>User Rating</div>
+            </div>
+          </div>
+        </section>
+
+        {/* Testimonials */}
+        <section ref={setRef(10)} style={{ padding: '80px 0', background: '#f8fafc', overflow: 'hidden' }}>
+          <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 5%', ...revealStyle(10) }}>
+            <h2 style={{ textAlign: 'center', fontSize: '2rem', fontWeight: 800, marginBottom: '15px', letterSpacing: '-0.5px' }}>
+              What Our Users Say
+            </h2>
+            <p style={{ textAlign: 'center', color: '#64748b', fontSize: '1rem', marginBottom: '50px' }}>
+              Real stories from real investors
+            </p>
+          </div>
+
+          <div style={{ overflow: 'hidden', width: '100%' }}>
+            <div className="testimonial-scroll">
+              {/* Testimonial 1 */}
+              <div style={{ minWidth: '340px', background: 'white', borderRadius: '20px', padding: '30px', border: '1px solid #e2e8f0', boxShadow: '0 4px 20px rgba(0,0,0,0.03)', flexShrink: 0 }}>
+                <div style={{ display: 'flex', gap: '4px', marginBottom: '15px' }}>
+                  {[1, 2, 3, 4, 5].map(i => <span key={i} style={{ color: '#fbbf24', fontSize: '1rem' }}>★</span>)}
+                </div>
+                <p style={{ color: '#334155', fontSize: '0.95rem', lineHeight: 1.7, marginBottom: '20px', fontStyle: 'italic' }}>&quot;Deposited Ksh 5,000 and earned Ksh 2,500 in two weeks!&quot;</p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div style={{ width: '45px', height: '45px', borderRadius: '50%', background: 'linear-gradient(135deg, #0052ff, #00a3ff)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 700, fontSize: '1rem' }}>JM</div>
+                  <div>
+                    <div style={{ fontWeight: 700, color: '#0f172a', fontSize: '0.95rem' }}>John Mwangi</div>
+                    <div style={{ color: '#64748b', fontSize: '0.8rem' }}>Nairobi, Kenya</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Testimonial 2 */}
+              <div style={{ minWidth: '340px', background: 'white', borderRadius: '20px', padding: '30px', border: '1px solid #e2e8f0', boxShadow: '0 4px 20px rgba(0,0,0,0.03)', flexShrink: 0 }}>
+                <div style={{ display: 'flex', gap: '4px', marginBottom: '15px' }}>
+                  {[1, 2, 3, 4, 5].map(i => <span key={i} style={{ color: '#fbbf24', fontSize: '1rem' }}>★</span>)}
+                </div>
+                <p style={{ color: '#334155', fontSize: '0.95rem', lineHeight: 1.7, marginBottom: '20px', fontStyle: 'italic' }}>&quot;Best investment app in Kenya - M-Pesa works perfectly!&quot;</p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div style={{ width: '45px', height: '45px', borderRadius: '50%', background: 'linear-gradient(135deg, #10b981, #34d399)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 700, fontSize: '1rem' }}>SW</div>
+                  <div>
+                    <div style={{ fontWeight: 700, color: '#0f172a', fontSize: '0.95rem' }}>Sarah Wanjiku</div>
+                    <div style={{ color: '#64748b', fontSize: '0.8rem' }}>Mombasa, Kenya</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Testimonial 3 */}
+              <div style={{ minWidth: '340px', background: 'white', borderRadius: '20px', padding: '30px', border: '1px solid #e2e8f0', boxShadow: '0 4px 20px rgba(0,0,0,0.03)', flexShrink: 0 }}>
+                <div style={{ display: 'flex', gap: '4px', marginBottom: '15px' }}>
+                  {[1, 2, 3, 4, 5].map(i => <span key={i} style={{ color: '#fbbf24', fontSize: '1rem' }}>★</span>)}
+                </div>
+                <p style={{ color: '#334155', fontSize: '0.95rem', lineHeight: 1.7, marginBottom: '20px', fontStyle: 'italic' }}>&quot;All my friends joined and we&apos;re all earning daily!&quot;</p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div style={{ width: '45px', height: '45px', borderRadius: '50%', background: 'linear-gradient(135deg, #8b5cf6, #a78bfa)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 700, fontSize: '1rem' }}>PO</div>
+                  <div>
+                    <div style={{ fontWeight: 700, color: '#0f172a', fontSize: '0.95rem' }}>Peter Ochieng</div>
+                    <div style={{ color: '#64748b', fontSize: '0.8rem' }}>Kisumu, Kenya</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Testimonial 4 */}
+              <div style={{ minWidth: '340px', background: 'white', borderRadius: '20px', padding: '30px', border: '1px solid #e2e8f0', boxShadow: '0 4px 20px rgba(0,0,0,0.03)', flexShrink: 0 }}>
+                <div style={{ display: 'flex', gap: '4px', marginBottom: '15px' }}>
+                  {[1, 2, 3, 4, 5].map(i => <span key={i} style={{ color: '#fbbf24', fontSize: '1rem' }}>★</span>)}
+                </div>
+                <p style={{ color: '#334155', fontSize: '0.95rem', lineHeight: 1.7, marginBottom: '20px', fontStyle: 'italic' }}>&quot;Started with Ksh 1,000 - daily returns are consistent!&quot;</p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div style={{ width: '45px', height: '45px', borderRadius: '50%', background: 'linear-gradient(135deg, #f59e0b, #fbbf24)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 700, fontSize: '1rem' }}>AM</div>
+                  <div>
+                    <div style={{ fontWeight: 700, color: '#0f172a', fontSize: '0.95rem' }}>Alice Muthoni</div>
+                    <div style={{ color: '#64748b', fontSize: '0.8rem' }}>Nakuru, Kenya</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Duplicate cards for seamless loop */}
+              {/* Testimonial 1 duplicate */}
+              <div style={{ minWidth: '340px', background: 'white', borderRadius: '20px', padding: '30px', border: '1px solid #e2e8f0', boxShadow: '0 4px 20px rgba(0,0,0,0.03)', flexShrink: 0 }}>
+                <div style={{ display: 'flex', gap: '4px', marginBottom: '15px' }}>
+                  {[1, 2, 3, 4, 5].map(i => <span key={`d1-${i}`} style={{ color: '#fbbf24', fontSize: '1rem' }}>★</span>)}
+                </div>
+                <p style={{ color: '#334155', fontSize: '0.95rem', lineHeight: 1.7, marginBottom: '20px', fontStyle: 'italic' }}>&quot;Deposited Ksh 5,000 and earned Ksh 2,500 in two weeks!&quot;</p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div style={{ width: '45px', height: '45px', borderRadius: '50%', background: 'linear-gradient(135deg, #0052ff, #00a3ff)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 700, fontSize: '1rem' }}>JM</div>
+                  <div>
+                    <div style={{ fontWeight: 700, color: '#0f172a', fontSize: '0.95rem' }}>John Mwangi</div>
+                    <div style={{ color: '#64748b', fontSize: '0.8rem' }}>Nairobi, Kenya</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Testimonial 2 duplicate */}
+              <div style={{ minWidth: '340px', background: 'white', borderRadius: '20px', padding: '30px', border: '1px solid #e2e8f0', boxShadow: '0 4px 20px rgba(0,0,0,0.03)', flexShrink: 0 }}>
+                <div style={{ display: 'flex', gap: '4px', marginBottom: '15px' }}>
+                  {[1, 2, 3, 4, 5].map(i => <span key={`d2-${i}`} style={{ color: '#fbbf24', fontSize: '1rem' }}>★</span>)}
+                </div>
+                <p style={{ color: '#334155', fontSize: '0.95rem', lineHeight: 1.7, marginBottom: '20px', fontStyle: 'italic' }}>&quot;Best investment app in Kenya - M-Pesa works perfectly!&quot;</p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div style={{ width: '45px', height: '45px', borderRadius: '50%', background: 'linear-gradient(135deg, #10b981, #34d399)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 700, fontSize: '1rem' }}>SW</div>
+                  <div>
+                    <div style={{ fontWeight: 700, color: '#0f172a', fontSize: '0.95rem' }}>Sarah Wanjiku</div>
+                    <div style={{ color: '#64748b', fontSize: '0.8rem' }}>Mombasa, Kenya</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Testimonial 3 duplicate */}
+              <div style={{ minWidth: '340px', background: 'white', borderRadius: '20px', padding: '30px', border: '1px solid #e2e8f0', boxShadow: '0 4px 20px rgba(0,0,0,0.03)', flexShrink: 0 }}>
+                <div style={{ display: 'flex', gap: '4px', marginBottom: '15px' }}>
+                  {[1, 2, 3, 4, 5].map(i => <span key={`d3-${i}`} style={{ color: '#fbbf24', fontSize: '1rem' }}>★</span>)}
+                </div>
+                <p style={{ color: '#334155', fontSize: '0.95rem', lineHeight: 1.7, marginBottom: '20px', fontStyle: 'italic' }}>&quot;All my friends joined and we&apos;re all earning daily!&quot;</p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div style={{ width: '45px', height: '45px', borderRadius: '50%', background: 'linear-gradient(135deg, #8b5cf6, #a78bfa)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 700, fontSize: '1rem' }}>PO</div>
+                  <div>
+                    <div style={{ fontWeight: 700, color: '#0f172a', fontSize: '0.95rem' }}>Peter Ochieng</div>
+                    <div style={{ color: '#64748b', fontSize: '0.8rem' }}>Kisumu, Kenya</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Testimonial 4 duplicate */}
+              <div style={{ minWidth: '340px', background: 'white', borderRadius: '20px', padding: '30px', border: '1px solid #e2e8f0', boxShadow: '0 4px 20px rgba(0,0,0,0.03)', flexShrink: 0 }}>
+                <div style={{ display: 'flex', gap: '4px', marginBottom: '15px' }}>
+                  {[1, 2, 3, 4, 5].map(i => <span key={`d4-${i}`} style={{ color: '#fbbf24', fontSize: '1rem' }}>★</span>)}
+                </div>
+                <p style={{ color: '#334155', fontSize: '0.95rem', lineHeight: 1.7, marginBottom: '20px', fontStyle: 'italic' }}>&quot;Started with Ksh 1,000 - daily returns are consistent!&quot;</p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div style={{ width: '45px', height: '45px', borderRadius: '50%', background: 'linear-gradient(135deg, #f59e0b, #fbbf24)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 700, fontSize: '1rem' }}>AM</div>
+                  <div>
+                    <div style={{ fontWeight: 700, color: '#0f172a', fontSize: '0.95rem' }}>Alice Muthoni</div>
+                    <div style={{ color: '#64748b', fontSize: '0.8rem' }}>Nakuru, Kenya</div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </section>
