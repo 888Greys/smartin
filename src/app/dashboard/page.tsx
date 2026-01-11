@@ -223,7 +223,9 @@ export default function DashboardPage() {
                 flexDirection: 'column',
                 zIndex: 100,
                 transition: 'left 0.3s ease',
-                boxShadow: sidebarCollapsed ? 'none' : '4px 0 30px rgba(0,0,0,0.1)'
+                boxShadow: sidebarCollapsed ? 'none' : '4px 0 30px rgba(0,0,0,0.1)',
+                overflowY: 'auto',
+                overflowX: 'hidden'
             }}>
                 {/* Logo */}
                 <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none', marginBottom: '30px' }}>
