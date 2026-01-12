@@ -182,12 +182,7 @@ export default function ForgotPasswordPage() {
         <div style={{ minHeight: '100vh', background: 'linear-gradient(180deg, #f0f5ff 0%, #ffffff 100%)', display: 'flex', justifyContent: 'center', alignItems: 'center', fontFamily: "'Plus Jakarta Sans', sans-serif", color: '#1e293b' }}>
             <div style={{ width: '90%', maxWidth: '380px', textAlign: 'center', padding: '16px' }}>
                 {/* Lion Logo */}
-                <img src="/lion.png" alt="SmartInvest" style={{ height: '60px', marginBottom: '20px' }} />
-
-                <div style={{ fontSize: '1.2rem', fontWeight: 800, marginBottom: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
-                    <div style={{ width: '26px', height: '26px', background: '#0052ff', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 900, fontSize: '0.85rem' }}>S</div>
-                    smart<span style={{ color: '#0052ff' }}>Invest</span>
-                </div>
+                <img src="/lion.png" alt="SmartInvest" style={{ height: '70px', marginBottom: '24px' }} />
 
                 {renderStep()}
 
