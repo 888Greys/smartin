@@ -76,19 +76,25 @@ export default function DashboardPage() {
 
     useEffect(() => {
         const fetchUser = async () => {
-            // DEMO MODE - Set to false for production
-            const DEMO_MODE = false;
+            // DEMO MODE - controlled by environment variable
+            // Set NEXT_PUBLIC_DEMO_MODE=true in .env.local for local testing
+            const DEMO_MODE = process.env.NEXT_PUBLIC_DEMO_MODE === 'true';
             if (DEMO_MODE) {
                 setUser({
                     id: 'demo123',
                     email: 'demo@smartinvest.com',
-                    balance: 0,
-                    totalEarnings: 0,
-                    totalDeposits: 0,
+                    fullName: 'Demo User',
+                    balance: 5000,
+                    totalEarnings: 1250,
+                    totalDeposits: 10000,
                     totalWithdrawals: 0,
-                    referralEarnings: 0,
+                    referralEarnings: 250,
+                    tier: 'premium',
+                    createdAt: new Date().toISOString(),
                 });
-                setBalance(0);
+                setBalance(5000);
+                setProfileFirstName('Demo');
+                setProfileLastName('User');
                 setIsLoading(false);
                 return;
             }
@@ -169,6 +175,19 @@ export default function DashboardPage() {
         },
         { id: 'wallet', label: 'Wallet' },
         { id: 'profile', label: 'Profile' },
+    ];
+
+    // Mining Rigs Data
+    const miningRigs = [
+        { id: 'antminer-s19', name: 'Antminer S19', icon: '⛏️', dailyEarnings: 450, price: 1500, category: 'Crypto Mining' },
+        { id: 'uber-fleet', name: 'Uber Fleet Share', icon: '🚗', dailyEarnings: 900, price: 3000, category: 'Asset Sharing' },
+        { id: 'delivery-truck', name: 'Delivery Truck', icon: '🚚', dailyEarnings: 2500, price: 8000, category: 'Asset Sharing' },
+        { id: 'solar-unit', name: 'Solar Unit', icon: '☀️', dailyEarnings: 4800, price: 15000, category: 'Green Energy' },
+        { id: 'ai-neural', name: 'AI Neural Hub', icon: '🤖', dailyEarnings: 10000, price: 30000, category: 'Tech Infrastructure' },
+        { id: 'e-boda', name: 'E-Boda Asset', icon: '🏍️', dailyEarnings: 320, price: 1000, category: 'Asset Sharing' },
+        { id: '5g-tower', name: '5G Tower Share', icon: '📡', dailyEarnings: 20000, price: 60000, category: 'Tech Infrastructure' },
+        { id: 'firewall-rig', name: 'Firewall Rig', icon: '🔥', dailyEarnings: 750, price: 2500, category: 'Crypto Mining' },
+        { id: 'spacelink-node', name: 'SpaceLink Node', icon: '🛰️', dailyEarnings: 45000, price: 120000, category: 'Tech Infrastructure' },
     ];
 
     const sidebarWidth = 260;
@@ -653,23 +672,120 @@ export default function DashboardPage() {
                     </div>
                 )}
 
-                {/* INVESTMENTS SECTION */}
+                {/* MINING MARKETPLACE SECTION */}
                 {activeSection === 'investments' && (
                     <div style={{ animation: 'fadeIn 0.3s ease' }}>
-                        <div style={{ background: 'white', borderRadius: '24px', padding: '30px', border: '1px solid #e2e8f0', marginBottom: '20px' }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                <b style={{ fontSize: '1.1rem' }}>No Active Mining Bots</b>
-                                <span style={{ color: 'var(--emerald)', fontWeight: 800 }}>+Ksh 0.00 today</span>
+                        {/* Header Stats */}
+                        <div style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)', borderRadius: '24px', padding: '25px', marginBottom: '20px', color: 'white' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                                <div>
+                                    <p style={{ fontSize: '0.8rem', opacity: 0.7, marginBottom: '5px' }}>Hello, {user?.fullName?.split(' ')[0] || 'User'}...</p>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                        <span style={{ fontSize: '0.75rem', color: '#10b981' }}>●</span>
+                                        <span style={{ fontSize: '0.8rem', color: '#10b981' }}>Market Status: ACTIVE</span>
+                                    </div>
+                                </div>
+                                <div style={{ textAlign: 'right' }}>
+                                    <p style={{ fontSize: '0.75rem', opacity: 0.5 }}>Balance</p>
+                                    <p style={{ fontSize: '1.2rem', fontWeight: 800 }}>KES {balance.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
+                                </div>
                             </div>
-                            <div style={{ height: '8px', background: '#f1f5f9', borderRadius: '10px', margin: '20px 0', overflow: 'hidden' }}>
-                                <div style={{ height: '100%', background: 'var(--primary)', width: '0%', borderRadius: '10px' }}></div>
+
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '15px' }}>
+                                <div style={{ background: 'rgba(255,255,255,0.05)', padding: '12px', borderRadius: '12px', textAlign: 'center' }}>
+                                    <p style={{ fontSize: '0.7rem', opacity: 0.5 }}>HASHRATE</p>
+                                    <p style={{ fontSize: '1rem', fontWeight: 800, color: '#10b981' }}>0.00 TH/s</p>
+                                </div>
+                                <div style={{ background: 'rgba(255,255,255,0.05)', padding: '12px', borderRadius: '12px', textAlign: 'center' }}>
+                                    <p style={{ fontSize: '0.7rem', opacity: 0.5 }}>ACTIVE RIGS</p>
+                                    <p style={{ fontSize: '1rem', fontWeight: 800, color: '#0052ff' }}>0</p>
+                                </div>
+                                <div style={{ background: 'rgba(255,255,255,0.05)', padding: '12px', borderRadius: '12px', textAlign: 'center' }}>
+                                    <p style={{ fontSize: '0.7rem', opacity: 0.5 }}>EARNINGS TODAY</p>
+                                    <p style={{ fontSize: '1rem', fontWeight: 800, color: '#f59e0b' }}>KES 0</p>
+                                </div>
                             </div>
-                            <p style={{ textAlign: 'center', fontSize: '0.9rem', color: '#64748b' }}>
-                                Go to Marketplace to activate a mining bot
-                            </p>
                         </div>
 
-                        <button style={{ padding: '18px 30px', borderRadius: '15px', border: 'none', fontWeight: 800, fontSize: '1rem', cursor: 'pointer', background: 'var(--navy)', color: 'white' }}>
+                        {/* Mining Rigs Grid */}
+                        <h3 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: '15px' }}>Rent Mining Rigs</h3>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                            {miningRigs.map((rig) => (
+                                <div
+                                    key={rig.id}
+                                    style={{
+                                        background: 'white',
+                                        borderRadius: '16px',
+                                        padding: '18px 20px',
+                                        border: '1px solid #e2e8f0',
+                                        display: 'flex',
+                                        justifyContent: 'space-between',
+                                        alignItems: 'center',
+                                        transition: '0.2s',
+                                        cursor: 'pointer'
+                                    }}
+                                >
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                                        <div style={{
+                                            width: '50px',
+                                            height: '50px',
+                                            background: '#0f172a',
+                                            borderRadius: '14px',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            fontSize: '1.5rem'
+                                        }}>
+                                            {rig.icon}
+                                        </div>
+                                        <div>
+                                            <p style={{ fontWeight: 700, fontSize: '0.95rem' }}>{rig.name}</p>
+                                            <p style={{ fontSize: '0.8rem', color: '#64748b' }}>Daily: KES {rig.dailyEarnings.toLocaleString()}</p>
+                                        </div>
+                                    </div>
+                                    <div style={{ textAlign: 'right', display: 'flex', alignItems: 'center', gap: '15px' }}>
+                                        <p style={{ fontWeight: 800, fontSize: '0.9rem' }}>KES {rig.price.toLocaleString()}</p>
+                                        <button
+                                            style={{
+                                                padding: '10px 20px',
+                                                background: '#0052ff',
+                                                color: 'white',
+                                                border: 'none',
+                                                borderRadius: '10px',
+                                                fontWeight: 700,
+                                                fontSize: '0.85rem',
+                                                cursor: 'pointer'
+                                            }}
+                                            onClick={() => {
+                                                if (balance < rig.price) {
+                                                    alert(`Insufficient balance! You need KES ${rig.price.toLocaleString()} to rent ${rig.name}`);
+                                                } else {
+                                                    alert(`Renting ${rig.name}... (Coming soon)`);
+                                                }
+                                            }}
+                                        >
+                                            Rent
+                                        </button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Withdraw Button */}
+                        <button
+                            style={{
+                                marginTop: '25px',
+                                width: '100%',
+                                padding: '18px 30px',
+                                borderRadius: '15px',
+                                border: 'none',
+                                fontWeight: 800,
+                                fontSize: '1rem',
+                                cursor: 'pointer',
+                                background: '#0f172a',
+                                color: 'white'
+                            }}
+                        >
                             Withdraw Earnings to Wallet
                         </button>
                     </div>
