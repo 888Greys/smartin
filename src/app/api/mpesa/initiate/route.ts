@@ -59,6 +59,10 @@ export async function POST(request: NextRequest) {
         }
 
         // Call MegaPay API
+        const callbackUrl = process.env.NEXT_PUBLIC_APP_URL
+            ? `${process.env.NEXT_PUBLIC_APP_URL}/api/mpesa/callback`
+            : 'https://invest.innbucks.org/api/mpesa/callback';
+
         const response = await fetch(MEGAPAY_API_URL, {
             method: 'POST',
             headers: {
@@ -70,6 +74,7 @@ export async function POST(request: NextRequest) {
                 amount: Number(amount),
                 msisdn: msisdn,
                 reference: txRef,
+                callback_url: callbackUrl,
             }),
         });
 
