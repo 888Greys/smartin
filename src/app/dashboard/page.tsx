@@ -363,14 +363,22 @@ export default function DashboardPage() {
 
                 {/* User & Logout - always at bottom */}
                 <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '15px', flexGrow: 0, flexShrink: 0 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '15px' }}>
+                    <div
+                        onClick={() => { setActiveSection('profile'); setSidebarCollapsed(true); }}
+                        style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '15px', cursor: 'pointer', padding: '10px', borderRadius: '12px', transition: '0.2s' }}
+                        onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}
+                        onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                    >
                         <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: user?.profilePhoto || profilePhoto ? 'transparent' : 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem', overflow: 'hidden', backgroundImage: user?.profilePhoto || profilePhoto ? `url(${user?.profilePhoto || profilePhoto})` : 'none', backgroundSize: 'cover', backgroundPosition: 'center' }}>
-                            {!user?.profilePhoto && !profilePhoto && '👤'}
+                            {!user?.profilePhoto && !profilePhoto && (user?.fullName ? user.fullName.charAt(0).toUpperCase() : '👤')}
                         </div>
-                        <div>
-                            <div style={{ color: 'white', fontWeight: 700, fontSize: '0.9rem' }}>{user?.email?.split('@')[0] || 'User'}</div>
-                            <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.75rem' }}>Premium Member</div>
+                        <div style={{ flex: 1 }}>
+                            <div style={{ color: 'white', fontWeight: 700, fontSize: '0.9rem' }}>
+                                {user?.fullName || user?.email?.split('@')[0] || 'User'}
+                            </div>
+                            <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.75rem' }}>{user?.tier === 'vip' ? 'VIP Member' : user?.tier === 'premium' ? 'Premium Member' : 'Basic Member'}</div>
                         </div>
+                        <span style={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.8rem' }}>›</span>
                     </div>
                     <button onClick={handleLogout} style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.2)', background: 'transparent', color: 'rgba(255,255,255,0.7)', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
                         🚪 Log Out
