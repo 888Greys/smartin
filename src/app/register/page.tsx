@@ -24,7 +24,7 @@ function RegisterContent() {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [referralCode, setReferralCode] = useState('');
-    const [showReferralInput, setShowReferralInput] = useState(false);
+    const [showReferralInput, setShowReferralInput] = useState(true);
     const [otp, setOtp] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
@@ -215,32 +215,20 @@ function RegisterContent() {
                             <label style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: '6px', display: 'block' }}>Confirm Password</label>
                             <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Re-enter your password" required style={{ width: '100%', padding: '12px', border: '1px solid #cbd5e1', borderRadius: '10px', marginBottom: '14px', fontSize: '0.9rem', outline: 'none', boxSizing: 'border-box' }} />
 
-                            {/* Referral Code Input */}
-                            {!showReferralInput ? (
-                                <button
-                                    type="button"
-                                    onClick={() => setShowReferralInput(true)}
-                                    style={{ background: 'transparent', color: '#0052ff', border: 'none', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer', marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '5px' }}
-                                >
-                                    🎁 Have a referral code?
-                                </button>
-                            ) : (
-                                <>
-                                    <label style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: '6px', display: 'block' }}>Referral Code (optional)</label>
-                                    <input
-                                        type="text"
-                                        value={referralCode}
-                                        onChange={(e) => setReferralCode(e.target.value.toUpperCase())}
-                                        placeholder="Enter referral code"
-                                        style={{ width: '100%', padding: '12px', border: '1px solid #10b981', borderRadius: '10px', marginBottom: '14px', fontSize: '0.9rem', outline: 'none', boxSizing: 'border-box', background: '#f0fdf4' }}
-                                    />
-                                    {referralCode && (
-                                        <div style={{ background: '#f0fdf4', padding: '10px 12px', borderRadius: '10px', marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '10px', border: '1px solid #bbf7d0' }}>
-                                            <span style={{ fontSize: '1rem' }}>🎉</span>
-                                            <span style={{ fontSize: '0.75rem', color: '#059669', fontWeight: 600, lineHeight: 1.3 }}>You'll get a KES 10 welcome bonus!</span>
-                                        </div>
-                                    )}
-                                </>
+                            {/* Referral Code Input - Always visible */}
+                            <label style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: '6px', display: 'block' }}>🎁 Referral Code (optional)</label>
+                            <input
+                                type="text"
+                                value={referralCode}
+                                onChange={(e) => setReferralCode(e.target.value.toUpperCase())}
+                                placeholder="Enter referral code"
+                                style={{ width: '100%', padding: '12px', border: '1px solid #10b981', borderRadius: '10px', marginBottom: '14px', fontSize: '0.9rem', outline: 'none', boxSizing: 'border-box', background: '#f0fdf4' }}
+                            />
+                            {referralCode && (
+                                <div style={{ background: '#f0fdf4', padding: '10px 12px', borderRadius: '10px', marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '10px', border: '1px solid #bbf7d0' }}>
+                                    <span style={{ fontSize: '1rem' }}>🎉</span>
+                                    <span style={{ fontSize: '0.75rem', color: '#059669', fontWeight: 600, lineHeight: 1.3 }}>You'll get a KES 10 welcome bonus!</span>
+                                </div>
                             )}
 
                             <div style={{ background: '#f0f5ff', padding: '10px 12px', borderRadius: '10px', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '10px' }}>
