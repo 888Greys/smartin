@@ -101,6 +101,15 @@ export default function DashboardPage() {
                 const data = await res.json();
                 setUser(data.user);
                 setBalance(data.user.balance || 0);
+
+                // Pre-fill form fields with existing data
+                if (data.user.fullName) setProfileName(data.user.fullName);
+                if (data.user.phone) setProfilePhone(data.user.phone);
+                if (data.user.idNumber) setProfileIdNumber(data.user.idNumber);
+                if (data.user.dateOfBirth) setProfileDateOfBirth(new Date(data.user.dateOfBirth).toISOString().split('T')[0]);
+                if (data.user.gender) setProfileGender(data.user.gender);
+                if (data.user.occupation) setProfileOccupation(data.user.occupation);
+                if (data.user.address) setProfileAddress(data.user.address);
             } catch {
                 localStorage.removeItem('smartinvest_token');
                 router.push('/login');
@@ -112,14 +121,7 @@ export default function DashboardPage() {
         fetchUser();
     }, [router]);
 
-    // Live balance ticker
-    useEffect(() => {
-        if (!user) return;
-        const interval = setInterval(() => {
-            setBalance(prev => Math.round((prev + 0.01) * 100) / 100);
-        }, 2000);
-        return () => clearInterval(interval);
-    }, [user]);
+    // Balance updates are now only from deposits/withdrawals, not auto-increment
 
     const handleLogout = () => {
         localStorage.removeItem('smartinvest_token');
