@@ -55,7 +55,8 @@ export default function DashboardPage() {
     const [totalMined, setTotalMined] = useState(0);
     const [activityFeedExpanded, setActivityFeedExpanded] = useState(false);
     const [miningTerminalExpanded, setMiningTerminalExpanded] = useState(false);
-    const [rentedBots, setRentedBots] = useState<Array<{id: string, name: string, icon: string, dailyEarnings: number, price: number, rentedAt: Date, duration: string}>>([]);
+    const [rentedBots, setRentedBots] = useState<Array<{id: string, name: string, icon: string, dailyEarnings: number, price: number, rentedAt: string, duration: string}>>([]);
+    const [rentalSuccess, setRentalSuccess] = useState<string | null>(null);
 
     // Deposit form state
     const [depositPhone, setDepositPhone] = useState('');
@@ -63,6 +64,14 @@ export default function DashboardPage() {
     const [depositLoading, setDepositLoading] = useState(false);
     const [depositError, setDepositError] = useState('');
     const [depositSuccess, setDepositSuccess] = useState(false);
+
+    // Withdrawal form state
+    const [withdrawPhone, setWithdrawPhone] = useState('');
+    const [withdrawAmount, setWithdrawAmount] = useState('');
+    const [withdrawLoading, setWithdrawLoading] = useState(false);
+    const [withdrawError, setWithdrawError] = useState('');
+    const [withdrawSuccess, setWithdrawSuccess] = useState(false);
+    const [walletTab, setWalletTab] = useState<'deposit' | 'withdraw'>('deposit');
 
     // Transaction history state
     interface Transaction {
@@ -263,6 +272,62 @@ export default function DashboardPage() {
         }, 5000);
         return () => clearInterval(interval);
     }, []);
+
+    // Load rented bots from localStorage on mount
+    useEffect(() => {
+        const savedBots = localStorage.getItem('smartinvest_rented_bots');
+        if (savedBots) {
+            try {
+                setRentedBots(JSON.parse(savedBots));
+            } catch (e) {
+                console.error('Error loading rented bots:', e);
+            }
+        }
+    }, []);
+
+    // Save rented bots to localStorage when changed
+    useEffect(() => {
+        if (rentedBots.length > 0) {
+            localStorage.setItem('smartinvest_rented_bots', JSON.stringify(rentedBots));
+        }
+    }, [rentedBots]);
+
+    // Bot earnings simulation - adds to balance every minute for each active bot
+    useEffect(() => {
+        if (rentedBots.length === 0) return;
+        
+        const interval = setInterval(() => {
+            // Calculate per-minute earnings (dailyEarnings / 1440 minutes * simulation speed)
+            const totalPerMinute = rentedBots.reduce((sum, bot) => {
+                return sum + (bot.dailyEarnings / 1440) * 10; // 10x speed for demo
+            }, 0);
+            
+            if (totalPerMinute > 0) {
+                setBalance(prev => prev + totalPerMinute);
+            }
+        }, 60000); // Every minute
+        
+        return () => clearInterval(interval);
+    }, [rentedBots]);
+
+    // Auto-populate withdraw phone from profile or deposit phone
+    useEffect(() => {
+        if (walletTab === 'withdraw' && !withdrawPhone) {
+            // Prioritize profile phone, then deposit phone
+            if (profilePhone) {
+                setWithdrawPhone(profilePhone);
+            } else if (depositPhone) {
+                setWithdrawPhone(depositPhone);
+            }
+        }
+    }, [walletTab, profilePhone, depositPhone, withdrawPhone]);
+
+    // Auto-populate deposit phone from profile
+    useEffect(() => {
+        if (!depositPhone && profilePhone) {
+            setDepositPhone(profilePhone);
+        }
+    }, [profilePhone, depositPhone]);
 
     // Balance updates are now only from deposits/withdrawals, not auto-increment
 
@@ -1356,12 +1421,14 @@ export default function DashboardPage() {
                                 const stockCounts = [6, 4, 3, 5, 2]; // Fixed stock for each bot
                                 const stockLeft = stockCounts[index] || 3;
                                 const isLowStock = stockLeft <= 5;
+                                const isAlreadyRented = rentedBots.some(bot => bot.id === rig.id);
                                 
                                 return (
                                 <div
                                     key={rig.id}
                                     style={{
-                                        background: 'rgba(17, 25, 40, 0.85)',
+                                        background: isAlreadyRented ? 'rgba(17, 25, 40, 0.5)' : 'rgba(17, 25, 40, 0.85)',
+                                        opacity: isAlreadyRented ? 0.6 : 1,
                                         borderRadius: '16px',
                                         padding: '18px 20px',
                                         border: expandedRig === rig.id ? '2px solid #00f2ff' : '1px solid rgba(255, 255, 255, 0.1)',
@@ -1370,8 +1437,25 @@ export default function DashboardPage() {
                                         position: 'relative'
                                     }}
                                 >
-                                    {/* Limited Supply Badge */}
-                                    {isLowStock && (
+                                    {/* Limited Supply Badge or Already Rented Badge */}
+                                    {isAlreadyRented ? (
+                                        <div style={{
+                                            position: 'absolute',
+                                            top: '10px',
+                                            right: '10px',
+                                            background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                                            color: 'white',
+                                            padding: '6px 12px',
+                                            borderRadius: '20px',
+                                            fontSize: '0.75rem',
+                                            fontWeight: 800,
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '5px'
+                                        }}>
+                                            ✓ Active
+                                        </div>
+                                    ) : isLowStock && (
                                         <div style={{
                                             position: 'absolute',
                                             top: '10px',
@@ -1496,25 +1580,28 @@ export default function DashboardPage() {
 
                                             {/* Rent Button */}
                                             <button
+                                                disabled={isAlreadyRented}
                                                 style={{
                                                     width: '100%',
                                                     padding: '14px 20px',
-                                                    background: 'linear-gradient(135deg, #00f2ff 0%, #0066ff 100%)',
+                                                    background: isAlreadyRented ? '#10b981' : 'linear-gradient(135deg, #00f2ff 0%, #0066ff 100%)',
                                                     color: 'white',
                                                     border: 'none',
                                                     borderRadius: '12px',
                                                     fontWeight: 700,
                                                     fontSize: '0.95rem',
-                                                    cursor: 'pointer',
+                                                    cursor: isAlreadyRented ? 'not-allowed' : 'pointer',
                                                     transition: '0.2s'
                                                 }}
                                                 onClick={(e) => {
                                                     e.stopPropagation();
-                                                    setSelectedRig(rig);
-                                                    setShowRentModal(true);
+                                                    if (!isAlreadyRented) {
+                                                        setSelectedRig(rig);
+                                                        setShowRentModal(true);
+                                                    }
                                                 }}
                                             >
-                                                Rent for KES {rig.price.toLocaleString()}
+                                                {isAlreadyRented ? '✓ Already Rented' : `Rent for KES ${rig.price.toLocaleString()}`}
                                             </button>
                                         </div>
                                     )}
@@ -1814,22 +1901,62 @@ export default function DashboardPage() {
                             <h2 style={{ fontSize: '2.5rem', fontWeight: 800 }}>Ksh {balance.toLocaleString(undefined, { minimumFractionDigits: 2 })}</h2>
                         </div>
 
+                        {/* Deposit/Withdraw Tab Switcher */}
+                        <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
+                            <button
+                                onClick={() => setWalletTab('deposit')}
+                                style={{
+                                    flex: 1,
+                                    padding: '14px',
+                                    background: walletTab === 'deposit' ? '#059669' : '#f1f5f9',
+                                    color: walletTab === 'deposit' ? 'white' : '#64748b',
+                                    border: 'none',
+                                    borderRadius: '12px',
+                                    fontWeight: 700,
+                                    fontSize: '0.95rem',
+                                    cursor: 'pointer',
+                                    transition: '0.2s'
+                                }}
+                            >
+                                💰 Deposit
+                            </button>
+                            <button
+                                onClick={() => setWalletTab('withdraw')}
+                                style={{
+                                    flex: 1,
+                                    padding: '14px',
+                                    background: walletTab === 'withdraw' ? '#059669' : '#f1f5f9',
+                                    color: walletTab === 'withdraw' ? 'white' : '#64748b',
+                                    border: 'none',
+                                    borderRadius: '12px',
+                                    fontWeight: 700,
+                                    fontSize: '0.95rem',
+                                    cursor: 'pointer',
+                                    transition: '0.2s'
+                                }}
+                            >
+                                💸 Withdraw
+                            </button>
+                        </div>
+
                         {/* Deposit Form */}
-                        {depositSuccess ? (
-                            <div style={{ background: 'white', padding: '30px', borderRadius: '24px', border: '1px solid #e2e8f0', textAlign: 'center' }}>
-                                <div style={{ fontSize: '3rem', marginBottom: '15px' }}>📱</div>
-                                <h3 style={{ fontSize: '1.2rem', fontWeight: 800, marginBottom: '10px' }}>Check your phone!</h3>
-                                <p style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '20px' }}>
-                                    We've sent an M-Pesa prompt to <strong>{depositPhone}</strong>. Enter your PIN to complete the deposit of <strong>Ksh {depositAmount}</strong>.
-                                </p>
-                                <button
-                                    onClick={() => { setDepositSuccess(false); setDepositPhone(''); setDepositAmount(''); }}
-                                    style={{ padding: '14px 30px', background: '#0052ff', color: 'white', border: 'none', borderRadius: '12px', fontWeight: 700, cursor: 'pointer' }}
-                                >
-                                    Make Another Deposit
-                                </button>
-                            </div>
-                        ) : (
+                        {walletTab === 'deposit' && (
+                            <>
+                            {depositSuccess ? (
+                                <div style={{ background: 'white', padding: '30px', borderRadius: '24px', border: '1px solid #e2e8f0', textAlign: 'center' }}>
+                                    <div style={{ fontSize: '3rem', marginBottom: '15px' }}>📱</div>
+                                    <h3 style={{ fontSize: '1.2rem', fontWeight: 800, marginBottom: '10px' }}>Check your phone!</h3>
+                                    <p style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '20px' }}>
+                                        We've sent an M-Pesa prompt to <strong>{depositPhone}</strong>. Enter your PIN to complete the deposit of <strong>Ksh {depositAmount}</strong>.
+                                    </p>
+                                    <button
+                                        onClick={() => { setDepositSuccess(false); setDepositPhone(''); setDepositAmount(''); }}
+                                        style={{ padding: '14px 30px', background: '#0052ff', color: 'white', border: 'none', borderRadius: '12px', fontWeight: 700, cursor: 'pointer' }}
+                                    >
+                                        Make Another Deposit
+                                    </button>
+                                </div>
+                            ) : (
                             <div style={{ background: 'white', padding: '25px', borderRadius: '24px', border: '1px solid #e2e8f0' }}>
                                 <h3 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: '20px' }}>Deposit via M-Pesa</h3>
 
@@ -1916,6 +2043,110 @@ export default function DashboardPage() {
                                     {depositLoading ? 'Sending request...' : `Deposit ${depositAmount ? `Ksh ${parseInt(depositAmount).toLocaleString()}` : ''}`}
                                 </button>
                             </div>
+                            )}
+                            </>
+                        )}
+
+                        {/* Withdraw Form */}
+                        {walletTab === 'withdraw' && (
+                            <>
+                            {withdrawSuccess ? (
+                                <div style={{ background: 'white', padding: '30px', borderRadius: '24px', border: '1px solid #e2e8f0', textAlign: 'center' }}>
+                                    <div style={{ fontSize: '3rem', marginBottom: '15px' }}>✅</div>
+                                    <h3 style={{ fontSize: '1.2rem', fontWeight: 800, marginBottom: '10px', color: '#059669' }}>Withdrawal Successful!</h3>
+                                    <p style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '20px' }}>
+                                        <strong>Ksh {withdrawAmount}</strong> has been sent to <strong>{withdrawPhone}</strong>. You should receive it shortly.
+                                    </p>
+                                    <button
+                                        onClick={() => { setWithdrawSuccess(false); setWithdrawAmount(''); }}
+                                        style={{ padding: '14px 30px', background: '#0052ff', color: 'white', border: 'none', borderRadius: '12px', fontWeight: 700, cursor: 'pointer' }}
+                                    >
+                                        Make Another Withdrawal
+                                    </button>
+                                </div>
+                            ) : (
+                                <div style={{ background: 'white', padding: '25px', borderRadius: '24px', border: '1px solid #e2e8f0' }}>
+                                    <h3 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: '20px' }}>Withdraw to M-Pesa</h3>
+
+                                    <label style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: '6px', display: 'block' }}>M-Pesa Phone Number</label>
+                                    <input
+                                        type="tel"
+                                        value={withdrawPhone}
+                                        onChange={(e) => setWithdrawPhone(e.target.value.replace(/\D/g, '').slice(0, 12))}
+                                        placeholder="07XXXXXXXX"
+                                        style={{ width: '100%', padding: '14px', border: '1px solid #e2e8f0', borderRadius: '12px', marginBottom: '15px', fontSize: '1rem', outline: 'none', boxSizing: 'border-box' }}
+                                    />
+
+                                    <label style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: '6px', display: 'block' }}>Amount (Ksh)</label>
+                                    <input
+                                        type="number"
+                                        value={withdrawAmount}
+                                        onChange={(e) => setWithdrawAmount(e.target.value)}
+                                        placeholder="Minimum Ksh 50"
+                                        min="50"
+                                        style={{ width: '100%', padding: '14px', border: '1px solid #e2e8f0', borderRadius: '12px', marginBottom: '15px', fontSize: '1rem', outline: 'none', boxSizing: 'border-box' }}
+                                    />
+
+                                    {/* Quick amounts */}
+                                    <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
+                                        {[100, 500, 1000, 5000].map((amt) => (
+                                            <button
+                                                key={amt}
+                                                type="button"
+                                                onClick={() => setWithdrawAmount(amt.toString())}
+                                                style={{
+                                                    flex: 1,
+                                                    padding: '10px',
+                                                    background: withdrawAmount === amt.toString() ? '#059669' : '#f1f5f9',
+                                                    color: withdrawAmount === amt.toString() ? 'white' : '#64748b',
+                                                    border: 'none',
+                                                    borderRadius: '10px',
+                                                    fontSize: '0.85rem',
+                                                    fontWeight: 700,
+                                                    cursor: 'pointer'
+                                                }}
+                                            >
+                                                {amt.toLocaleString()}
+                                            </button>
+                                        ))}
+                                    </div>
+
+                                    {/* Available balance info */}
+                                    <div style={{ background: '#fef3c7', padding: '12px 14px', borderRadius: '12px', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                        <span style={{ fontSize: '1rem' }}>💰</span>
+                                        <span style={{ fontSize: '0.8rem', color: '#92400e', fontWeight: 600 }}>Available: Ksh {balance.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                                    </div>
+
+                                    {withdrawError && <p style={{ color: '#dc2626', fontSize: '0.85rem', marginBottom: '15px' }}>{withdrawError}</p>}
+
+                                    <button
+                                        onClick={async () => {
+                                            setWithdrawError('');
+                                            const amountNum = parseInt(withdrawAmount);
+                                            if (amountNum < 50) { setWithdrawError('Minimum withdrawal is Ksh 50'); return; }
+                                            if (amountNum > balance) { setWithdrawError('Insufficient balance'); return; }
+                                            if (withdrawPhone.length < 9) { setWithdrawError('Please enter a valid phone number'); return; }
+
+                                            setWithdrawLoading(true);
+                                            try {
+                                                // Simulate withdrawal (in production, call actual API)
+                                                await new Promise(resolve => setTimeout(resolve, 2000));
+                                                setBalance(prev => prev - amountNum);
+                                                setWithdrawSuccess(true);
+                                            } catch {
+                                                setWithdrawError('Something went wrong. Please try again.');
+                                            } finally {
+                                                setWithdrawLoading(false);
+                                            }
+                                        }}
+                                        disabled={withdrawLoading}
+                                        style={{ width: '100%', padding: '16px', background: '#059669', color: 'white', border: 'none', borderRadius: '12px', fontSize: '1rem', fontWeight: 800, cursor: 'pointer', opacity: withdrawLoading ? 0.7 : 1 }}
+                                    >
+                                        {withdrawLoading ? 'Processing...' : `Withdraw ${withdrawAmount ? `Ksh ${parseInt(withdrawAmount).toLocaleString()}` : ''}`}
+                                    </button>
+                                </div>
+                            )}
+                            </>
                         )}
 
                         {/* Transaction History */}
@@ -2283,6 +2514,32 @@ export default function DashboardPage() {
                 )}
             </main>
 
+            {/* RENTAL SUCCESS TOAST */}
+            {rentalSuccess && (
+                <div style={{
+                    position: 'fixed',
+                    bottom: '30px',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                    color: 'white',
+                    padding: '16px 30px',
+                    borderRadius: '16px',
+                    boxShadow: '0 10px 40px rgba(16, 185, 129, 0.4)',
+                    zIndex: 2000,
+                    animation: 'slideUp 0.3s ease',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px'
+                }}>
+                    <span style={{ fontSize: '1.5rem' }}>🎉</span>
+                    <div>
+                        <p style={{ fontWeight: 700, fontSize: '0.95rem' }}>Bot Rented Successfully!</p>
+                        <p style={{ fontSize: '0.8rem', opacity: 0.9 }}>{rentalSuccess} is now mining for you</p>
+                    </div>
+                </div>
+            )}
+
             {/* RENT MODAL */}
             {showRentModal && selectedRig && (
                 <div
@@ -2447,6 +2704,9 @@ export default function DashboardPage() {
                                     if (balance < selectedRig.price) {
                                         setShowRentModal(false);
                                         setActiveSection('wallet');
+                                    } else if (rentedBots.some(bot => bot.id === selectedRig.id)) {
+                                        // Already rented
+                                        alert('You have already rented this bot!');
                                     } else {
                                         // Deduct balance and add to rented bots
                                         setBalance(prev => prev - selectedRig.price);
@@ -2456,37 +2716,39 @@ export default function DashboardPage() {
                                             icon: selectedRig.icon,
                                             dailyEarnings: selectedRig.dailyEarnings,
                                             price: selectedRig.price,
-                                            rentedAt: new Date(),
+                                            rentedAt: new Date().toISOString(),
                                             duration: selectedRig.duration
                                         }]);
                                         setShowRentModal(false);
+                                        setRentalSuccess(selectedRig.name);
+                                        setTimeout(() => setRentalSuccess(null), 4000);
                                     }
                                 }}
-                                disabled={balance < selectedRig.price}
+                                disabled={balance < selectedRig.price || rentedBots.some(bot => bot.id === selectedRig.id)}
                                 style={{
                                     flex: 2,
                                     padding: '16px',
-                                    background: balance < selectedRig.price ? '#94a3b8' : '#0052ff',
+                                    background: balance < selectedRig.price ? '#94a3b8' : rentedBots.some(bot => bot.id === selectedRig.id) ? '#10b981' : '#0052ff',
                                     color: 'white',
                                     border: 'none',
                                     borderRadius: '12px',
                                     fontWeight: 800,
                                     fontSize: '0.95rem',
-                                    cursor: balance < selectedRig.price ? 'not-allowed' : 'pointer',
+                                    cursor: (balance < selectedRig.price || rentedBots.some(bot => bot.id === selectedRig.id)) ? 'not-allowed' : 'pointer',
                                     transition: '0.2s'
                                 }}
                                 onMouseEnter={(e) => {
-                                    if (balance >= selectedRig.price) {
+                                    if (balance >= selectedRig.price && !rentedBots.some(bot => bot.id === selectedRig.id)) {
                                         e.currentTarget.style.background = '#0041cc';
                                     }
                                 }}
                                 onMouseLeave={(e) => {
-                                    if (balance >= selectedRig.price) {
+                                    if (balance >= selectedRig.price && !rentedBots.some(bot => bot.id === selectedRig.id)) {
                                         e.currentTarget.style.background = '#0052ff';
                                     }
                                 }}
                             >
-                                {balance < selectedRig.price ? 'Add Funds' : `Confirm Rental - KES ${selectedRig.price.toLocaleString()}`}
+                                {balance < selectedRig.price ? 'Add Funds' : rentedBots.some(bot => bot.id === selectedRig.id) ? '✓ Already Rented' : `Confirm Rental - KES ${selectedRig.price.toLocaleString()}`}
                             </button>
                         </div>
                     </div>
