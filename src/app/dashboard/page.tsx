@@ -767,7 +767,9 @@ export default function DashboardPage() {
                             {activeSection === 'wallet' && 'Wallet'}
                             {activeSection === 'profile' && 'Profile'}
                         </h1>
-                        <p style={{ color: '#64748b', fontSize: '0.8rem' }}>Welcome back, {user?.email?.split('@')[0] || 'User'}!</p>
+                        <p style={{ color: '#64748b', fontSize: '0.8rem' }}>
+                            Welcome back, {(profileFirstName?.trim() || user?.fullName?.split(' ')[0] || user?.email?.split('@')[0] || 'User')}!
+                        </p>
                     </div>
                     <div style={{ position: 'relative' }}>
                         <div
