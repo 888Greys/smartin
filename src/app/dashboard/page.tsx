@@ -2682,30 +2682,6 @@ export default function DashboardPage() {
                             </button>
                         </div>
 
-                        {/* Referral Section */}
-                        <div style={{ background: '#f0f7ff', padding: '25px', borderRadius: '20px', border: '1px dashed #0052ff', marginBottom: '25px' }}>
-                            <p style={{ fontSize: '0.8rem', fontWeight: 800, color: '#0052ff', marginBottom: '12px' }}>REFERRAL CODE</p>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
-                                <code style={{ fontSize: '1.4rem', fontWeight: 800, background: 'white', padding: '10px 20px', borderRadius: '10px' }}>
-                                    SMART-{(user?.referralCode || '000000').slice(-6).toUpperCase()}
-                                </code>
-                                <button
-                                    onClick={() => { navigator.clipboard.writeText(`SMART-${(user?.referralCode || '').slice(-6).toUpperCase()}`); setProfileMessage('Referral code copied!'); }}
-                                    style={{ background: '#0052ff', color: 'white', border: 'none', padding: '12px 24px', borderRadius: '10px', fontWeight: 700, cursor: 'pointer' }}
-                                >Copy</button>
-                            </div>
-                            <div style={{ display: 'flex', gap: '20px' }}>
-                                <div>
-                                    <p style={{ fontSize: '0.75rem', color: '#64748b' }}>Referrals</p>
-                                    <p style={{ fontSize: '1.2rem', fontWeight: 800 }}>{user?.referralCount || 0}</p>
-                                </div>
-                                <div>
-                                    <p style={{ fontSize: '0.75rem', color: '#64748b' }}>Earnings</p>
-                                    <p style={{ fontSize: '1.2rem', fontWeight: 800, color: '#059669' }}>Ksh {(user?.referralEarnings || 0).toLocaleString()}</p>
-                                </div>
-                            </div>
-                        </div>
-
                         {/* Account Stats */}
                         <div style={{ background: 'white', padding: '25px', borderRadius: '24px', border: '1px solid #e2e8f0' }}>
                             <h3 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: '20px' }}>Account Stats</h3>
