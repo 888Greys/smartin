@@ -5,11 +5,6 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { startAuthentication } from "@simplewebauthn/browser";
 
-import { AuthLayout } from "@/components/layouts/AuthLayout";
-import { Card } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
-
 export default function LoginPage() {
     const router = useRouter();
     const [email, setEmail] = useState('');
@@ -118,115 +113,62 @@ export default function LoginPage() {
 
     if (!isHydrated) {
         return (
-            <AuthLayout>
-                <div className="flex justify-center">
-                    <div className="h-6 w-6 rounded-md bg-[#0052ff] text-[0.75rem] font-black text-white grid place-items-center">
-                        S
-                    </div>
-                </div>
-            </AuthLayout>
+            <div style={{ minHeight: '100vh', background: 'linear-gradient(180deg, #f0f5ff 0%, #ffffff 100%)', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <div style={{ width: '24px', height: '24px', background: '#0052ff', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 900, fontSize: '0.75rem' }}>S</div>
+            </div>
         );
     }
 
     return (
-        <AuthLayout
-            title="Welcome back"
-            subtitle="Check your earnings and manage your money."
-            footer={
-                <>
-                    <p className="text-[0.75rem] text-slate-500">
-                        New to smartInvest?{" "}
-                        <Link className="font-semibold text-[#0052ff] hover:underline" href="/register">
-                            Create account
-                        </Link>
-                    </p>
-                    <div className="mt-5 flex items-center justify-center gap-2 text-[0.65rem] font-semibold text-emerald-600">
-                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-                            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-                        </svg>
-                        Secure, encrypted login
-                    </div>
-                </>
-            }
-        >
-            <Card className="text-left" padding="md">
-                <form onSubmit={handleSubmit} className="space-y-3">
-                    <div>
-                        <label
-                            htmlFor="login-email"
-                            className="mb-1.5 block text-[0.8rem] font-semibold"
-                        >
-                            Email Address
-                        </label>
-                        <Input
-                            id="login-email"
-                            type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            placeholder="Enter your email"
-                            required
-                            autoComplete="email"
-                        />
-                    </div>
+        <div style={{ minHeight: '100vh', background: 'linear-gradient(180deg, #f0f5ff 0%, #ffffff 100%)', display: 'flex', justifyContent: 'center', alignItems: 'center', fontFamily: "'Plus Jakarta Sans', sans-serif", color: '#1e293b' }}>
+            <div style={{ width: '90%', maxWidth: '380px', textAlign: 'center', padding: '16px' }}>
+                <div style={{ marginBottom: '28px', display: 'flex', justifyContent: 'center' }}>
+                    <Link href="/"><img src="/lion.png" alt="SmartInvest" style={{ height: '60px', objectFit: 'contain', cursor: 'pointer' }} /></Link>
+                </div>
 
-                    <div>
-                        <label
-                            htmlFor="login-password"
-                            className="mb-1.5 block text-[0.8rem] font-semibold"
-                        >
-                            Password
-                        </label>
-                        <Input
-                            id="login-password"
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            placeholder="Enter your password"
-                            required
-                            autoComplete="current-password"
-                        />
-                        <div className="mt-1.5 text-right">
-                            <Link
-                                href="/forgot-password"
-                                className="text-[0.75rem] font-semibold text-[#0052ff] hover:underline"
-                            >
-                                Forgot password?
-                            </Link>
-                        </div>
-                    </div>
+                <h1 style={{ fontSize: '1.4rem', fontWeight: 800, marginBottom: '8px', letterSpacing: '-0.3px' }}>Welcome back</h1>
+                <p style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '20px', lineHeight: 1.4 }}>Check your earnings and manage your money.</p>
 
-                    {error ? <p className="text-[0.75rem] text-red-600">{error}</p> : null}
+                <div style={{ background: 'white', padding: '20px', borderRadius: '16px', boxShadow: '0 10px 25px rgba(0,0,0,0.04)', border: '1px solid #e2e8f0', textAlign: 'left' }}>
+                    <form onSubmit={handleSubmit}>
+                        <label style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: '6px', display: 'block' }}>Email Address</label>
+                        <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Enter your email" required style={{ width: '100%', padding: '12px', border: '1px solid #cbd5e1', borderRadius: '10px', marginBottom: '14px', fontSize: '0.9rem', outline: 'none', boxSizing: 'border-box' }} />
 
-                    <Button type="submit" className="w-full" isLoading={isLoading}>
-                        Log In
-                    </Button>
+                        <label style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: '6px', display: 'block' }}>Password</label>
+                        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter your password" required style={{ width: '100%', padding: '12px', border: '1px solid #cbd5e1', borderRadius: '10px', marginBottom: '6px', fontSize: '0.9rem', outline: 'none', boxSizing: 'border-box' }} />
 
-                    <Button
-                        type="button"
-                        variant="secondary"
-                        className="w-full"
-                        onClick={handleBiometrics}
-                        disabled={isLoading}
-                    >
-                        <svg
-                            width="16"
-                            height="16"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                        >
-                            <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" />
-                            <circle cx="12" cy="10" r="3" />
-                            <path d="M7 21v-2a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v2" />
-                        </svg>
-                        Use Biometrics
-                    </Button>
-                </form>
-            </Card>
-        </AuthLayout>
+                        <Link href="/forgot-password" style={{ display: 'block', textAlign: 'right', fontSize: '0.75rem', color: '#0052ff', textDecoration: 'none', fontWeight: 600, marginBottom: '16px' }}>Forgot password?</Link>
+
+                        {error && <p style={{ color: '#dc2626', fontSize: '0.75rem', marginBottom: '12px' }}>{error}</p>}
+
+                        <button type="submit" disabled={isLoading} style={{ width: '100%', padding: '14px', background: '#0052ff', color: 'white', border: 'none', borderRadius: '10px', fontSize: '0.95rem', fontWeight: 700, cursor: 'pointer', marginBottom: '12px', opacity: isLoading ? 0.8 : 1 }}>
+                            {isLoading ? "Logging in..." : "Log In"}
+                        </button>
+
+                        <button type="button" onClick={handleBiometrics} disabled={isLoading} style={{ width: '100%', padding: '12px', background: '#f1f5f9', color: '#1e293b', border: 'none', borderRadius: '10px', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+                                <circle cx="12" cy="10" r="3"></circle>
+                                <path d="M7 21v-2a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v2"></path>
+                            </svg>
+                            Use Biometrics
+                        </button>
+                    </form>
+                </div>
+
+                <p style={{ marginTop: '16px', fontSize: '0.75rem', color: '#64748b' }}>
+                    New to smartInvest?{" "}
+                    <Link href="/register" style={{ color: '#0052ff', textDecoration: 'none', fontWeight: 600 }}>Create account</Link>
+                </p>
+
+                <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '5px', fontSize: '0.65rem', color: '#059669', fontWeight: 600 }}>
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                    </svg>
+                    Secure, encrypted login
+                </div>
+            </div>
+        </div>
     );
 }

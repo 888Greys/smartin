@@ -1,14 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 
-import { AuthLayout } from "@/components/layouts/AuthLayout";
-import { Card } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
-
 export default function DepositPage() {
+    const router = useRouter();
     const [phone, setPhone] = useState('');
     const [amount, setAmount] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -21,7 +18,7 @@ export default function DepositPage() {
 
         const amountNum = parseInt(amount);
         if (amountNum < 10) {
-            setError('Minimum deposit is Ksh 10');
+            setError('Minimum deposit is KES 10');
             return;
         }
 
@@ -56,116 +53,122 @@ export default function DepositPage() {
 
     if (success) {
         return (
-            <AuthLayout
-                title="Check your phone!"
-                subtitle={
-                    <>
-                        We&apos;ve sent an M-Pesa prompt to <strong>{phone}</strong>. Enter your PIN to
-                        complete the deposit of <strong>Ksh {amount}</strong>.
-                    </>
-                }
-                footer={
-                    <Link href="/dashboard" className="text-[0.8rem] text-slate-500 hover:underline">
-                        ← Back to Dashboard
-                    </Link>
-                }
-            >
-                <div className="text-5xl">📱</div>
-                <div className="mt-5 rounded-xl bg-[#f0f5ff] px-4 py-3">
-                    <p className="text-[0.75rem] font-semibold text-[#0052ff]">
-                        💡 Didn&apos;t receive the prompt? Wait a few seconds or try again.
+            <div style={{ minHeight: '100vh', background: 'linear-gradient(180deg, #f0f5ff 0%, #ffffff 100%)', display: 'flex', justifyContent: 'center', alignItems: 'center', fontFamily: "'Plus Jakarta Sans', sans-serif", color: '#1e293b' }}>
+                <div style={{ width: '90%', maxWidth: '380px', textAlign: 'center', padding: '16px' }}>
+                    <div style={{ fontSize: '3rem', marginBottom: '20px' }}>📱</div>
+                    <h1 style={{ fontSize: '1.4rem', fontWeight: 800, marginBottom: '12px' }}>Check your phone!</h1>
+                    <p style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '24px', lineHeight: 1.5 }}>
+                        We&apos;ve sent an M-Pesa prompt to <strong>{phone}</strong>. Enter your PIN to complete the deposit of <strong>KES {amount}</strong>.
                     </p>
-                </div>
-                <div className="mt-4">
-                    <Button
-                        onClick={() => {
-                            setSuccess(false);
-                            setPhone('');
-                            setAmount('');
-                        }}
-                        className="w-full"
+                    <div style={{ background: '#f0f5ff', padding: '14px', borderRadius: '12px', marginBottom: '20px' }}>
+                        <p style={{ fontSize: '0.75rem', color: '#0052ff', fontWeight: 600 }}>
+                            💡 Didn&apos;t receive the prompt? Wait a few seconds or try again.
+                        </p>
+                    </div>
+                    <button
+                        onClick={() => { setSuccess(false); setPhone(''); setAmount(''); }}
+                        style={{ width: '100%', padding: '14px', background: '#0052ff', color: 'white', border: 'none', borderRadius: '10px', fontSize: '0.95rem', fontWeight: 700, cursor: 'pointer', marginBottom: '12px' }}
                     >
                         Make Another Deposit
-                    </Button>
+                    </button>
+                    <Link href="/dashboard" style={{ display: 'block', fontSize: '0.8rem', color: '#64748b', textDecoration: 'none' }}>
+                        ← Back to Dashboard
+                    </Link>
                 </div>
-            </AuthLayout>
+            </div>
         );
     }
 
     return (
-        <AuthLayout
-            title="Deposit Funds"
-            subtitle="Add money to your smartInvest account via M-Pesa."
-            footer={
-                <Link href="/dashboard" className="text-[0.75rem] text-slate-500 hover:underline">
-                    ← Back to Dashboard
-                </Link>
-            }
-        >
-            <Card className="text-left" padding="md">
-                <form onSubmit={handleDeposit} className="space-y-3">
-                    <div>
-                        <label htmlFor="dep-phone" className="mb-1.5 block text-[0.8rem] font-semibold">
+        <div style={{ minHeight: '100vh', background: 'linear-gradient(180deg, #f0f5ff 0%, #ffffff 100%)', display: 'flex', justifyContent: 'center', alignItems: 'center', fontFamily: "'Plus Jakarta Sans', sans-serif", color: '#1e293b' }}>
+            <div style={{ width: '90%', maxWidth: '380px', textAlign: 'center', padding: '16px' }}>
+                {/* Logo */}
+                <div style={{ fontSize: '1.2rem', fontWeight: 800, marginBottom: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+                    <div style={{ width: '26px', height: '26px', background: '#0052ff', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 900, fontSize: '0.85rem' }}>S</div>
+                    smart<span style={{ color: '#0052ff' }}>Invest</span>
+                </div>
+
+                <h1 style={{ fontSize: '1.4rem', fontWeight: 800, marginBottom: '8px', letterSpacing: '-0.3px' }}>
+                    Deposit Funds
+                </h1>
+                <p style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '20px', lineHeight: 1.4 }}>
+                    Add money to your smartInvest account via M-Pesa.
+                </p>
+
+                <div style={{ background: 'white', padding: '20px', borderRadius: '16px', boxShadow: '0 10px 25px rgba(0,0,0,0.04)', border: '1px solid #e2e8f0', textAlign: 'left' }}>
+                    <form onSubmit={handleDeposit}>
+                        <label style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: '6px', display: 'block' }}>
                             M-Pesa Phone Number
                         </label>
-                        <Input
-                            id="dep-phone"
+                        <input
                             type="tel"
                             value={phone}
                             onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 12))}
                             placeholder="07XXXXXXXX"
                             required
-                            inputMode="numeric"
+                            style={{ width: '100%', padding: '12px', border: '1px solid #cbd5e1', borderRadius: '10px', marginBottom: '14px', fontSize: '0.9rem', outline: 'none', boxSizing: 'border-box' }}
                         />
-                    </div>
 
-                    <div>
-                        <label htmlFor="dep-amt" className="mb-1.5 block text-[0.8rem] font-semibold">
-                            Amount (Ksh)
+                        <label style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: '6px', display: 'block' }}>
+                            Amount (KES)
                         </label>
-                        <Input
-                            id="dep-amt"
+                        <input
                             type="number"
                             value={amount}
                             onChange={(e) => setAmount(e.target.value)}
-                            placeholder="Minimum Ksh 10"
-                            min={10}
+                            placeholder="Minimum KES 10"
+                            min="10"
                             required
+                            style={{ width: '100%', padding: '12px', border: '1px solid #cbd5e1', borderRadius: '10px', marginBottom: '14px', fontSize: '0.9rem', outline: 'none', boxSizing: 'border-box' }}
                         />
-                    </div>
 
-                    <div className="flex gap-2">
-                        {[100, 500, 1000, 5000].map((amt) => (
-                            <button
-                                key={amt}
-                                type="button"
-                                onClick={() => setAmount(amt.toString())}
-                                className={
-                                    "flex-1 rounded-lg px-2 py-2 text-[0.75rem] font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0052ff] focus-visible:ring-offset-2 " +
-                                    (amount === amt.toString()
-                                        ? "bg-[#0052ff] text-white"
-                                        : "bg-slate-100 text-slate-600 hover:bg-slate-200")
-                                }
-                            >
-                                {amt}
-                            </button>
-                        ))}
-                    </div>
+                        {/* Quick amounts */}
+                        <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
+                            {[100, 500, 1000, 5000].map((amt) => (
+                                <button
+                                    key={amt}
+                                    type="button"
+                                    onClick={() => setAmount(amt.toString())}
+                                    style={{
+                                        flex: 1,
+                                        padding: '8px',
+                                        background: amount === amt.toString() ? '#0052ff' : '#f1f5f9',
+                                        color: amount === amt.toString() ? 'white' : '#64748b',
+                                        border: 'none',
+                                        borderRadius: '8px',
+                                        fontSize: '0.75rem',
+                                        fontWeight: 600,
+                                        cursor: 'pointer'
+                                    }}
+                                >
+                                    {amt}
+                                </button>
+                            ))}
+                        </div>
 
-                    <div className="flex items-center gap-2 rounded-xl bg-[#f0f5ff] px-3 py-2">
-                        <span className="text-base">🔒</span>
-                        <span className="text-[0.75rem] font-semibold leading-snug text-[#0052ff]">
-                            Secure M-Pesa payment. You&apos;ll receive an STK push.
-                        </span>
-                    </div>
+                        <div style={{ background: '#f0f5ff', padding: '10px 12px', borderRadius: '10px', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                            <span style={{ fontSize: '1rem' }}>🔒</span>
+                            <span style={{ fontSize: '0.75rem', color: '#0052ff', fontWeight: 600, lineHeight: 1.3 }}>
+                                Secure M-Pesa payment. You&apos;ll receive an STK push.
+                            </span>
+                        </div>
 
-                    {error ? <p className="text-[0.75rem] text-red-600">{error}</p> : null}
+                        {error && <p style={{ color: '#dc2626', fontSize: '0.75rem', marginBottom: '12px' }}>{error}</p>}
 
-                    <Button type="submit" className="w-full" isLoading={isLoading}>
-                        {isLoading ? "Sending request..." : `Deposit${amount ? ` Ksh ${amount}` : ""}`}
-                    </Button>
-                </form>
-            </Card>
-        </AuthLayout>
+                        <button
+                            type="submit"
+                            disabled={isLoading}
+                            style={{ width: '100%', padding: '14px', background: '#059669', color: 'white', border: 'none', borderRadius: '10px', fontSize: '0.95rem', fontWeight: 700, cursor: 'pointer', opacity: isLoading ? 0.8 : 1 }}
+                        >
+                            {isLoading ? "Sending request..." : `Deposit ${amount ? `KES ${amount}` : ''}`}
+                        </button>
+                    </form>
+                </div>
+
+                <Link href="/dashboard" style={{ display: 'block', marginTop: '16px', fontSize: '0.75rem', color: '#64748b', textDecoration: 'none' }}>
+                    ← Back to Dashboard
+                </Link>
+            </div>
+        </div>
     );
 }
