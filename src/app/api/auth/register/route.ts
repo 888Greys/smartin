@@ -9,6 +9,16 @@ const JWT_SECRET = process.env.JWT_SECRET || 'smartinvest-secret-key-change-in-p
 const LEVEL_1_BONUS = 20; // Direct referral bonus
 const LEVEL_2_BONUS = 5;  // Indirect referral bonus (referrer's referrer)
 
+// Generate short 6-character referral code
+function generateReferralCode(): string {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // Exclude confusing chars like 0,O,1,I
+    let code = '';
+    for (let i = 0; i < 6; i++) {
+        code += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return code;
+}
+
 export async function POST(request: NextRequest) {
     try {
         const { email, password, referralCode } = await request.json();
@@ -57,6 +67,16 @@ export async function POST(request: NextRequest) {
         // Hash password
         const passwordHash = await bcrypt.hash(password, 12);
 
+        // Generate unique referral code
+        let newReferralCode = generateReferralCode();
+        let attempts = 0;
+        while (attempts < 10) {
+            const existing = await prisma.user.findUnique({ where: { referralCode: newReferralCode } });
+            if (!existing) break;
+            newReferralCode = generateReferralCode();
+            attempts++;
+        }
+
         // Create user with referral info
         const user = await prisma.user.create({
             data: {
@@ -65,6 +85,7 @@ export async function POST(request: NextRequest) {
                 balance: 10.00, // Starting balance
                 isVerified: true, // Already verified via OTP
                 referredBy: referrerId,
+                referralCode: newReferralCode,
             }
         });
 

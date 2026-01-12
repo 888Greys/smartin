@@ -99,6 +99,13 @@ export default function DashboardPage() {
     const [profileMessage, setProfileMessage] = useState('');
     const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
 
+    // Toast notification state
+    const [toast, setToast] = useState<string | null>(null);
+    const showToast = (message: string) => {
+        setToast(message);
+        setTimeout(() => setToast(null), 3000);
+    };
+
     useEffect(() => {
         const fetchUser = async () => {
             // DEV MODE - controlled by environment variable
@@ -2270,7 +2277,7 @@ export default function DashboardPage() {
                                             const code = user?.referralCode;
                                             if (code) {
                                                 navigator.clipboard.writeText(code);
-                                                alert('Referral code copied!');
+                                                showToast('✅ Referral code copied!');
                                             }
                                         }}
                                         style={{
@@ -2312,7 +2319,7 @@ export default function DashboardPage() {
                                         onClick={() => {
                                             const link = `${window.location.origin}/register?ref=${user?.referralCode}`;
                                             navigator.clipboard.writeText(link);
-                                            alert('Invite link copied!');
+                                            showToast('✅ Invite link copied!');
                                         }}
                                         style={{
                                             padding: '12px 20px',
@@ -2938,6 +2945,27 @@ export default function DashboardPage() {
                             </button>
                         </div>
                     </div>
+                </div>
+            )}
+
+            {/* TOAST NOTIFICATION */}
+            {toast && (
+                <div style={{
+                    position: 'fixed',
+                    bottom: '30px',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)',
+                    color: 'white',
+                    padding: '16px 30px',
+                    borderRadius: '16px',
+                    boxShadow: '0 10px 40px rgba(0, 0, 0, 0.3)',
+                    zIndex: 3000,
+                    animation: 'slideUp 0.3s ease',
+                    fontSize: '0.95rem',
+                    fontWeight: 600
+                }}>
+                    {toast}
                 </div>
             )}
 
