@@ -48,6 +48,18 @@ export default function DashboardPage() {
     const [depositError, setDepositError] = useState('');
     const [depositSuccess, setDepositSuccess] = useState(false);
 
+    // Transaction history state
+    interface Transaction {
+        id: string;
+        type: string;
+        amount: number;
+        status: string;
+        reference: string | null;
+        createdAt: string;
+    }
+    const [transactions, setTransactions] = useState<Transaction[]>([]);
+    const [loadingTransactions, setLoadingTransactions] = useState(false);
+
     // Profile form state
     const [profileName, setProfileName] = useState('');
     const [profilePhone, setProfilePhone] = useState('');
@@ -734,9 +746,13 @@ export default function DashboardPage() {
 
                                         setDepositLoading(true);
                                         try {
+                                            const token = localStorage.getItem('smartinvest_token');
                                             const res = await fetch('/api/mpesa/initiate', {
                                                 method: 'POST',
-                                                headers: { 'Content-Type': 'application/json' },
+                                                headers: {
+                                                    'Content-Type': 'application/json',
+                                                    'Authorization': token ? `Bearer ${token}` : ''
+                                                },
                                                 body: JSON.stringify({ phone: depositPhone, amount: amountNum }),
                                             });
                                             const data = await res.json();
@@ -755,6 +771,82 @@ export default function DashboardPage() {
                                 </button>
                             </div>
                         )}
+
+                        {/* Transaction History */}
+                        <div style={{ background: 'white', padding: '25px', borderRadius: '24px', border: '1px solid #e2e8f0', marginTop: '25px' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                                <h3 style={{ fontSize: '1.1rem', fontWeight: 800 }}>Transaction History</h3>
+                                <button
+                                    onClick={async () => {
+                                        const token = localStorage.getItem('smartinvest_token');
+                                        if (!token) return;
+                                        setLoadingTransactions(true);
+                                        try {
+                                            const res = await fetch('/api/transactions', {
+                                                headers: { 'Authorization': `Bearer ${token}` }
+                                            });
+                                            const data = await res.json();
+                                            if (res.ok) setTransactions(data.transactions || []);
+                                        } catch { /* ignore */ }
+                                        setLoadingTransactions(false);
+                                    }}
+                                    style={{ padding: '8px 16px', background: '#f1f5f9', border: 'none', borderRadius: '8px', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer' }}
+                                >
+                                    {loadingTransactions ? 'Loading...' : '↻ Refresh'}
+                                </button>
+                            </div>
+
+                            {transactions.length === 0 ? (
+                                <div style={{ textAlign: 'center', padding: '30px', color: '#94a3b8' }}>
+                                    <div style={{ fontSize: '2rem', marginBottom: '10px' }}>📋</div>
+                                    <p>No transactions yet</p>
+                                    <p style={{ fontSize: '0.8rem' }}>Your deposits and withdrawals will appear here</p>
+                                </div>
+                            ) : (
+                                <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
+                                    {transactions.map((tx) => (
+                                        <div key={tx.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 0', borderBottom: '1px solid #f1f5f9' }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                                <div style={{
+                                                    width: '40px',
+                                                    height: '40px',
+                                                    borderRadius: '10px',
+                                                    background: tx.type === 'deposit' ? '#dcfce7' : '#fef3c7',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    fontSize: '1.2rem'
+                                                }}>
+                                                    {tx.type === 'deposit' ? '↓' : '↑'}
+                                                </div>
+                                                <div>
+                                                    <p style={{ fontWeight: 600, textTransform: 'capitalize' }}>{tx.type}</p>
+                                                    <p style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
+                                                        {new Date(tx.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div style={{ textAlign: 'right' }}>
+                                                <p style={{ fontWeight: 800, color: tx.type === 'deposit' ? '#059669' : '#f59e0b' }}>
+                                                    {tx.type === 'deposit' ? '+' : '-'}Ksh {tx.amount.toLocaleString()}
+                                                </p>
+                                                <p style={{
+                                                    fontSize: '0.7rem',
+                                                    padding: '2px 8px',
+                                                    borderRadius: '10px',
+                                                    background: tx.status === 'completed' ? '#dcfce7' : tx.status === 'pending' ? '#fef3c7' : '#fee2e2',
+                                                    color: tx.status === 'completed' ? '#059669' : tx.status === 'pending' ? '#b45309' : '#dc2626',
+                                                    textTransform: 'capitalize',
+                                                    display: 'inline-block'
+                                                }}>
+                                                    {tx.status}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
                     </div>
                 )}
 
