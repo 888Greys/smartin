@@ -233,13 +233,13 @@ function RegisterContent() {
 
                             <div style={{ background: '#f0f5ff', padding: '10px 12px', borderRadius: '10px', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '10px' }}>
                                 <span style={{ fontSize: '1rem' }}>📈</span>
-                                <span style={{ fontSize: '0.75rem', color: '#0052ff', fontWeight: 600, lineHeight: 1.3 }}>Deposit $10 today and see your first earnings tomorrow.</span>
+                                <span style={{ fontSize: '0.75rem', color: '#0052ff', fontWeight: 600, lineHeight: 1.3 }}>Deposit Ksh 200 today and see your first earnings tomorrow.</span>
                             </div>
 
                             {error && <p style={{ color: '#dc2626', fontSize: '0.75rem', marginBottom: '12px' }}>{error}</p>}
 
                             <button type="submit" disabled={isLoading} style={{ width: '100%', padding: '14px', background: '#0052ff', color: 'white', border: 'none', borderRadius: '10px', fontSize: '0.95rem', fontWeight: 700, cursor: 'pointer', opacity: isLoading ? 0.8 : 1 }}>
-                                {isLoading ? "Sending code..." : "Grow my $10"}
+                                {isLoading ? "Sending code..." : "Grow my Ksh 200"}
                             </button>
                         </form>
                     </div>
@@ -249,6 +249,7 @@ function RegisterContent() {
 
         return (
             <>
+                <img src="/lion.png" alt="SmartInvest" style={{ height: '50px', marginBottom: '20px' }} />
                 <h1 style={{ fontSize: '1.4rem', fontWeight: 800, marginBottom: '8px', letterSpacing: '-0.3px' }}>Check your email</h1>
                 <p style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '20px', lineHeight: 1.4 }}>We sent a code to <strong style={{ color: '#1e293b' }}>{email}</strong></p>
                 <div style={{ background: 'white', padding: '20px', borderRadius: '16px', boxShadow: '0 10px 25px rgba(0,0,0,0.04)', border: '1px solid #e2e8f0', textAlign: 'left' }}>
