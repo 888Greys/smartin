@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { Suspense } from "react";
 
 type Step = 'register' | 'otp';
 
@@ -10,15 +11,20 @@ interface RegistrationState {
     step: Step;
     email: string;
     password: string;
+    referralCode: string;
     timestamp: number;
 }
 
-export default function RegisterPage() {
+function RegisterContent() {
+
     const router = useRouter();
+    const searchParams = useSearchParams();
     const [step, setStep] = useState<Step>('register');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+    const [referralCode, setReferralCode] = useState('');
+    const [showReferralInput, setShowReferralInput] = useState(false);
     const [otp, setOtp] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
@@ -32,6 +38,13 @@ export default function RegisterPage() {
             return;
         }
 
+        // Check for referral code in URL
+        const refCode = searchParams.get('ref');
+        if (refCode) {
+            setReferralCode(refCode);
+            setShowReferralInput(true);
+        }
+
         const saved = localStorage.getItem('smartinvest_registration');
         if (saved) {
             try {
@@ -40,6 +53,7 @@ export default function RegisterPage() {
                     setStep(state.step);
                     setEmail(state.email);
                     setPassword(state.password);
+                    if (state.referralCode) setReferralCode(state.referralCode);
                 } else {
                     localStorage.removeItem('smartinvest_registration');
                 }
@@ -48,14 +62,14 @@ export default function RegisterPage() {
             }
         }
         setIsHydrated(true);
-    }, [router]);
+    }, [router, searchParams]);
 
     useEffect(() => {
         if (step === 'otp' && email && password) {
-            const state: RegistrationState = { step, email, password, timestamp: Date.now() };
+            const state: RegistrationState = { step, email, password, referralCode, timestamp: Date.now() };
             localStorage.setItem('smartinvest_registration', JSON.stringify(state));
         }
-    }, [step, email, password]);
+    }, [step, email, password, referralCode]);
 
     const clearSavedState = () => {
         localStorage.removeItem('smartinvest_registration');
@@ -120,11 +134,11 @@ export default function RegisterPage() {
                 return;
             }
 
-            // Create account
+            // Create account with referral code
             const registerRes = await fetch('/api/auth/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password }),
+                body: JSON.stringify({ email, password, referralCode }),
             });
             const registerData = await registerRes.json();
             if (!registerRes.ok) {
@@ -201,6 +215,34 @@ export default function RegisterPage() {
                             <label style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: '6px', display: 'block' }}>Confirm Password</label>
                             <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Re-enter your password" required style={{ width: '100%', padding: '12px', border: '1px solid #cbd5e1', borderRadius: '10px', marginBottom: '14px', fontSize: '0.9rem', outline: 'none', boxSizing: 'border-box' }} />
 
+                            {/* Referral Code Input */}
+                            {!showReferralInput ? (
+                                <button
+                                    type="button"
+                                    onClick={() => setShowReferralInput(true)}
+                                    style={{ background: 'transparent', color: '#0052ff', border: 'none', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer', marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '5px' }}
+                                >
+                                    🎁 Have a referral code?
+                                </button>
+                            ) : (
+                                <>
+                                    <label style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: '6px', display: 'block' }}>Referral Code (optional)</label>
+                                    <input
+                                        type="text"
+                                        value={referralCode}
+                                        onChange={(e) => setReferralCode(e.target.value.toUpperCase())}
+                                        placeholder="Enter referral code"
+                                        style={{ width: '100%', padding: '12px', border: '1px solid #10b981', borderRadius: '10px', marginBottom: '14px', fontSize: '0.9rem', outline: 'none', boxSizing: 'border-box', background: '#f0fdf4' }}
+                                    />
+                                    {referralCode && (
+                                        <div style={{ background: '#f0fdf4', padding: '10px 12px', borderRadius: '10px', marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '10px', border: '1px solid #bbf7d0' }}>
+                                            <span style={{ fontSize: '1rem' }}>🎉</span>
+                                            <span style={{ fontSize: '0.75rem', color: '#059669', fontWeight: 600, lineHeight: 1.3 }}>You'll get a KES 10 welcome bonus!</span>
+                                        </div>
+                                    )}
+                                </>
+                            )}
+
                             <div style={{ background: '#f0f5ff', padding: '10px 12px', borderRadius: '10px', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '10px' }}>
                                 <span style={{ fontSize: '1rem' }}>📈</span>
                                 <span style={{ fontSize: '0.75rem', color: '#0052ff', fontWeight: 600, lineHeight: 1.3 }}>Deposit $10 today and see your first earnings tomorrow.</span>
@@ -264,5 +306,17 @@ export default function RegisterPage() {
                 </div>
             </div>
         </div>
+    );
+}
+
+export default function RegisterPage() {
+    return (
+        <Suspense fallback={
+            <div style={{ minHeight: '100vh', background: 'linear-gradient(180deg, #f0f5ff 0%, #ffffff 100%)', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <img src="/lion.png" alt="SmartInvest" style={{ height: '40px', objectFit: 'contain' }} />
+            </div>
+        }>
+            <RegisterContent />
+        </Suspense>
     );
 }

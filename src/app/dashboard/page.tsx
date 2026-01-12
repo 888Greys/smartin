@@ -27,7 +27,7 @@ interface User {
     referralEarnings?: number;
 }
 
-type Section = 'home' | 'market' | 'investments' | 'trading' | 'staking' | 'pools' | 'wallet' | 'profile';
+type Section = 'home' | 'market' | 'investments' | 'trading' | 'staking' | 'pools' | 'uber-fleet' | 'wallet' | 'team' | 'profile';
 
 export default function DashboardPage() {
     const router = useRouter();
@@ -43,19 +43,19 @@ export default function DashboardPage() {
     const [expandedRig, setExpandedRig] = useState<string | null>(null);
     const [showRentModal, setShowRentModal] = useState(false);
     const [selectedRig, setSelectedRig] = useState<any>(null);
-    
+
     // Mining simulation states
     const [cpuTemp, setCpuTemp] = useState(68);
     const [fanSpeed, setFanSpeed] = useState(3200);
     const [hashrate, setHashrate] = useState(142.5);
     const [miningLogs, setMiningLogs] = useState<string[]>([]);
-    const [payoutTicker, setPayoutTicker] = useState<Array<{id: number, text: string, amount: string}>>([]);
+    const [payoutTicker, setPayoutTicker] = useState<Array<{ id: number, text: string, amount: string }>>([]);
     const [xRayMode, setXRayMode] = useState(false);
     const [activeMiners, setActiveMiners] = useState(0);
     const [totalMined, setTotalMined] = useState(0);
     const [activityFeedExpanded, setActivityFeedExpanded] = useState(false);
     const [miningTerminalExpanded, setMiningTerminalExpanded] = useState(false);
-    const [rentedBots, setRentedBots] = useState<Array<{id: string, name: string, icon: string, dailyEarnings: number, price: number, rentedAt: string, duration: string}>>([]);
+    const [rentedBots, setRentedBots] = useState<Array<{ id: string, name: string, icon: string, dailyEarnings: number, price: number, rentedAt: string, duration: string }>>([]);
     const [rentalSuccess, setRentalSuccess] = useState<string | null>(null);
 
     // Deposit form state
@@ -106,7 +106,7 @@ export default function DashboardPage() {
             const token = localStorage.getItem('smartinvest_token');
             const DEV_BYPASS = process.env.NEXT_PUBLIC_DEV_BYPASS === 'true';
             const DEMO_MODE = DEV_BYPASS || token === 'dev-bypass-token';
-            
+
             if (DEMO_MODE) {
                 setUser({
                     id: 'demo123',
@@ -249,7 +249,7 @@ export default function DashboardPage() {
             const phone = `${prefix}***${lastDigits}`;
             const amount = (Math.random() * 5000 + 500).toFixed(0);
             const action = actions[Math.floor(Math.random() * actions.length)];
-            
+
             const notification = {
                 id: Date.now(),
                 text: action.type === 'withdrawal' ? `+KSh ${amount}` : action.text,
@@ -257,7 +257,7 @@ export default function DashboardPage() {
             };
 
             setPayoutTicker(prev => {
-                const newTicker = [{...notification, text: `${notification.text} ${phone} ${notification.amount}`.trim()}, ...prev];
+                const newTicker = [{ ...notification, text: `${notification.text} ${phone} ${notification.amount}`.trim() }, ...prev];
                 return newTicker.slice(0, 8); // Keep only last 8 notifications
             });
         }, 6000);
@@ -295,18 +295,18 @@ export default function DashboardPage() {
     // Bot earnings simulation - adds to balance every minute for each active bot
     useEffect(() => {
         if (rentedBots.length === 0) return;
-        
+
         const interval = setInterval(() => {
             // Calculate per-minute earnings (dailyEarnings / 1440 minutes * simulation speed)
             const totalPerMinute = rentedBots.reduce((sum, bot) => {
                 return sum + (bot.dailyEarnings / 1440) * 10; // 10x speed for demo
             }, 0);
-            
+
             if (totalPerMinute > 0) {
                 setBalance(prev => prev + totalPerMinute);
             }
         }, 60000); // Every minute
-        
+
         return () => clearInterval(interval);
     }, [rentedBots]);
 
@@ -359,17 +359,18 @@ export default function DashboardPage() {
             ]
         },
         { id: 'wallet', label: 'Wallet' },
+        { id: 'team', label: 'Team' },
         { id: 'profile', label: 'Profile' },
     ];
 
     // Mining Rigs Data
     const miningRigs = [
-        { 
-            id: 'antminer-s19', 
-            name: 'Antminer S19', 
-            icon: '⛏️', 
-            dailyEarnings: 450, 
-            price: 1500, 
+        {
+            id: 'antminer-s19',
+            name: 'Antminer S19',
+            icon: '⛏️',
+            dailyEarnings: 450,
+            price: 1500,
             category: 'Crypto Mining',
             description: 'High-performance Bitcoin mining hardware with 95 TH/s hashrate.',
             roi: '15%',
@@ -377,12 +378,12 @@ export default function DashboardPage() {
             hashrate: '95 TH/s',
             powerConsumption: '3250W'
         },
-        { 
-            id: 'uber-fleet', 
-            name: 'Uber Fleet Share', 
-            icon: '🚗', 
-            dailyEarnings: 900, 
-            price: 3000, 
+        {
+            id: 'uber-fleet',
+            name: 'Uber Fleet Share',
+            icon: '🚗',
+            dailyEarnings: 900,
+            price: 3000,
             category: 'Asset Sharing',
             description: 'Earn from ride-sharing without owning a car. Get a share of daily fleet earnings.',
             roi: '30%',
@@ -390,12 +391,12 @@ export default function DashboardPage() {
             vehicles: '5 cars',
             coverage: 'Nairobi Metro'
         },
-        { 
-            id: 'delivery-truck', 
-            name: 'Delivery Truck', 
-            icon: '🚚', 
-            dailyEarnings: 2500, 
-            price: 8000, 
+        {
+            id: 'delivery-truck',
+            name: 'Delivery Truck',
+            icon: '🚚',
+            dailyEarnings: 2500,
+            price: 8000,
             category: 'Asset Sharing',
             description: 'Commercial delivery truck generating income from logistics operations.',
             roi: '31%',
@@ -403,12 +404,12 @@ export default function DashboardPage() {
             capacity: '5 tons',
             routes: 'Nationwide'
         },
-        { 
-            id: 'solar-unit', 
-            name: 'Solar Unit', 
-            icon: '☀️', 
-            dailyEarnings: 4800, 
-            price: 15000, 
+        {
+            id: 'solar-unit',
+            name: 'Solar Unit',
+            icon: '☀️',
+            dailyEarnings: 4800,
+            price: 15000,
             category: 'Green Energy',
             description: 'Solar panel system selling clean energy to the national grid.',
             roi: '32%',
@@ -416,12 +417,12 @@ export default function DashboardPage() {
             output: '50 kW',
             efficiency: '22%'
         },
-        { 
-            id: 'ai-neural', 
-            name: 'AI Neural Hub', 
-            icon: '🤖', 
-            dailyEarnings: 10000, 
-            price: 30000, 
+        {
+            id: 'ai-neural',
+            name: 'AI Neural Hub',
+            icon: '🤖',
+            dailyEarnings: 10000,
+            price: 30000,
             category: 'Tech Infrastructure',
             description: 'GPU cluster for AI model training and machine learning computations.',
             roi: '33%',
@@ -429,12 +430,12 @@ export default function DashboardPage() {
             gpus: '8x NVIDIA A100',
             performance: '640 TFLOPS'
         },
-        { 
-            id: 'e-boda', 
-            name: 'E-Boda Asset', 
-            icon: '🏍️', 
-            dailyEarnings: 320, 
-            price: 1000, 
+        {
+            id: 'e-boda',
+            name: 'E-Boda Asset',
+            icon: '🏍️',
+            dailyEarnings: 320,
+            price: 1000,
             category: 'Asset Sharing',
             description: 'Electric motorcycle for boda-boda ride-sharing services.',
             roi: '32%',
@@ -442,12 +443,12 @@ export default function DashboardPage() {
             range: '80km',
             charging: '2 hours'
         },
-        { 
-            id: '5g-tower', 
-            name: '5G Tower Share', 
-            icon: '📡', 
-            dailyEarnings: 20000, 
-            price: 60000, 
+        {
+            id: '5g-tower',
+            name: '5G Tower Share',
+            icon: '📡',
+            dailyEarnings: 20000,
+            price: 60000,
             category: 'Tech Infrastructure',
             description: 'Own a share of 5G telecommunications infrastructure.',
             roi: '33%',
@@ -455,12 +456,12 @@ export default function DashboardPage() {
             coverage: '5km radius',
             carriers: 'Multi-operator'
         },
-        { 
-            id: 'firewall-rig', 
-            name: 'Firewall Rig', 
-            icon: '🔥', 
-            dailyEarnings: 750, 
-            price: 2500, 
+        {
+            id: 'firewall-rig',
+            name: 'Firewall Rig',
+            icon: '🔥',
+            dailyEarnings: 750,
+            price: 2500,
             category: 'Crypto Mining',
             description: 'Ethereum mining rig optimized for maximum hash rate and efficiency.',
             roi: '30%',
@@ -468,12 +469,12 @@ export default function DashboardPage() {
             hashrate: '420 MH/s',
             algorithm: 'Ethash'
         },
-        { 
-            id: 'asic-pro', 
-            name: 'ASIC Pro Miner', 
-            icon: '💎', 
-            dailyEarnings: 1200, 
-            price: 4000, 
+        {
+            id: 'asic-pro',
+            name: 'ASIC Pro Miner',
+            icon: '💎',
+            dailyEarnings: 1200,
+            price: 4000,
             category: 'Crypto Mining',
             description: 'Next-gen ASIC miner with advanced cooling system for 24/7 operation.',
             roi: '30%',
@@ -481,12 +482,12 @@ export default function DashboardPage() {
             hashrate: '140 TH/s',
             powerConsumption: '3400W'
         },
-        { 
-            id: 'gpu-farm', 
-            name: 'GPU Mining Farm', 
-            icon: '🖥️', 
-            dailyEarnings: 2200, 
-            price: 7500, 
+        {
+            id: 'gpu-farm',
+            name: 'GPU Mining Farm',
+            icon: '🖥️',
+            dailyEarnings: 2200,
+            price: 7500,
             category: 'Crypto Mining',
             description: 'Multi-GPU mining setup for altcoin mining with high flexibility.',
             roi: '29%',
@@ -494,12 +495,12 @@ export default function DashboardPage() {
             hashrate: '1.2 GH/s',
             powerConsumption: '4800W'
         },
-        { 
-            id: 'quantum-hasher', 
-            name: 'Quantum Hasher X1', 
-            icon: '⚡', 
-            dailyEarnings: 3500, 
-            price: 12000, 
+        {
+            id: 'quantum-hasher',
+            name: 'Quantum Hasher X1',
+            icon: '⚡',
+            dailyEarnings: 3500,
+            price: 12000,
             category: 'Crypto Mining',
             description: 'Premium quantum-resistant mining hardware with industry-leading efficiency.',
             roi: '29%',
@@ -507,12 +508,12 @@ export default function DashboardPage() {
             hashrate: '250 TH/s',
             powerConsumption: '5200W'
         },
-        { 
-            id: 'spacelink-node', 
-            name: 'SpaceLink Node', 
-            icon: '🛰️', 
-            dailyEarnings: 45000, 
-            price: 120000, 
+        {
+            id: 'spacelink-node',
+            name: 'SpaceLink Node',
+            icon: '🛰️',
+            dailyEarnings: 45000,
+            price: 120000,
             category: 'Tech Infrastructure',
             description: 'Satellite internet ground station providing high-speed connectivity.',
             roi: '37%',
@@ -950,7 +951,7 @@ export default function DashboardPage() {
                     <div style={{ animation: 'fadeIn 0.3s ease' }}>
                         {/* All Mining Rigs organized by category */}
                         <h3 style={{ fontSize: '1.3rem', fontWeight: 800, marginBottom: '20px' }}>Investment Marketplace</h3>
-                        
+
                         {/* Crypto Mining Bots */}
                         <div style={{ marginBottom: '30px' }}>
                             <h4 style={{ fontSize: '1rem', fontWeight: 700, color: '#64748b', marginBottom: '15px' }}>🤖 Crypto Mining Bots</h4>
@@ -1157,7 +1158,7 @@ export default function DashboardPage() {
                         {['Green Energy', 'Tech Infrastructure'].map(category => {
                             const categoryRigs = miningRigs.filter(rig => rig.category === category);
                             if (categoryRigs.length === 0) return null;
-                            
+
                             return (
                                 <div key={category} style={{ marginBottom: '30px' }}>
                                     <h4 style={{ fontSize: '1rem', fontWeight: 700, color: '#64748b', marginBottom: '15px' }}>
@@ -1330,7 +1331,7 @@ export default function DashboardPage() {
                                         const rentedDate = new Date(bot.rentedAt);
                                         const daysActive = Math.floor((Date.now() - rentedDate.getTime()) / (1000 * 60 * 60 * 24)) + 1;
                                         const totalEarned = bot.dailyEarnings * daysActive;
-                                        
+
                                         return (
                                             <div
                                                 key={bot.id + '-rented'}
@@ -1366,7 +1367,7 @@ export default function DashboardPage() {
                                                     }}></div>
                                                     MINING
                                                 </div>
-                                                
+
                                                 <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
                                                     <div style={{
                                                         width: '50px',
@@ -1385,11 +1386,11 @@ export default function DashboardPage() {
                                                         <p style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Day {daysActive} of {bot.duration}</p>
                                                     </div>
                                                 </div>
-                                                
-                                                <div style={{ 
-                                                    display: 'grid', 
-                                                    gridTemplateColumns: '1fr 1fr', 
-                                                    gap: '10px', 
+
+                                                <div style={{
+                                                    display: 'grid',
+                                                    gridTemplateColumns: '1fr 1fr',
+                                                    gap: '10px',
                                                     marginTop: '15px',
                                                     paddingTop: '15px',
                                                     borderTop: '1px solid rgba(255, 255, 255, 0.1)'
@@ -1422,191 +1423,192 @@ export default function DashboardPage() {
                                 const stockLeft = stockCounts[index] || 3;
                                 const isLowStock = stockLeft <= 5;
                                 const isAlreadyRented = rentedBots.some(bot => bot.id === rig.id);
-                                
+
                                 return (
-                                <div
-                                    key={rig.id}
-                                    style={{
-                                        background: isAlreadyRented ? 'rgba(17, 25, 40, 0.5)' : 'rgba(17, 25, 40, 0.85)',
-                                        opacity: isAlreadyRented ? 0.6 : 1,
-                                        borderRadius: '16px',
-                                        padding: '18px 20px',
-                                        border: expandedRig === rig.id ? '2px solid #00f2ff' : '1px solid rgba(255, 255, 255, 0.1)',
-                                        transition: '0.2s',
-                                        cursor: 'pointer',
-                                        position: 'relative'
-                                    }}
-                                >
-                                    {/* Limited Supply Badge or Already Rented Badge */}
-                                    {isAlreadyRented ? (
-                                        <div style={{
-                                            position: 'absolute',
-                                            top: '10px',
-                                            right: '10px',
-                                            background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-                                            color: 'white',
-                                            padding: '6px 12px',
-                                            borderRadius: '20px',
-                                            fontSize: '0.75rem',
-                                            fontWeight: 800,
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            gap: '5px'
-                                        }}>
-                                            ✓ Active
-                                        </div>
-                                    ) : isLowStock && (
-                                        <div style={{
-                                            position: 'absolute',
-                                            top: '10px',
-                                            right: '10px',
-                                            background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
-                                            color: 'white',
-                                            padding: '6px 12px',
-                                            borderRadius: '20px',
-                                            fontSize: '0.75rem',
-                                            fontWeight: 800,
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            gap: '5px',
-                                            boxShadow: '0 4px 15px rgba(239, 68, 68, 0.4)',
-                                            animation: 'pulse 2s infinite'
-                                        }}>
-                                            🔥 Only {stockLeft} left!
-                                        </div>
-                                    )}
-                                    
                                     <div
-                                        onClick={() => setExpandedRig(expandedRig === rig.id ? null : rig.id)}
+                                        key={rig.id}
                                         style={{
-                                            display: 'flex',
-                                            justifyContent: 'space-between',
-                                            alignItems: 'center'
+                                            background: isAlreadyRented ? 'rgba(17, 25, 40, 0.5)' : 'rgba(17, 25, 40, 0.85)',
+                                            opacity: isAlreadyRented ? 0.6 : 1,
+                                            borderRadius: '16px',
+                                            padding: '18px 20px',
+                                            border: expandedRig === rig.id ? '2px solid #00f2ff' : '1px solid rgba(255, 255, 255, 0.1)',
+                                            transition: '0.2s',
+                                            cursor: 'pointer',
+                                            position: 'relative'
                                         }}
                                     >
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                                        {/* Limited Supply Badge or Already Rented Badge */}
+                                        {isAlreadyRented ? (
                                             <div style={{
-                                                width: '50px',
-                                                height: '50px',
-                                                background: 'rgba(0, 242, 255, 0.1)',
-                                                borderRadius: '14px',
+                                                position: 'absolute',
+                                                top: '10px',
+                                                right: '10px',
+                                                background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                                                color: 'white',
+                                                padding: '6px 12px',
+                                                borderRadius: '20px',
+                                                fontSize: '0.75rem',
+                                                fontWeight: 800,
                                                 display: 'flex',
                                                 alignItems: 'center',
-                                                justifyContent: 'center',
-                                                fontSize: '1.5rem'
+                                                gap: '5px'
                                             }}>
-                                                {rig.icon}
+                                                ✓ Active
                                             </div>
-                                            <div>
-                                                <p style={{ fontWeight: 700, fontSize: '0.95rem', color: '#fff' }}>{rig.name}</p>
-                                                <p style={{ fontSize: '0.8rem', color: '#94a3b8' }}>Daily: KES {rig.dailyEarnings.toLocaleString()}</p>
-                                            </div>
-                                        </div>
-                                        <div style={{ textAlign: 'right', display: 'flex', alignItems: 'center', gap: '15px' }}>
-                                            <p style={{ fontWeight: 800, fontSize: '0.9rem', color: '#ffb800' }}>KES {rig.price.toLocaleString()}</p>
-                                            <span style={{ fontSize: '1.2rem', color: '#94a3b8', transform: expandedRig === rig.id ? 'rotate(180deg)' : 'rotate(0deg)', transition: '0.3s' }}>▼</span>
-                                        </div>
-                                    </div>
-
-                                    {/* Expanded Details */}
-                                    {expandedRig === rig.id && (
-                                        <div style={{ marginTop: '20px', paddingTop: '20px', borderTop: '1px solid rgba(255, 255, 255, 0.1)', animation: 'fadeIn 0.3s ease' }}>
-                                            <p style={{ fontSize: '0.9rem', color: '#94a3b8', marginBottom: '20px', lineHeight: 1.6 }}>
-                                                {rig.description}
-                                            </p>
-
-                                            {/* ROI Calculation Table */}
-                                            <div style={{ 
-                                                background: 'linear-gradient(135deg, rgba(255, 184, 0, 0.2) 0%, rgba(255, 184, 0, 0.1) 100%)', 
-                                                padding: '20px', 
-                                                borderRadius: '12px', 
-                                                marginBottom: '20px',
-                                                border: '1px solid rgba(255, 184, 0, 0.3)'
+                                        ) : isLowStock && (
+                                            <div style={{
+                                                position: 'absolute',
+                                                top: '10px',
+                                                right: '10px',
+                                                background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+                                                color: 'white',
+                                                padding: '6px 12px',
+                                                borderRadius: '20px',
+                                                fontSize: '0.75rem',
+                                                fontWeight: 800,
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: '5px',
+                                                boxShadow: '0 4px 15px rgba(239, 68, 68, 0.4)',
+                                                animation: 'pulse 2s infinite'
                                             }}>
-                                                <h4 style={{ fontSize: '0.9rem', fontWeight: 800, marginBottom: '15px', color: '#ffb800' }}>
-                                                    💰 Return on Investment (ROI)
-                                                </h4>
-                                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px', marginBottom: '15px' }}>
-                                                    <div>
-                                                        <p style={{ fontSize: '0.7rem', color: '#94a3b8', marginBottom: '4px' }}>Daily Profit</p>
-                                                        <p style={{ fontSize: '1rem', fontWeight: 800, color: '#ffb800' }}>
-                                                            KES {rig.dailyEarnings.toLocaleString()}
-                                                        </p>
-                                                        <p style={{ fontSize: '0.65rem', color: '#94a3b8' }}>2.5% of investment</p>
-                                                    </div>
-                                                    <div>
-                                                        <p style={{ fontSize: '0.7rem', color: '#94a3b8', marginBottom: '4px' }}>Weekly Profit</p>
-                                                        <p style={{ fontSize: '1rem', fontWeight: 800, color: '#ffb800' }}>
-                                                            KES {(rig.dailyEarnings * 7).toLocaleString()}
-                                                        </p>
-                                                        <p style={{ fontSize: '0.65rem', color: '#94a3b8' }}>17.5% return</p>
-                                                    </div>
-                                                    <div style={{ background: 'rgba(255, 184, 0, 0.2)', padding: '10px', borderRadius: '8px' }}>
-                                                        <p style={{ fontSize: '0.7rem', color: '#94a3b8', marginBottom: '4px' }}>Monthly Total</p>
-                                                        <p style={{ fontSize: '1.2rem', fontWeight: 900, color: '#ffb800' }}>
-                                                            KES {(rig.dailyEarnings * 30).toLocaleString()}
-                                                        </p>
-                                                        <p style={{ fontSize: '0.65rem', color: '#94a3b8' }}>75% ROI in 30 days</p>
-                                                    </div>
+                                                🔥 Only {stockLeft} left!
+                                            </div>
+                                        )}
+
+                                        <div
+                                            onClick={() => setExpandedRig(expandedRig === rig.id ? null : rig.id)}
+                                            style={{
+                                                display: 'flex',
+                                                justifyContent: 'space-between',
+                                                alignItems: 'center'
+                                            }}
+                                        >
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                                                <div style={{
+                                                    width: '50px',
+                                                    height: '50px',
+                                                    background: 'rgba(0, 242, 255, 0.1)',
+                                                    borderRadius: '14px',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    fontSize: '1.5rem'
+                                                }}>
+                                                    {rig.icon}
                                                 </div>
-                                                <p style={{ fontSize: '0.75rem', color: '#ffb800', textAlign: 'center', fontWeight: 600 }}>
-                                                    📈 Break-even in just 40 days! Pure profit after that.
+                                                <div>
+                                                    <p style={{ fontWeight: 700, fontSize: '0.95rem', color: '#fff' }}>{rig.name}</p>
+                                                    <p style={{ fontSize: '0.8rem', color: '#94a3b8' }}>Daily: KES {rig.dailyEarnings.toLocaleString()}</p>
+                                                </div>
+                                            </div>
+                                            <div style={{ textAlign: 'right', display: 'flex', alignItems: 'center', gap: '15px' }}>
+                                                <p style={{ fontWeight: 800, fontSize: '0.9rem', color: '#ffb800' }}>KES {rig.price.toLocaleString()}</p>
+                                                <span style={{ fontSize: '1.2rem', color: '#94a3b8', transform: expandedRig === rig.id ? 'rotate(180deg)' : 'rotate(0deg)', transition: '0.3s' }}>▼</span>
+                                            </div>
+                                        </div>
+
+                                        {/* Expanded Details */}
+                                        {expandedRig === rig.id && (
+                                            <div style={{ marginTop: '20px', paddingTop: '20px', borderTop: '1px solid rgba(255, 255, 255, 0.1)', animation: 'fadeIn 0.3s ease' }}>
+                                                <p style={{ fontSize: '0.9rem', color: '#94a3b8', marginBottom: '20px', lineHeight: 1.6 }}>
+                                                    {rig.description}
                                                 </p>
-                                            </div>
 
-                                            {/* Stats Grid */}
-                                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px', marginBottom: '20px' }}>
-                                                <div style={{ background: 'rgba(255, 255, 255, 0.05)', padding: '12px', borderRadius: '10px' }}>
-                                                    <p style={{ fontSize: '0.7rem', color: '#94a3b8', marginBottom: '4px' }}>ROI</p>
-                                                    <p style={{ fontSize: '1rem', fontWeight: 800, color: '#39ff14' }}>{rig.roi}</p>
-                                                </div>
-                                                <div style={{ background: 'rgba(255, 255, 255, 0.05)', padding: '12px', borderRadius: '10px' }}>
-                                                    <p style={{ fontSize: '0.7rem', color: '#94a3b8', marginBottom: '4px' }}>Duration</p>
-                                                    <p style={{ fontSize: '1rem', fontWeight: 800, color: '#fff' }}>{rig.duration}</p>
-                                                </div>
-                                                {rig.hashrate && (
-                                                    <div style={{ background: 'rgba(255, 255, 255, 0.05)', padding: '12px', borderRadius: '10px' }}>
-                                                        <p style={{ fontSize: '0.7rem', color: '#94a3b8', marginBottom: '4px' }}>Hashrate</p>
-                                                        <p style={{ fontSize: '1rem', fontWeight: 800, color: '#fff' }}>{rig.hashrate}</p>
-                                                    </div>
-                                                )}
-                                                {rig.powerConsumption && (
-                                                    <div style={{ background: 'rgba(255, 255, 255, 0.05)', padding: '12px', borderRadius: '10px' }}>
-                                                        <p style={{ fontSize: '0.7rem', color: '#94a3b8', marginBottom: '4px' }}>Power</p>
-                                                        <p style={{ fontSize: '1rem', fontWeight: 800, color: '#fff' }}>{rig.powerConsumption}</p>
-                                                    </div>
-                                                )}
-                                            </div>
-
-                                            {/* Rent Button */}
-                                            <button
-                                                disabled={isAlreadyRented}
-                                                style={{
-                                                    width: '100%',
-                                                    padding: '14px 20px',
-                                                    background: isAlreadyRented ? '#10b981' : 'linear-gradient(135deg, #00f2ff 0%, #0066ff 100%)',
-                                                    color: 'white',
-                                                    border: 'none',
+                                                {/* ROI Calculation Table */}
+                                                <div style={{
+                                                    background: 'linear-gradient(135deg, rgba(255, 184, 0, 0.2) 0%, rgba(255, 184, 0, 0.1) 100%)',
+                                                    padding: '20px',
                                                     borderRadius: '12px',
-                                                    fontWeight: 700,
-                                                    fontSize: '0.95rem',
-                                                    cursor: isAlreadyRented ? 'not-allowed' : 'pointer',
-                                                    transition: '0.2s'
-                                                }}
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    if (!isAlreadyRented) {
-                                                        setSelectedRig(rig);
-                                                        setShowRentModal(true);
-                                                    }
-                                                }}
-                                            >
-                                                {isAlreadyRented ? '✓ Already Rented' : `Rent for KES ${rig.price.toLocaleString()}`}
-                                            </button>
-                                        </div>
-                                    )}
-                                </div>
-                            )})}
+                                                    marginBottom: '20px',
+                                                    border: '1px solid rgba(255, 184, 0, 0.3)'
+                                                }}>
+                                                    <h4 style={{ fontSize: '0.9rem', fontWeight: 800, marginBottom: '15px', color: '#ffb800' }}>
+                                                        💰 Return on Investment (ROI)
+                                                    </h4>
+                                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px', marginBottom: '15px' }}>
+                                                        <div>
+                                                            <p style={{ fontSize: '0.7rem', color: '#94a3b8', marginBottom: '4px' }}>Daily Profit</p>
+                                                            <p style={{ fontSize: '1rem', fontWeight: 800, color: '#ffb800' }}>
+                                                                KES {rig.dailyEarnings.toLocaleString()}
+                                                            </p>
+                                                            <p style={{ fontSize: '0.65rem', color: '#94a3b8' }}>2.5% of investment</p>
+                                                        </div>
+                                                        <div>
+                                                            <p style={{ fontSize: '0.7rem', color: '#94a3b8', marginBottom: '4px' }}>Weekly Profit</p>
+                                                            <p style={{ fontSize: '1rem', fontWeight: 800, color: '#ffb800' }}>
+                                                                KES {(rig.dailyEarnings * 7).toLocaleString()}
+                                                            </p>
+                                                            <p style={{ fontSize: '0.65rem', color: '#94a3b8' }}>17.5% return</p>
+                                                        </div>
+                                                        <div style={{ background: 'rgba(255, 184, 0, 0.2)', padding: '10px', borderRadius: '8px' }}>
+                                                            <p style={{ fontSize: '0.7rem', color: '#94a3b8', marginBottom: '4px' }}>Monthly Total</p>
+                                                            <p style={{ fontSize: '1.2rem', fontWeight: 900, color: '#ffb800' }}>
+                                                                KES {(rig.dailyEarnings * 30).toLocaleString()}
+                                                            </p>
+                                                            <p style={{ fontSize: '0.65rem', color: '#94a3b8' }}>75% ROI in 30 days</p>
+                                                        </div>
+                                                    </div>
+                                                    <p style={{ fontSize: '0.75rem', color: '#ffb800', textAlign: 'center', fontWeight: 600 }}>
+                                                        📈 Break-even in just 40 days! Pure profit after that.
+                                                    </p>
+                                                </div>
+
+                                                {/* Stats Grid */}
+                                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px', marginBottom: '20px' }}>
+                                                    <div style={{ background: 'rgba(255, 255, 255, 0.05)', padding: '12px', borderRadius: '10px' }}>
+                                                        <p style={{ fontSize: '0.7rem', color: '#94a3b8', marginBottom: '4px' }}>ROI</p>
+                                                        <p style={{ fontSize: '1rem', fontWeight: 800, color: '#39ff14' }}>{rig.roi}</p>
+                                                    </div>
+                                                    <div style={{ background: 'rgba(255, 255, 255, 0.05)', padding: '12px', borderRadius: '10px' }}>
+                                                        <p style={{ fontSize: '0.7rem', color: '#94a3b8', marginBottom: '4px' }}>Duration</p>
+                                                        <p style={{ fontSize: '1rem', fontWeight: 800, color: '#fff' }}>{rig.duration}</p>
+                                                    </div>
+                                                    {rig.hashrate && (
+                                                        <div style={{ background: 'rgba(255, 255, 255, 0.05)', padding: '12px', borderRadius: '10px' }}>
+                                                            <p style={{ fontSize: '0.7rem', color: '#94a3b8', marginBottom: '4px' }}>Hashrate</p>
+                                                            <p style={{ fontSize: '1rem', fontWeight: 800, color: '#fff' }}>{rig.hashrate}</p>
+                                                        </div>
+                                                    )}
+                                                    {rig.powerConsumption && (
+                                                        <div style={{ background: 'rgba(255, 255, 255, 0.05)', padding: '12px', borderRadius: '10px' }}>
+                                                            <p style={{ fontSize: '0.7rem', color: '#94a3b8', marginBottom: '4px' }}>Power</p>
+                                                            <p style={{ fontSize: '1rem', fontWeight: 800, color: '#fff' }}>{rig.powerConsumption}</p>
+                                                        </div>
+                                                    )}
+                                                </div>
+
+                                                {/* Rent Button */}
+                                                <button
+                                                    disabled={isAlreadyRented}
+                                                    style={{
+                                                        width: '100%',
+                                                        padding: '14px 20px',
+                                                        background: isAlreadyRented ? '#10b981' : 'linear-gradient(135deg, #00f2ff 0%, #0066ff 100%)',
+                                                        color: 'white',
+                                                        border: 'none',
+                                                        borderRadius: '12px',
+                                                        fontWeight: 700,
+                                                        fontSize: '0.95rem',
+                                                        cursor: isAlreadyRented ? 'not-allowed' : 'pointer',
+                                                        transition: '0.2s'
+                                                    }}
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        if (!isAlreadyRented) {
+                                                            setSelectedRig(rig);
+                                                            setShowRentModal(true);
+                                                        }
+                                                    }}
+                                                >
+                                                    {isAlreadyRented ? '✓ Already Rented' : `Rent for KES ${rig.price.toLocaleString()}`}
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
+                                )
+                            })}
                         </div>
 
                         {/* Stats Grid */}
@@ -1631,7 +1633,7 @@ export default function DashboardPage() {
                                 </div>
                                 <div style={{ fontSize: '0.65rem', color: '#94a3b8', marginTop: '4px' }}>Normal Range</div>
                                 <svg style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: '30px', opacity: 0.3 }} viewBox="0 0 100 30" preserveAspectRatio="none">
-                                    <path d="M0 25 Q 25 5, 50 20 T 100 15" fill="none" stroke="#00f2ff" strokeWidth="2"/>
+                                    <path d="M0 25 Q 25 5, 50 20 T 100 15" fill="none" stroke="#00f2ff" strokeWidth="2" />
                                 </svg>
                             </div>
 
@@ -1676,7 +1678,7 @@ export default function DashboardPage() {
                                 </div>
                                 <div style={{ fontSize: '0.65rem', color: '#94a3b8', marginTop: '4px' }}>Network Stable</div>
                                 <svg style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: '30px', opacity: 0.3 }} viewBox="0 0 100 30" preserveAspectRatio="none">
-                                    <path d="M0 20 Q 20 25, 40 10 T 80 20 T 100 5" fill="none" stroke="#bc13fe" strokeWidth="2"/>
+                                    <path d="M0 20 Q 20 25, 40 10 T 80 20 T 100 5" fill="none" stroke="#bc13fe" strokeWidth="2" />
                                 </svg>
                             </div>
 
@@ -1725,18 +1727,18 @@ export default function DashboardPage() {
                         </div>
 
                         {/* Real-Time Payout Ticker */}
-                        <div style={{ 
+                        <div style={{
                             background: 'rgba(17, 25, 40, 0.75)',
                             border: '1px solid rgba(255, 255, 255, 0.1)',
-                            borderRadius: '16px', 
-                            padding: '15px', 
+                            borderRadius: '16px',
+                            padding: '15px',
                             marginBottom: '20px',
                             cursor: 'pointer'
                         }}
-                        onClick={() => setActivityFeedExpanded(!activityFeedExpanded)}
+                            onClick={() => setActivityFeedExpanded(!activityFeedExpanded)}
                         >
-                            <div style={{ 
-                                display: 'flex', 
+                            <div style={{
+                                display: 'flex',
                                 justifyContent: 'space-between',
                                 alignItems: 'center'
                             }}>
@@ -1744,7 +1746,7 @@ export default function DashboardPage() {
                                     <span style={{ fontSize: '1.1rem', color: '#bc13fe' }}>📊</span>
                                     <span style={{ fontWeight: 600, fontSize: '0.9rem' }}>Live Activity Feed</span>
                                 </div>
-                                <span style={{ 
+                                <span style={{
                                     fontSize: '1.2rem',
                                     transform: activityFeedExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
                                     transition: '0.3s'
@@ -1753,20 +1755,20 @@ export default function DashboardPage() {
                         </div>
 
                         {activityFeedExpanded && (
-                            <div style={{ 
+                            <div style={{
                                 background: 'rgba(17, 25, 40, 0.75)',
                                 border: '1px solid rgba(255, 255, 255, 0.1)',
-                                borderRadius: '16px', 
-                                padding: '15px', 
+                                borderRadius: '16px',
+                                padding: '15px',
                                 marginBottom: '20px'
                             }}>
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxHeight: '200px', overflowY: 'auto' }}>
                                     {payoutTicker.map((item) => (
-                                        <div 
+                                        <div
                                             key={item.id}
-                                            style={{ 
-                                                background: 'rgba(16, 185, 129, 0.1)', 
-                                                padding: '10px 15px', 
+                                            style={{
+                                                background: 'rgba(16, 185, 129, 0.1)',
+                                                padding: '10px 15px',
                                                 borderRadius: '10px',
                                                 borderLeft: '3px solid #10b981',
                                                 color: '#10b981',
@@ -1783,20 +1785,20 @@ export default function DashboardPage() {
                         )}
 
                         {/* Mining Terminal */}
-                        <div style={{ 
-                            background: '#000', 
+                        <div style={{
+                            background: '#000',
                             border: '1px solid rgba(255, 255, 255, 0.1)',
-                            borderRadius: '16px', 
+                            borderRadius: '16px',
                             padding: '12px 18px',
                             marginBottom: '20px',
                             fontFamily: 'monospace',
                             fontSize: '0.75rem',
                             cursor: 'pointer'
                         }}
-                        onClick={() => setMiningTerminalExpanded(!miningTerminalExpanded)}
+                            onClick={() => setMiningTerminalExpanded(!miningTerminalExpanded)}
                         >
-                            <div style={{ 
-                                display: 'flex', 
+                            <div style={{
+                                display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'space-between',
                                 gap: '12px'
@@ -1809,7 +1811,7 @@ export default function DashboardPage() {
                                     </div>
                                     <div style={{ color: '#39ff14' }}>Mining Terminal v2.5.1</div>
                                 </div>
-                                <span style={{ 
+                                <span style={{
                                     color: '#39ff14',
                                     fontSize: '1rem',
                                     transform: miningTerminalExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
@@ -1819,26 +1821,26 @@ export default function DashboardPage() {
                         </div>
 
                         {miningTerminalExpanded && (
-                            <div style={{ 
+                            <div style={{
                                 background: '#000',
                                 border: '1px solid rgba(255, 255, 255, 0.1)',
-                                borderRadius: '16px', 
+                                borderRadius: '16px',
                                 padding: '18px',
                                 marginBottom: '20px',
                                 fontFamily: 'monospace',
                                 boxShadow: '0 4px 20px rgba(0,0,0,0.5)'
                             }}>
-                                <div style={{ 
-                                    maxHeight: '250px', 
-                                    overflowY: 'auto', 
-                                    display: 'flex', 
+                                <div style={{
+                                    maxHeight: '250px',
+                                    overflowY: 'auto',
+                                    display: 'flex',
                                     flexDirection: 'column',
                                     gap: '4px'
                                 }}>
                                     {miningLogs.map((log, index) => (
-                                        <div key={index} style={{ 
-                                            color: log.includes('Success') || log.includes('Found') ? '#10b981' : 
-                                                   log.includes('Error') ? '#ef4444' : '#22d3ee',
+                                        <div key={index} style={{
+                                            color: log.includes('Success') || log.includes('Found') ? '#10b981' :
+                                                log.includes('Error') ? '#ef4444' : '#22d3ee',
                                             fontSize: '0.8rem',
                                             lineHeight: 1.5,
                                             animation: 'fadeIn 0.5s ease'
@@ -1942,210 +1944,210 @@ export default function DashboardPage() {
                         {/* Deposit Form */}
                         {walletTab === 'deposit' && (
                             <>
-                            {depositSuccess ? (
-                                <div style={{ background: 'white', padding: '30px', borderRadius: '24px', border: '1px solid #e2e8f0', textAlign: 'center' }}>
-                                    <div style={{ fontSize: '3rem', marginBottom: '15px' }}>📱</div>
-                                    <h3 style={{ fontSize: '1.2rem', fontWeight: 800, marginBottom: '10px' }}>Check your phone!</h3>
-                                    <p style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '20px' }}>
-                                        We've sent an M-Pesa prompt to <strong>{depositPhone}</strong>. Enter your PIN to complete the deposit of <strong>Ksh {depositAmount}</strong>.
-                                    </p>
-                                    <button
-                                        onClick={() => { setDepositSuccess(false); setDepositPhone(''); setDepositAmount(''); }}
-                                        style={{ padding: '14px 30px', background: '#0052ff', color: 'white', border: 'none', borderRadius: '12px', fontWeight: 700, cursor: 'pointer' }}
-                                    >
-                                        Make Another Deposit
-                                    </button>
-                                </div>
-                            ) : (
-                            <div style={{ background: 'white', padding: '25px', borderRadius: '24px', border: '1px solid #e2e8f0' }}>
-                                <h3 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: '20px' }}>Deposit via M-Pesa</h3>
-
-                                <label style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: '6px', display: 'block' }}>M-Pesa Phone Number</label>
-                                <input
-                                    type="tel"
-                                    value={depositPhone}
-                                    onChange={(e) => setDepositPhone(e.target.value.replace(/\D/g, '').slice(0, 12))}
-                                    placeholder="07XXXXXXXX"
-                                    style={{ width: '100%', padding: '14px', border: '1px solid #e2e8f0', borderRadius: '12px', marginBottom: '15px', fontSize: '1rem', outline: 'none', boxSizing: 'border-box' }}
-                                />
-
-                                <label style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: '6px', display: 'block' }}>Amount (Ksh)</label>
-                                <input
-                                    type="number"
-                                    value={depositAmount}
-                                    onChange={(e) => setDepositAmount(e.target.value)}
-                                    placeholder="Minimum Ksh 10"
-                                    min="10"
-                                    style={{ width: '100%', padding: '14px', border: '1px solid #e2e8f0', borderRadius: '12px', marginBottom: '15px', fontSize: '1rem', outline: 'none', boxSizing: 'border-box' }}
-                                />
-
-                                {/* Quick amounts */}
-                                <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
-                                    {[100, 500, 1000, 5000].map((amt) => (
+                                {depositSuccess ? (
+                                    <div style={{ background: 'white', padding: '30px', borderRadius: '24px', border: '1px solid #e2e8f0', textAlign: 'center' }}>
+                                        <div style={{ fontSize: '3rem', marginBottom: '15px' }}>📱</div>
+                                        <h3 style={{ fontSize: '1.2rem', fontWeight: 800, marginBottom: '10px' }}>Check your phone!</h3>
+                                        <p style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '20px' }}>
+                                            We've sent an M-Pesa prompt to <strong>{depositPhone}</strong>. Enter your PIN to complete the deposit of <strong>Ksh {depositAmount}</strong>.
+                                        </p>
                                         <button
-                                            key={amt}
-                                            type="button"
-                                            onClick={() => setDepositAmount(amt.toString())}
-                                            style={{
-                                                flex: 1,
-                                                padding: '10px',
-                                                background: depositAmount === amt.toString() ? '#0052ff' : '#f1f5f9',
-                                                color: depositAmount === amt.toString() ? 'white' : '#64748b',
-                                                border: 'none',
-                                                borderRadius: '10px',
-                                                fontSize: '0.85rem',
-                                                fontWeight: 700,
-                                                cursor: 'pointer'
-                                            }}
+                                            onClick={() => { setDepositSuccess(false); setDepositPhone(''); setDepositAmount(''); }}
+                                            style={{ padding: '14px 30px', background: '#0052ff', color: 'white', border: 'none', borderRadius: '12px', fontWeight: 700, cursor: 'pointer' }}
                                         >
-                                            {amt.toLocaleString()}
+                                            Make Another Deposit
                                         </button>
-                                    ))}
-                                </div>
+                                    </div>
+                                ) : (
+                                    <div style={{ background: 'white', padding: '25px', borderRadius: '24px', border: '1px solid #e2e8f0' }}>
+                                        <h3 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: '20px' }}>Deposit via M-Pesa</h3>
 
-                                <div style={{ background: '#f0f7ff', padding: '12px 14px', borderRadius: '12px', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                    <span style={{ fontSize: '1rem' }}>🔒</span>
-                                    <span style={{ fontSize: '0.8rem', color: '#0052ff', fontWeight: 600 }}>Secure M-Pesa payment. You'll receive an STK push.</span>
-                                </div>
+                                        <label style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: '6px', display: 'block' }}>M-Pesa Phone Number</label>
+                                        <input
+                                            type="tel"
+                                            value={depositPhone}
+                                            onChange={(e) => setDepositPhone(e.target.value.replace(/\D/g, '').slice(0, 12))}
+                                            placeholder="07XXXXXXXX"
+                                            style={{ width: '100%', padding: '14px', border: '1px solid #e2e8f0', borderRadius: '12px', marginBottom: '15px', fontSize: '1rem', outline: 'none', boxSizing: 'border-box' }}
+                                        />
 
-                                {depositError && <p style={{ color: '#dc2626', fontSize: '0.85rem', marginBottom: '15px' }}>{depositError}</p>}
+                                        <label style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: '6px', display: 'block' }}>Amount (Ksh)</label>
+                                        <input
+                                            type="number"
+                                            value={depositAmount}
+                                            onChange={(e) => setDepositAmount(e.target.value)}
+                                            placeholder="Minimum Ksh 10"
+                                            min="10"
+                                            style={{ width: '100%', padding: '14px', border: '1px solid #e2e8f0', borderRadius: '12px', marginBottom: '15px', fontSize: '1rem', outline: 'none', boxSizing: 'border-box' }}
+                                        />
 
-                                <button
-                                    onClick={async () => {
-                                        setDepositError('');
-                                        const amountNum = parseInt(depositAmount);
-                                        if (amountNum < 10) { setDepositError('Minimum deposit is Ksh 10'); return; }
-                                        if (depositPhone.length < 9) { setDepositError('Please enter a valid phone number'); return; }
+                                        {/* Quick amounts */}
+                                        <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
+                                            {[100, 500, 1000, 5000].map((amt) => (
+                                                <button
+                                                    key={amt}
+                                                    type="button"
+                                                    onClick={() => setDepositAmount(amt.toString())}
+                                                    style={{
+                                                        flex: 1,
+                                                        padding: '10px',
+                                                        background: depositAmount === amt.toString() ? '#0052ff' : '#f1f5f9',
+                                                        color: depositAmount === amt.toString() ? 'white' : '#64748b',
+                                                        border: 'none',
+                                                        borderRadius: '10px',
+                                                        fontSize: '0.85rem',
+                                                        fontWeight: 700,
+                                                        cursor: 'pointer'
+                                                    }}
+                                                >
+                                                    {amt.toLocaleString()}
+                                                </button>
+                                            ))}
+                                        </div>
 
-                                        setDepositLoading(true);
-                                        try {
-                                            const token = localStorage.getItem('smartinvest_token');
-                                            const res = await fetch('/api/mpesa/initiate', {
-                                                method: 'POST',
-                                                headers: {
-                                                    'Content-Type': 'application/json',
-                                                    'Authorization': token ? `Bearer ${token}` : ''
-                                                },
-                                                body: JSON.stringify({ phone: depositPhone, amount: amountNum }),
-                                            });
-                                            const data = await res.json();
-                                            if (!res.ok) { setDepositError(data.error || 'Failed to send payment request'); return; }
-                                            setDepositSuccess(true);
-                                        } catch {
-                                            setDepositError('Something went wrong. Please try again.');
-                                        } finally {
-                                            setDepositLoading(false);
-                                        }
-                                    }}
-                                    disabled={depositLoading}
-                                    style={{ width: '100%', padding: '16px', background: '#059669', color: 'white', border: 'none', borderRadius: '12px', fontSize: '1rem', fontWeight: 800, cursor: 'pointer', opacity: depositLoading ? 0.7 : 1 }}
-                                >
-                                    {depositLoading ? 'Sending request...' : `Deposit ${depositAmount ? `Ksh ${parseInt(depositAmount).toLocaleString()}` : ''}`}
-                                </button>
-                            </div>
-                            )}
+                                        <div style={{ background: '#f0f7ff', padding: '12px 14px', borderRadius: '12px', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                            <span style={{ fontSize: '1rem' }}>🔒</span>
+                                            <span style={{ fontSize: '0.8rem', color: '#0052ff', fontWeight: 600 }}>Secure M-Pesa payment. You'll receive an STK push.</span>
+                                        </div>
+
+                                        {depositError && <p style={{ color: '#dc2626', fontSize: '0.85rem', marginBottom: '15px' }}>{depositError}</p>}
+
+                                        <button
+                                            onClick={async () => {
+                                                setDepositError('');
+                                                const amountNum = parseInt(depositAmount);
+                                                if (amountNum < 10) { setDepositError('Minimum deposit is Ksh 10'); return; }
+                                                if (depositPhone.length < 9) { setDepositError('Please enter a valid phone number'); return; }
+
+                                                setDepositLoading(true);
+                                                try {
+                                                    const token = localStorage.getItem('smartinvest_token');
+                                                    const res = await fetch('/api/mpesa/initiate', {
+                                                        method: 'POST',
+                                                        headers: {
+                                                            'Content-Type': 'application/json',
+                                                            'Authorization': token ? `Bearer ${token}` : ''
+                                                        },
+                                                        body: JSON.stringify({ phone: depositPhone, amount: amountNum }),
+                                                    });
+                                                    const data = await res.json();
+                                                    if (!res.ok) { setDepositError(data.error || 'Failed to send payment request'); return; }
+                                                    setDepositSuccess(true);
+                                                } catch {
+                                                    setDepositError('Something went wrong. Please try again.');
+                                                } finally {
+                                                    setDepositLoading(false);
+                                                }
+                                            }}
+                                            disabled={depositLoading}
+                                            style={{ width: '100%', padding: '16px', background: '#059669', color: 'white', border: 'none', borderRadius: '12px', fontSize: '1rem', fontWeight: 800, cursor: 'pointer', opacity: depositLoading ? 0.7 : 1 }}
+                                        >
+                                            {depositLoading ? 'Sending request...' : `Deposit ${depositAmount ? `Ksh ${parseInt(depositAmount).toLocaleString()}` : ''}`}
+                                        </button>
+                                    </div>
+                                )}
                             </>
                         )}
 
                         {/* Withdraw Form */}
                         {walletTab === 'withdraw' && (
                             <>
-                            {withdrawSuccess ? (
-                                <div style={{ background: 'white', padding: '30px', borderRadius: '24px', border: '1px solid #e2e8f0', textAlign: 'center' }}>
-                                    <div style={{ fontSize: '3rem', marginBottom: '15px' }}>✅</div>
-                                    <h3 style={{ fontSize: '1.2rem', fontWeight: 800, marginBottom: '10px', color: '#059669' }}>Withdrawal Successful!</h3>
-                                    <p style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '20px' }}>
-                                        <strong>Ksh {withdrawAmount}</strong> has been sent to <strong>{withdrawPhone}</strong>. You should receive it shortly.
-                                    </p>
-                                    <button
-                                        onClick={() => { setWithdrawSuccess(false); setWithdrawAmount(''); }}
-                                        style={{ padding: '14px 30px', background: '#0052ff', color: 'white', border: 'none', borderRadius: '12px', fontWeight: 700, cursor: 'pointer' }}
-                                    >
-                                        Make Another Withdrawal
-                                    </button>
-                                </div>
-                            ) : (
-                                <div style={{ background: 'white', padding: '25px', borderRadius: '24px', border: '1px solid #e2e8f0' }}>
-                                    <h3 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: '20px' }}>Withdraw to M-Pesa</h3>
-
-                                    <label style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: '6px', display: 'block' }}>M-Pesa Phone Number</label>
-                                    <input
-                                        type="tel"
-                                        value={withdrawPhone}
-                                        onChange={(e) => setWithdrawPhone(e.target.value.replace(/\D/g, '').slice(0, 12))}
-                                        placeholder="07XXXXXXXX"
-                                        style={{ width: '100%', padding: '14px', border: '1px solid #e2e8f0', borderRadius: '12px', marginBottom: '15px', fontSize: '1rem', outline: 'none', boxSizing: 'border-box' }}
-                                    />
-
-                                    <label style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: '6px', display: 'block' }}>Amount (Ksh)</label>
-                                    <input
-                                        type="number"
-                                        value={withdrawAmount}
-                                        onChange={(e) => setWithdrawAmount(e.target.value)}
-                                        placeholder="Minimum Ksh 50"
-                                        min="50"
-                                        style={{ width: '100%', padding: '14px', border: '1px solid #e2e8f0', borderRadius: '12px', marginBottom: '15px', fontSize: '1rem', outline: 'none', boxSizing: 'border-box' }}
-                                    />
-
-                                    {/* Quick amounts */}
-                                    <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
-                                        {[100, 500, 1000, 5000].map((amt) => (
-                                            <button
-                                                key={amt}
-                                                type="button"
-                                                onClick={() => setWithdrawAmount(amt.toString())}
-                                                style={{
-                                                    flex: 1,
-                                                    padding: '10px',
-                                                    background: withdrawAmount === amt.toString() ? '#059669' : '#f1f5f9',
-                                                    color: withdrawAmount === amt.toString() ? 'white' : '#64748b',
-                                                    border: 'none',
-                                                    borderRadius: '10px',
-                                                    fontSize: '0.85rem',
-                                                    fontWeight: 700,
-                                                    cursor: 'pointer'
-                                                }}
-                                            >
-                                                {amt.toLocaleString()}
-                                            </button>
-                                        ))}
+                                {withdrawSuccess ? (
+                                    <div style={{ background: 'white', padding: '30px', borderRadius: '24px', border: '1px solid #e2e8f0', textAlign: 'center' }}>
+                                        <div style={{ fontSize: '3rem', marginBottom: '15px' }}>✅</div>
+                                        <h3 style={{ fontSize: '1.2rem', fontWeight: 800, marginBottom: '10px', color: '#059669' }}>Withdrawal Successful!</h3>
+                                        <p style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '20px' }}>
+                                            <strong>Ksh {withdrawAmount}</strong> has been sent to <strong>{withdrawPhone}</strong>. You should receive it shortly.
+                                        </p>
+                                        <button
+                                            onClick={() => { setWithdrawSuccess(false); setWithdrawAmount(''); }}
+                                            style={{ padding: '14px 30px', background: '#0052ff', color: 'white', border: 'none', borderRadius: '12px', fontWeight: 700, cursor: 'pointer' }}
+                                        >
+                                            Make Another Withdrawal
+                                        </button>
                                     </div>
+                                ) : (
+                                    <div style={{ background: 'white', padding: '25px', borderRadius: '24px', border: '1px solid #e2e8f0' }}>
+                                        <h3 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: '20px' }}>Withdraw to M-Pesa</h3>
 
-                                    {/* Available balance info */}
-                                    <div style={{ background: '#fef3c7', padding: '12px 14px', borderRadius: '12px', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                        <span style={{ fontSize: '1rem' }}>💰</span>
-                                        <span style={{ fontSize: '0.8rem', color: '#92400e', fontWeight: 600 }}>Available: Ksh {balance.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                                        <label style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: '6px', display: 'block' }}>M-Pesa Phone Number</label>
+                                        <input
+                                            type="tel"
+                                            value={withdrawPhone}
+                                            onChange={(e) => setWithdrawPhone(e.target.value.replace(/\D/g, '').slice(0, 12))}
+                                            placeholder="07XXXXXXXX"
+                                            style={{ width: '100%', padding: '14px', border: '1px solid #e2e8f0', borderRadius: '12px', marginBottom: '15px', fontSize: '1rem', outline: 'none', boxSizing: 'border-box' }}
+                                        />
+
+                                        <label style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: '6px', display: 'block' }}>Amount (Ksh)</label>
+                                        <input
+                                            type="number"
+                                            value={withdrawAmount}
+                                            onChange={(e) => setWithdrawAmount(e.target.value)}
+                                            placeholder="Minimum Ksh 50"
+                                            min="50"
+                                            style={{ width: '100%', padding: '14px', border: '1px solid #e2e8f0', borderRadius: '12px', marginBottom: '15px', fontSize: '1rem', outline: 'none', boxSizing: 'border-box' }}
+                                        />
+
+                                        {/* Quick amounts */}
+                                        <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
+                                            {[100, 500, 1000, 5000].map((amt) => (
+                                                <button
+                                                    key={amt}
+                                                    type="button"
+                                                    onClick={() => setWithdrawAmount(amt.toString())}
+                                                    style={{
+                                                        flex: 1,
+                                                        padding: '10px',
+                                                        background: withdrawAmount === amt.toString() ? '#059669' : '#f1f5f9',
+                                                        color: withdrawAmount === amt.toString() ? 'white' : '#64748b',
+                                                        border: 'none',
+                                                        borderRadius: '10px',
+                                                        fontSize: '0.85rem',
+                                                        fontWeight: 700,
+                                                        cursor: 'pointer'
+                                                    }}
+                                                >
+                                                    {amt.toLocaleString()}
+                                                </button>
+                                            ))}
+                                        </div>
+
+                                        {/* Available balance info */}
+                                        <div style={{ background: '#fef3c7', padding: '12px 14px', borderRadius: '12px', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                            <span style={{ fontSize: '1rem' }}>💰</span>
+                                            <span style={{ fontSize: '0.8rem', color: '#92400e', fontWeight: 600 }}>Available: Ksh {balance.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                                        </div>
+
+                                        {withdrawError && <p style={{ color: '#dc2626', fontSize: '0.85rem', marginBottom: '15px' }}>{withdrawError}</p>}
+
+                                        <button
+                                            onClick={async () => {
+                                                setWithdrawError('');
+                                                const amountNum = parseInt(withdrawAmount);
+                                                if (amountNum < 50) { setWithdrawError('Minimum withdrawal is Ksh 50'); return; }
+                                                if (amountNum > balance) { setWithdrawError('Insufficient balance'); return; }
+                                                if (withdrawPhone.length < 9) { setWithdrawError('Please enter a valid phone number'); return; }
+
+                                                setWithdrawLoading(true);
+                                                try {
+                                                    // Simulate withdrawal (in production, call actual API)
+                                                    await new Promise(resolve => setTimeout(resolve, 2000));
+                                                    setBalance(prev => prev - amountNum);
+                                                    setWithdrawSuccess(true);
+                                                } catch {
+                                                    setWithdrawError('Something went wrong. Please try again.');
+                                                } finally {
+                                                    setWithdrawLoading(false);
+                                                }
+                                            }}
+                                            disabled={withdrawLoading}
+                                            style={{ width: '100%', padding: '16px', background: '#059669', color: 'white', border: 'none', borderRadius: '12px', fontSize: '1rem', fontWeight: 800, cursor: 'pointer', opacity: withdrawLoading ? 0.7 : 1 }}
+                                        >
+                                            {withdrawLoading ? 'Processing...' : `Withdraw ${withdrawAmount ? `Ksh ${parseInt(withdrawAmount).toLocaleString()}` : ''}`}
+                                        </button>
                                     </div>
-
-                                    {withdrawError && <p style={{ color: '#dc2626', fontSize: '0.85rem', marginBottom: '15px' }}>{withdrawError}</p>}
-
-                                    <button
-                                        onClick={async () => {
-                                            setWithdrawError('');
-                                            const amountNum = parseInt(withdrawAmount);
-                                            if (amountNum < 50) { setWithdrawError('Minimum withdrawal is Ksh 50'); return; }
-                                            if (amountNum > balance) { setWithdrawError('Insufficient balance'); return; }
-                                            if (withdrawPhone.length < 9) { setWithdrawError('Please enter a valid phone number'); return; }
-
-                                            setWithdrawLoading(true);
-                                            try {
-                                                // Simulate withdrawal (in production, call actual API)
-                                                await new Promise(resolve => setTimeout(resolve, 2000));
-                                                setBalance(prev => prev - amountNum);
-                                                setWithdrawSuccess(true);
-                                            } catch {
-                                                setWithdrawError('Something went wrong. Please try again.');
-                                            } finally {
-                                                setWithdrawLoading(false);
-                                            }
-                                        }}
-                                        disabled={withdrawLoading}
-                                        style={{ width: '100%', padding: '16px', background: '#059669', color: 'white', border: 'none', borderRadius: '12px', fontSize: '1rem', fontWeight: 800, cursor: 'pointer', opacity: withdrawLoading ? 0.7 : 1 }}
-                                    >
-                                        {withdrawLoading ? 'Processing...' : `Withdraw ${withdrawAmount ? `Ksh ${parseInt(withdrawAmount).toLocaleString()}` : ''}`}
-                                    </button>
-                                </div>
-                            )}
+                                )}
                             </>
                         )}
 
@@ -2223,6 +2225,214 @@ export default function DashboardPage() {
                                     ))}
                                 </div>
                             )}
+                        </div>
+                    </div>
+                )}
+
+                {/* TEAM SECTION */}
+                {activeSection === 'team' && (
+                    <div style={{ animation: 'fadeIn 0.3s ease', maxWidth: '600px' }}>
+                        {/* Header */}
+                        <div style={{ background: 'linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%)', padding: '30px', borderRadius: '24px', marginBottom: '25px', color: 'white', textAlign: 'center' }}>
+                            <div style={{ fontSize: '3rem', marginBottom: '15px' }}>👥</div>
+                            <h2 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '8px' }}>Build Your Team</h2>
+                            <p style={{ opacity: 0.9, fontSize: '0.9rem' }}>Invite friends and earn together!</p>
+                        </div>
+
+                        {/* Invite Card */}
+                        <div style={{ background: 'linear-gradient(135deg, #0052ff 0%, #00a3ff 100%)', padding: '25px', borderRadius: '24px', marginBottom: '25px', color: 'white' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
+                                <span style={{ fontSize: '1.5rem' }}>🎁</span>
+                                <h3 style={{ fontSize: '1.1rem', fontWeight: 800 }}>Invite Friends & Earn</h3>
+                            </div>
+                            <p style={{ fontSize: '0.85rem', opacity: 0.9, marginBottom: '20px', lineHeight: 1.5 }}>
+                                Earn <strong>KES 20</strong> for every friend you invite, plus <strong>KES 5</strong> when they invite someone!
+                            </p>
+
+                            {/* Referral Code */}
+                            <div style={{ background: 'rgba(255,255,255,0.15)', padding: '15px', borderRadius: '14px', marginBottom: '15px' }}>
+                                <p style={{ fontSize: '0.7rem', opacity: 0.7, marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '1px' }}>Your Referral Code</p>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                    <code style={{
+                                        flex: 1,
+                                        fontSize: '1.3rem',
+                                        fontWeight: 800,
+                                        fontFamily: 'monospace',
+                                        letterSpacing: '3px',
+                                        background: 'rgba(255,255,255,0.1)',
+                                        padding: '12px 15px',
+                                        borderRadius: '10px'
+                                    }}>
+                                        {user?.referralCode || 'LOADING...'}
+                                    </code>
+                                    <button
+                                        onClick={() => {
+                                            const code = user?.referralCode;
+                                            if (code) {
+                                                navigator.clipboard.writeText(code);
+                                                alert('Referral code copied!');
+                                            }
+                                        }}
+                                        style={{
+                                            padding: '12px 20px',
+                                            background: 'white',
+                                            color: '#0052ff',
+                                            border: 'none',
+                                            borderRadius: '10px',
+                                            fontWeight: 700,
+                                            cursor: 'pointer',
+                                            fontSize: '0.85rem'
+                                        }}
+                                    >
+                                        Copy
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Share Link */}
+                            <div style={{ background: 'rgba(255,255,255,0.15)', padding: '15px', borderRadius: '14px', marginBottom: '15px' }}>
+                                <p style={{ fontSize: '0.7rem', opacity: 0.7, marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '1px' }}>Share Link</p>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+                                    <input
+                                        type="text"
+                                        readOnly
+                                        value={`${typeof window !== 'undefined' ? window.location.origin : ''}/register?ref=${user?.referralCode || ''}`}
+                                        style={{
+                                            flex: 1,
+                                            minWidth: '200px',
+                                            padding: '12px 15px',
+                                            background: 'rgba(255,255,255,0.1)',
+                                            border: 'none',
+                                            borderRadius: '10px',
+                                            color: 'white',
+                                            fontSize: '0.8rem'
+                                        }}
+                                    />
+                                    <button
+                                        onClick={() => {
+                                            const link = `${window.location.origin}/register?ref=${user?.referralCode}`;
+                                            navigator.clipboard.writeText(link);
+                                            alert('Invite link copied!');
+                                        }}
+                                        style={{
+                                            padding: '12px 20px',
+                                            background: 'rgba(255,255,255,0.2)',
+                                            color: 'white',
+                                            border: '1px solid rgba(255,255,255,0.3)',
+                                            borderRadius: '10px',
+                                            fontWeight: 600,
+                                            cursor: 'pointer',
+                                            fontSize: '0.8rem'
+                                        }}
+                                    >
+                                        📋 Copy
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Share Buttons */}
+                            <div style={{ display: 'flex', gap: '10px' }}>
+                                <button
+                                    onClick={() => {
+                                        const link = `${window.location.origin}/register?ref=${user?.referralCode}`;
+                                        const text = `Join SmartInvest and get KES 10 free! Use my code: ${user?.referralCode}`;
+                                        window.open(`https://wa.me/?text=${encodeURIComponent(text + ' ' + link)}`, '_blank');
+                                    }}
+                                    style={{
+                                        flex: 1,
+                                        padding: '14px',
+                                        background: '#25D366',
+                                        color: 'white',
+                                        border: 'none',
+                                        borderRadius: '12px',
+                                        fontWeight: 700,
+                                        cursor: 'pointer',
+                                        fontSize: '0.9rem',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        gap: '8px'
+                                    }}
+                                >
+                                    📱 WhatsApp
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        const link = `${window.location.origin}/register?ref=${user?.referralCode}`;
+                                        const text = `Join SmartInvest and start earning! Use my code: ${user?.referralCode}`;
+                                        window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(link)}`, '_blank');
+                                    }}
+                                    style={{
+                                        flex: 1,
+                                        padding: '14px',
+                                        background: '#1DA1F2',
+                                        color: 'white',
+                                        border: 'none',
+                                        borderRadius: '12px',
+                                        fontWeight: 700,
+                                        cursor: 'pointer',
+                                        fontSize: '0.9rem',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        gap: '8px'
+                                    }}
+                                >
+                                    🐦 Twitter
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Stats */}
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '15px', marginBottom: '25px' }}>
+                            <div style={{ background: 'white', padding: '25px', borderRadius: '20px', border: '1px solid #e2e8f0', textAlign: 'center' }}>
+                                <div style={{ fontSize: '2rem', marginBottom: '10px' }}>👥</div>
+                                <p style={{ fontSize: '2rem', fontWeight: 800, color: '#8b5cf6' }}>{user?.referralCount || 0}</p>
+                                <p style={{ fontSize: '0.8rem', color: '#64748b' }}>Team Members</p>
+                            </div>
+                            <div style={{ background: 'white', padding: '25px', borderRadius: '20px', border: '1px solid #e2e8f0', textAlign: 'center' }}>
+                                <div style={{ fontSize: '2rem', marginBottom: '10px' }}>💰</div>
+                                <p style={{ fontSize: '2rem', fontWeight: 800, color: '#10b981' }}>KES {(user?.referralEarnings || 0).toLocaleString()}</p>
+                                <p style={{ fontSize: '0.8rem', color: '#64748b' }}>Total Earnings</p>
+                            </div>
+                        </div>
+
+                        {/* How It Works */}
+                        <div style={{ background: 'white', padding: '25px', borderRadius: '24px', border: '1px solid #e2e8f0', marginBottom: '25px' }}>
+                            <h3 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: '20px' }}>💡 How It Works</h3>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                                    <div style={{ width: '40px', height: '40px', background: '#f0f7ff', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, color: '#0052ff' }}>1</div>
+                                    <div>
+                                        <p style={{ fontWeight: 700 }}>Share your code</p>
+                                        <p style={{ fontSize: '0.8rem', color: '#64748b' }}>Send your referral link to friends</p>
+                                    </div>
+                                </div>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                                    <div style={{ width: '40px', height: '40px', background: '#f0fdf4', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, color: '#10b981' }}>2</div>
+                                    <div>
+                                        <p style={{ fontWeight: 700 }}>Friend signs up</p>
+                                        <p style={{ fontSize: '0.8rem', color: '#64748b' }}>They register using your code</p>
+                                    </div>
+                                </div>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                                    <div style={{ width: '40px', height: '40px', background: '#fef3c7', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, color: '#b45309' }}>3</div>
+                                    <div>
+                                        <p style={{ fontWeight: 700 }}>You both earn!</p>
+                                        <p style={{ fontSize: '0.8rem', color: '#64748b' }}>You get KES 20, they get KES 10</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Team Leaderboard Placeholder */}
+                        <div style={{ background: 'white', padding: '25px', borderRadius: '24px', border: '1px solid #e2e8f0' }}>
+                            <h3 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: '20px' }}>🏆 Top Referrers</h3>
+                            <div style={{ textAlign: 'center', padding: '30px', color: '#94a3b8' }}>
+                                <div style={{ fontSize: '2.5rem', marginBottom: '10px', opacity: 0.5 }}>🏅</div>
+                                <p style={{ fontWeight: 600 }}>Leaderboard Coming Soon</p>
+                                <p style={{ fontSize: '0.8rem' }}>Start referring to rank higher!</p>
+                            </div>
                         </div>
                     </div>
                 )}
@@ -2724,31 +2934,31 @@ export default function DashboardPage() {
                                         setTimeout(() => setRentalSuccess(null), 4000);
                                     }
                                 }}
-                                disabled={balance < selectedRig.price || rentedBots.some(bot => bot.id === selectedRig.id)}
+                                disabled={rentedBots.some(bot => bot.id === selectedRig.id)}
                                 style={{
                                     flex: 2,
                                     padding: '16px',
-                                    background: balance < selectedRig.price ? '#94a3b8' : rentedBots.some(bot => bot.id === selectedRig.id) ? '#10b981' : '#0052ff',
+                                    background: balance < selectedRig.price ? '#059669' : rentedBots.some(bot => bot.id === selectedRig.id) ? '#10b981' : '#0052ff',
                                     color: 'white',
                                     border: 'none',
                                     borderRadius: '12px',
                                     fontWeight: 800,
                                     fontSize: '0.95rem',
-                                    cursor: (balance < selectedRig.price || rentedBots.some(bot => bot.id === selectedRig.id)) ? 'not-allowed' : 'pointer',
+                                    cursor: rentedBots.some(bot => bot.id === selectedRig.id) ? 'not-allowed' : 'pointer',
                                     transition: '0.2s'
                                 }}
                                 onMouseEnter={(e) => {
-                                    if (balance >= selectedRig.price && !rentedBots.some(bot => bot.id === selectedRig.id)) {
-                                        e.currentTarget.style.background = '#0041cc';
+                                    if (!rentedBots.some(bot => bot.id === selectedRig.id)) {
+                                        e.currentTarget.style.background = balance < selectedRig.price ? '#047857' : '#0041cc';
                                     }
                                 }}
                                 onMouseLeave={(e) => {
-                                    if (balance >= selectedRig.price && !rentedBots.some(bot => bot.id === selectedRig.id)) {
-                                        e.currentTarget.style.background = '#0052ff';
+                                    if (!rentedBots.some(bot => bot.id === selectedRig.id)) {
+                                        e.currentTarget.style.background = balance < selectedRig.price ? '#059669' : '#0052ff';
                                     }
                                 }}
                             >
-                                {balance < selectedRig.price ? 'Add Funds' : rentedBots.some(bot => bot.id === selectedRig.id) ? '✓ Already Rented' : `Confirm Rental - KES ${selectedRig.price.toLocaleString()}`}
+                                {balance < selectedRig.price ? '💰 Add Funds' : rentedBots.some(bot => bot.id === selectedRig.id) ? '✓ Already Rented' : `Confirm Rental - KES ${selectedRig.price.toLocaleString()}`}
                             </button>
                         </div>
                     </div>
