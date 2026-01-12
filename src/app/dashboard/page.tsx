@@ -53,8 +53,9 @@ export default function DashboardPage() {
     const [xRayMode, setXRayMode] = useState(false);
     const [activeMiners, setActiveMiners] = useState(0);
     const [totalMined, setTotalMined] = useState(0);
-    const [activityFeedExpanded, setActivityFeedExpanded] = useState(true);
-    const [miningTerminalExpanded, setMiningTerminalExpanded] = useState(true);
+    const [activityFeedExpanded, setActivityFeedExpanded] = useState(false);
+    const [miningTerminalExpanded, setMiningTerminalExpanded] = useState(false);
+    const [rentedBots, setRentedBots] = useState<Array<{id: string, name: string, icon: string, dailyEarnings: number, price: number, rentedAt: Date, duration: string}>>([]);
 
     // Deposit form state
     const [depositPhone, setDepositPhone] = useState('');
@@ -401,6 +402,45 @@ export default function DashboardPage() {
             duration: '60 days',
             hashrate: '420 MH/s',
             algorithm: 'Ethash'
+        },
+        { 
+            id: 'asic-pro', 
+            name: 'ASIC Pro Miner', 
+            icon: '💎', 
+            dailyEarnings: 1200, 
+            price: 4000, 
+            category: 'Crypto Mining',
+            description: 'Next-gen ASIC miner with advanced cooling system for 24/7 operation.',
+            roi: '30%',
+            duration: '45 days',
+            hashrate: '140 TH/s',
+            powerConsumption: '3400W'
+        },
+        { 
+            id: 'gpu-farm', 
+            name: 'GPU Mining Farm', 
+            icon: '🖥️', 
+            dailyEarnings: 2200, 
+            price: 7500, 
+            category: 'Crypto Mining',
+            description: 'Multi-GPU mining setup for altcoin mining with high flexibility.',
+            roi: '29%',
+            duration: '60 days',
+            hashrate: '1.2 GH/s',
+            powerConsumption: '4800W'
+        },
+        { 
+            id: 'quantum-hasher', 
+            name: 'Quantum Hasher X1', 
+            icon: '⚡', 
+            dailyEarnings: 3500, 
+            price: 12000, 
+            category: 'Crypto Mining',
+            description: 'Premium quantum-resistant mining hardware with industry-leading efficiency.',
+            roi: '29%',
+            duration: '90 days',
+            hashrate: '250 TH/s',
+            powerConsumption: '5200W'
         },
         { 
             id: 'spacelink-node', 
@@ -1204,6 +1244,284 @@ export default function DashboardPage() {
                             </div>
                         </div>
 
+                        {/* My Rented Bots Section */}
+                        <div style={{ marginBottom: '25px' }}>
+                            <h3 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: '15px' }}>✅ My Active Bots</h3>
+                            {rentedBots.length === 0 ? (
+                                <div style={{
+                                    background: 'rgba(17, 25, 40, 0.75)',
+                                    border: '1px dashed rgba(255, 255, 255, 0.2)',
+                                    borderRadius: '16px',
+                                    padding: '30px',
+                                    textAlign: 'center'
+                                }}>
+                                    <div style={{ fontSize: '2.5rem', marginBottom: '10px', opacity: 0.5 }}>🤖</div>
+                                    <p style={{ color: '#94a3b8', fontSize: '0.9rem', fontWeight: 600 }}>No active bots</p>
+                                    <p style={{ color: '#64748b', fontSize: '0.75rem', marginTop: '5px' }}>Rent a bot below to start earning!</p>
+                                </div>
+                            ) : (
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                                    {rentedBots.map((bot) => {
+                                        const rentedDate = new Date(bot.rentedAt);
+                                        const daysActive = Math.floor((Date.now() - rentedDate.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+                                        const totalEarned = bot.dailyEarnings * daysActive;
+                                        
+                                        return (
+                                            <div
+                                                key={bot.id + '-rented'}
+                                                style={{
+                                                    background: 'linear-gradient(135deg, rgba(57, 255, 20, 0.1) 0%, rgba(0, 242, 255, 0.1) 100%)',
+                                                    borderRadius: '16px',
+                                                    padding: '18px 20px',
+                                                    border: '1px solid rgba(57, 255, 20, 0.3)',
+                                                    position: 'relative'
+                                                }}
+                                            >
+                                                {/* Active Badge */}
+                                                <div style={{
+                                                    position: 'absolute',
+                                                    top: '10px',
+                                                    right: '10px',
+                                                    background: 'linear-gradient(135deg, #39ff14 0%, #00f2ff 100%)',
+                                                    color: '#0f172a',
+                                                    padding: '6px 12px',
+                                                    borderRadius: '20px',
+                                                    fontSize: '0.7rem',
+                                                    fontWeight: 800,
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: '5px'
+                                                }}>
+                                                    <div style={{
+                                                        width: '6px',
+                                                        height: '6px',
+                                                        background: '#0f172a',
+                                                        borderRadius: '50%',
+                                                        animation: 'pulse 2s infinite'
+                                                    }}></div>
+                                                    MINING
+                                                </div>
+                                                
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                                                    <div style={{
+                                                        width: '50px',
+                                                        height: '50px',
+                                                        background: 'rgba(57, 255, 20, 0.2)',
+                                                        borderRadius: '14px',
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center',
+                                                        fontSize: '1.5rem'
+                                                    }}>
+                                                        {bot.icon}
+                                                    </div>
+                                                    <div style={{ flex: 1 }}>
+                                                        <p style={{ fontWeight: 700, fontSize: '0.95rem', color: '#fff' }}>{bot.name}</p>
+                                                        <p style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Day {daysActive} of {bot.duration}</p>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div style={{ 
+                                                    display: 'grid', 
+                                                    gridTemplateColumns: '1fr 1fr', 
+                                                    gap: '10px', 
+                                                    marginTop: '15px',
+                                                    paddingTop: '15px',
+                                                    borderTop: '1px solid rgba(255, 255, 255, 0.1)'
+                                                }}>
+                                                    <div>
+                                                        <p style={{ fontSize: '0.65rem', color: '#94a3b8', marginBottom: '4px' }}>Daily Earnings</p>
+                                                        <p style={{ fontSize: '1rem', fontWeight: 700, color: '#39ff14', fontFamily: 'monospace' }}>
+                                                            +KES {bot.dailyEarnings.toLocaleString()}
+                                                        </p>
+                                                    </div>
+                                                    <div>
+                                                        <p style={{ fontSize: '0.65rem', color: '#94a3b8', marginBottom: '4px' }}>Total Earned</p>
+                                                        <p style={{ fontSize: '1rem', fontWeight: 700, color: '#ffb800', fontFamily: 'monospace' }}>
+                                                            KES {totalEarned.toLocaleString()}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Bot Rental Marketplace - Prominent Position */}
+                        <h3 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: '15px' }}>🤖 Bot Rental Marketplace</h3>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '25px' }}>
+                            {miningRigs.filter(rig => rig.category === 'Crypto Mining').map((rig, index) => {
+                                const stockCounts = [6, 4, 3, 5, 2]; // Fixed stock for each bot
+                                const stockLeft = stockCounts[index] || 3;
+                                const isLowStock = stockLeft <= 5;
+                                
+                                return (
+                                <div
+                                    key={rig.id}
+                                    style={{
+                                        background: 'rgba(17, 25, 40, 0.85)',
+                                        borderRadius: '16px',
+                                        padding: '18px 20px',
+                                        border: expandedRig === rig.id ? '2px solid #00f2ff' : '1px solid rgba(255, 255, 255, 0.1)',
+                                        transition: '0.2s',
+                                        cursor: 'pointer',
+                                        position: 'relative'
+                                    }}
+                                >
+                                    {/* Limited Supply Badge */}
+                                    {isLowStock && (
+                                        <div style={{
+                                            position: 'absolute',
+                                            top: '10px',
+                                            right: '10px',
+                                            background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+                                            color: 'white',
+                                            padding: '6px 12px',
+                                            borderRadius: '20px',
+                                            fontSize: '0.75rem',
+                                            fontWeight: 800,
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '5px',
+                                            boxShadow: '0 4px 15px rgba(239, 68, 68, 0.4)',
+                                            animation: 'pulse 2s infinite'
+                                        }}>
+                                            🔥 Only {stockLeft} left!
+                                        </div>
+                                    )}
+                                    
+                                    <div
+                                        onClick={() => setExpandedRig(expandedRig === rig.id ? null : rig.id)}
+                                        style={{
+                                            display: 'flex',
+                                            justifyContent: 'space-between',
+                                            alignItems: 'center'
+                                        }}
+                                    >
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                                            <div style={{
+                                                width: '50px',
+                                                height: '50px',
+                                                background: 'rgba(0, 242, 255, 0.1)',
+                                                borderRadius: '14px',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                fontSize: '1.5rem'
+                                            }}>
+                                                {rig.icon}
+                                            </div>
+                                            <div>
+                                                <p style={{ fontWeight: 700, fontSize: '0.95rem', color: '#fff' }}>{rig.name}</p>
+                                                <p style={{ fontSize: '0.8rem', color: '#94a3b8' }}>Daily: KES {rig.dailyEarnings.toLocaleString()}</p>
+                                            </div>
+                                        </div>
+                                        <div style={{ textAlign: 'right', display: 'flex', alignItems: 'center', gap: '15px' }}>
+                                            <p style={{ fontWeight: 800, fontSize: '0.9rem', color: '#ffb800' }}>KES {rig.price.toLocaleString()}</p>
+                                            <span style={{ fontSize: '1.2rem', color: '#94a3b8', transform: expandedRig === rig.id ? 'rotate(180deg)' : 'rotate(0deg)', transition: '0.3s' }}>▼</span>
+                                        </div>
+                                    </div>
+
+                                    {/* Expanded Details */}
+                                    {expandedRig === rig.id && (
+                                        <div style={{ marginTop: '20px', paddingTop: '20px', borderTop: '1px solid rgba(255, 255, 255, 0.1)', animation: 'fadeIn 0.3s ease' }}>
+                                            <p style={{ fontSize: '0.9rem', color: '#94a3b8', marginBottom: '20px', lineHeight: 1.6 }}>
+                                                {rig.description}
+                                            </p>
+
+                                            {/* ROI Calculation Table */}
+                                            <div style={{ 
+                                                background: 'linear-gradient(135deg, rgba(255, 184, 0, 0.2) 0%, rgba(255, 184, 0, 0.1) 100%)', 
+                                                padding: '20px', 
+                                                borderRadius: '12px', 
+                                                marginBottom: '20px',
+                                                border: '1px solid rgba(255, 184, 0, 0.3)'
+                                            }}>
+                                                <h4 style={{ fontSize: '0.9rem', fontWeight: 800, marginBottom: '15px', color: '#ffb800' }}>
+                                                    💰 Return on Investment (ROI)
+                                                </h4>
+                                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px', marginBottom: '15px' }}>
+                                                    <div>
+                                                        <p style={{ fontSize: '0.7rem', color: '#94a3b8', marginBottom: '4px' }}>Daily Profit</p>
+                                                        <p style={{ fontSize: '1rem', fontWeight: 800, color: '#ffb800' }}>
+                                                            KES {rig.dailyEarnings.toLocaleString()}
+                                                        </p>
+                                                        <p style={{ fontSize: '0.65rem', color: '#94a3b8' }}>2.5% of investment</p>
+                                                    </div>
+                                                    <div>
+                                                        <p style={{ fontSize: '0.7rem', color: '#94a3b8', marginBottom: '4px' }}>Weekly Profit</p>
+                                                        <p style={{ fontSize: '1rem', fontWeight: 800, color: '#ffb800' }}>
+                                                            KES {(rig.dailyEarnings * 7).toLocaleString()}
+                                                        </p>
+                                                        <p style={{ fontSize: '0.65rem', color: '#94a3b8' }}>17.5% return</p>
+                                                    </div>
+                                                    <div style={{ background: 'rgba(255, 184, 0, 0.2)', padding: '10px', borderRadius: '8px' }}>
+                                                        <p style={{ fontSize: '0.7rem', color: '#94a3b8', marginBottom: '4px' }}>Monthly Total</p>
+                                                        <p style={{ fontSize: '1.2rem', fontWeight: 900, color: '#ffb800' }}>
+                                                            KES {(rig.dailyEarnings * 30).toLocaleString()}
+                                                        </p>
+                                                        <p style={{ fontSize: '0.65rem', color: '#94a3b8' }}>75% ROI in 30 days</p>
+                                                    </div>
+                                                </div>
+                                                <p style={{ fontSize: '0.75rem', color: '#ffb800', textAlign: 'center', fontWeight: 600 }}>
+                                                    📈 Break-even in just 40 days! Pure profit after that.
+                                                </p>
+                                            </div>
+
+                                            {/* Stats Grid */}
+                                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px', marginBottom: '20px' }}>
+                                                <div style={{ background: 'rgba(255, 255, 255, 0.05)', padding: '12px', borderRadius: '10px' }}>
+                                                    <p style={{ fontSize: '0.7rem', color: '#94a3b8', marginBottom: '4px' }}>ROI</p>
+                                                    <p style={{ fontSize: '1rem', fontWeight: 800, color: '#39ff14' }}>{rig.roi}</p>
+                                                </div>
+                                                <div style={{ background: 'rgba(255, 255, 255, 0.05)', padding: '12px', borderRadius: '10px' }}>
+                                                    <p style={{ fontSize: '0.7rem', color: '#94a3b8', marginBottom: '4px' }}>Duration</p>
+                                                    <p style={{ fontSize: '1rem', fontWeight: 800, color: '#fff' }}>{rig.duration}</p>
+                                                </div>
+                                                {rig.hashrate && (
+                                                    <div style={{ background: 'rgba(255, 255, 255, 0.05)', padding: '12px', borderRadius: '10px' }}>
+                                                        <p style={{ fontSize: '0.7rem', color: '#94a3b8', marginBottom: '4px' }}>Hashrate</p>
+                                                        <p style={{ fontSize: '1rem', fontWeight: 800, color: '#fff' }}>{rig.hashrate}</p>
+                                                    </div>
+                                                )}
+                                                {rig.powerConsumption && (
+                                                    <div style={{ background: 'rgba(255, 255, 255, 0.05)', padding: '12px', borderRadius: '10px' }}>
+                                                        <p style={{ fontSize: '0.7rem', color: '#94a3b8', marginBottom: '4px' }}>Power</p>
+                                                        <p style={{ fontSize: '1rem', fontWeight: 800, color: '#fff' }}>{rig.powerConsumption}</p>
+                                                    </div>
+                                                )}
+                                            </div>
+
+                                            {/* Rent Button */}
+                                            <button
+                                                style={{
+                                                    width: '100%',
+                                                    padding: '14px 20px',
+                                                    background: 'linear-gradient(135deg, #00f2ff 0%, #0066ff 100%)',
+                                                    color: 'white',
+                                                    border: 'none',
+                                                    borderRadius: '12px',
+                                                    fontWeight: 700,
+                                                    fontSize: '0.95rem',
+                                                    cursor: 'pointer',
+                                                    transition: '0.2s'
+                                                }}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setSelectedRig(rig);
+                                                    setShowRentModal(true);
+                                                }}
+                                            >
+                                                Rent for KES {rig.price.toLocaleString()}
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
+                            )})}
+                        </div>
+
                         {/* Stats Grid */}
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginBottom: '20px' }}>
                             {/* CPU Temp */}
@@ -1444,265 +1762,6 @@ export default function DashboardPage() {
                                 </div>
                             </div>
                         )}
-
-                        {/* Mining Rigs Grid - Only Crypto Mining Bots */}
-                        <h3 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: '15px' }}>🤖 Bot Rental Marketplace</h3>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                            {miningRigs.filter(rig => rig.category === 'Crypto Mining').map((rig, index) => {
-                                const stockLeft = Math.floor(Math.random() * 5) + 1; // 1-5 units left
-                                const isLowStock = stockLeft <= 3;
-                                
-                                return (
-                                <div
-                                    key={rig.id}
-                                    style={{
-                                        background: 'white',
-                                        borderRadius: '16px',
-                                        padding: '18px 20px',
-                                        border: expandedRig === rig.id ? '2px solid #0052ff' : '1px solid #e2e8f0',
-                                        transition: '0.2s',
-                                        cursor: 'pointer',
-                                        position: 'relative'
-                                    }}
-                                >
-                                    {/* Limited Supply Badge */}
-                                    {isLowStock && (
-                                        <div style={{
-                                            position: 'absolute',
-                                            top: '10px',
-                                            right: '10px',
-                                            background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
-                                            color: 'white',
-                                            padding: '6px 12px',
-                                            borderRadius: '20px',
-                                            fontSize: '0.75rem',
-                                            fontWeight: 800,
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            gap: '5px',
-                                            boxShadow: '0 4px 15px rgba(239, 68, 68, 0.4)',
-                                            animation: 'pulse 2s infinite'
-                                        }}>
-                                            🔥 Only {stockLeft} left!
-                                        </div>
-                                    )}
-                                    
-                                    <div
-                                        onClick={() => setExpandedRig(expandedRig === rig.id ? null : rig.id)}
-                                        style={{
-                                            display: 'flex',
-                                            justifyContent: 'space-between',
-                                            alignItems: 'center'
-                                        }}
-                                    >
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-                                            <div style={{
-                                                width: '50px',
-                                                height: '50px',
-                                                background: '#0f172a',
-                                                borderRadius: '14px',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'center',
-                                                fontSize: '1.5rem'
-                                            }}>
-                                                {rig.icon}
-                                            </div>
-                                            <div>
-                                                <p style={{ fontWeight: 700, fontSize: '0.95rem' }}>{rig.name}</p>
-                                                <p style={{ fontSize: '0.8rem', color: '#64748b' }}>Daily: KES {rig.dailyEarnings.toLocaleString()}</p>
-                                            </div>
-                                        </div>
-                                        <div style={{ textAlign: 'right', display: 'flex', alignItems: 'center', gap: '15px' }}>
-                                            <p style={{ fontWeight: 800, fontSize: '0.9rem' }}>KES {rig.price.toLocaleString()}</p>
-                                            <span style={{ fontSize: '1.2rem', transform: expandedRig === rig.id ? 'rotate(180deg)' : 'rotate(0deg)', transition: '0.3s' }}>▼</span>
-                                        </div>
-                                    </div>
-
-                                    {/* Expanded Details */}
-                                    {expandedRig === rig.id && (
-                                        <div style={{ marginTop: '20px', paddingTop: '20px', borderTop: '1px solid #e2e8f0', animation: 'fadeIn 0.3s ease' }}>
-                                            {/* Description */}
-                                            <p style={{ fontSize: '0.9rem', color: '#64748b', marginBottom: '20px', lineHeight: 1.6 }}>
-                                                {rig.description}
-                                            </p>
-
-                                            {/* ROI Calculation Table */}
-                                            <div style={{ 
-                                                background: 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)', 
-                                                padding: '20px', 
-                                                borderRadius: '12px', 
-                                                marginBottom: '20px',
-                                                border: '2px solid #f59e0b'
-                                            }}>
-                                                <h4 style={{ fontSize: '0.9rem', fontWeight: 800, marginBottom: '15px', color: '#92400e' }}>
-                                                    💰 Return on Investment (ROI)
-                                                </h4>
-                                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px', marginBottom: '15px' }}>
-                                                    <div>
-                                                        <p style={{ fontSize: '0.7rem', color: '#78350f', marginBottom: '4px' }}>Daily Profit</p>
-                                                        <p style={{ fontSize: '1rem', fontWeight: 800, color: '#92400e' }}>
-                                                            KES {rig.dailyEarnings.toLocaleString()}
-                                                        </p>
-                                                        <p style={{ fontSize: '0.65rem', color: '#a16207' }}>2.5% of investment</p>
-                                                    </div>
-                                                    <div>
-                                                        <p style={{ fontSize: '0.7rem', color: '#78350f', marginBottom: '4px' }}>Weekly Profit</p>
-                                                        <p style={{ fontSize: '1rem', fontWeight: 800, color: '#92400e' }}>
-                                                            KES {(rig.dailyEarnings * 7).toLocaleString()}
-                                                        </p>
-                                                        <p style={{ fontSize: '0.65rem', color: '#a16207' }}>17.5% return</p>
-                                                    </div>
-                                                    <div style={{ background: 'rgba(251, 191, 36, 0.3)', padding: '10px', borderRadius: '8px' }}>
-                                                        <p style={{ fontSize: '0.7rem', color: '#78350f', marginBottom: '4px' }}>Monthly Total</p>
-                                                        <p style={{ fontSize: '1.2rem', fontWeight: 900, color: '#f59e0b' }}>
-                                                            KES {(rig.dailyEarnings * 30).toLocaleString()}
-                                                        </p>
-                                                        <p style={{ fontSize: '0.65rem', color: '#a16207' }}>75% ROI in 30 days</p>
-                                                    </div>
-                                                </div>
-                                                <p style={{ fontSize: '0.75rem', color: '#92400e', textAlign: 'center', fontWeight: 600 }}>
-                                                    📈 Break-even in just 40 days! Pure profit after that.
-                                                </p>
-                                            </div>
-
-                                            {/* Stats Grid */}
-                                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px', marginBottom: '20px' }}>
-                                                <div style={{ background: '#f8fafc', padding: '12px', borderRadius: '10px' }}>
-                                                    <p style={{ fontSize: '0.7rem', color: '#64748b', marginBottom: '4px' }}>ROI</p>
-                                                    <p style={{ fontSize: '1rem', fontWeight: 800, color: '#10b981' }}>{rig.roi}</p>
-                                                </div>
-                                                <div style={{ background: '#f8fafc', padding: '12px', borderRadius: '10px' }}>
-                                                    <p style={{ fontSize: '0.7rem', color: '#64748b', marginBottom: '4px' }}>Duration</p>
-                                                    <p style={{ fontSize: '1rem', fontWeight: 800 }}>{rig.duration}</p>
-                                                </div>
-                                                {rig.hashrate && (
-                                                    <div style={{ background: '#f8fafc', padding: '12px', borderRadius: '10px' }}>
-                                                        <p style={{ fontSize: '0.7rem', color: '#64748b', marginBottom: '4px' }}>Hashrate</p>
-                                                        <p style={{ fontSize: '1rem', fontWeight: 800 }}>{rig.hashrate}</p>
-                                                    </div>
-                                                )}
-                                                {rig.powerConsumption && (
-                                                    <div style={{ background: '#f8fafc', padding: '12px', borderRadius: '10px' }}>
-                                                        <p style={{ fontSize: '0.7rem', color: '#64748b', marginBottom: '4px' }}>Power</p>
-                                                        <p style={{ fontSize: '1rem', fontWeight: 800 }}>{rig.powerConsumption}</p>
-                                                    </div>
-                                                )}
-                                                {rig.vehicles && (
-                                                    <div style={{ background: '#f8fafc', padding: '12px', borderRadius: '10px' }}>
-                                                        <p style={{ fontSize: '0.7rem', color: '#64748b', marginBottom: '4px' }}>Fleet Size</p>
-                                                        <p style={{ fontSize: '1rem', fontWeight: 800 }}>{rig.vehicles}</p>
-                                                    </div>
-                                                )}
-                                                {rig.coverage && (
-                                                    <div style={{ background: '#f8fafc', padding: '12px', borderRadius: '10px' }}>
-                                                        <p style={{ fontSize: '0.7rem', color: '#64748b', marginBottom: '4px' }}>Coverage</p>
-                                                        <p style={{ fontSize: '1rem', fontWeight: 800 }}>{rig.coverage}</p>
-                                                    </div>
-                                                )}
-                                                {rig.capacity && (
-                                                    <div style={{ background: '#f8fafc', padding: '12px', borderRadius: '10px' }}>
-                                                        <p style={{ fontSize: '0.7rem', color: '#64748b', marginBottom: '4px' }}>Capacity</p>
-                                                        <p style={{ fontSize: '1rem', fontWeight: 800 }}>{rig.capacity}</p>
-                                                    </div>
-                                                )}
-                                                {rig.routes && (
-                                                    <div style={{ background: '#f8fafc', padding: '12px', borderRadius: '10px' }}>
-                                                        <p style={{ fontSize: '0.7rem', color: '#64748b', marginBottom: '4px' }}>Routes</p>
-                                                        <p style={{ fontSize: '1rem', fontWeight: 800 }}>{rig.routes}</p>
-                                                    </div>
-                                                )}
-                                                {rig.output && (
-                                                    <div style={{ background: '#f8fafc', padding: '12px', borderRadius: '10px' }}>
-                                                        <p style={{ fontSize: '0.7rem', color: '#64748b', marginBottom: '4px' }}>Output</p>
-                                                        <p style={{ fontSize: '1rem', fontWeight: 800 }}>{rig.output}</p>
-                                                    </div>
-                                                )}
-                                                {rig.efficiency && (
-                                                    <div style={{ background: '#f8fafc', padding: '12px', borderRadius: '10px' }}>
-                                                        <p style={{ fontSize: '0.7rem', color: '#64748b', marginBottom: '4px' }}>Efficiency</p>
-                                                        <p style={{ fontSize: '1rem', fontWeight: 800 }}>{rig.efficiency}</p>
-                                                    </div>
-                                                )}
-                                                {rig.gpus && (
-                                                    <div style={{ background: '#f8fafc', padding: '12px', borderRadius: '10px' }}>
-                                                        <p style={{ fontSize: '0.7rem', color: '#64748b', marginBottom: '4px' }}>GPUs</p>
-                                                        <p style={{ fontSize: '1rem', fontWeight: 800 }}>{rig.gpus}</p>
-                                                    </div>
-                                                )}
-                                                {rig.performance && (
-                                                    <div style={{ background: '#f8fafc', padding: '12px', borderRadius: '10px' }}>
-                                                        <p style={{ fontSize: '0.7rem', color: '#64748b', marginBottom: '4px' }}>Performance</p>
-                                                        <p style={{ fontSize: '1rem', fontWeight: 800 }}>{rig.performance}</p>
-                                                    </div>
-                                                )}
-                                                {rig.range && (
-                                                    <div style={{ background: '#f8fafc', padding: '12px', borderRadius: '10px' }}>
-                                                        <p style={{ fontSize: '0.7rem', color: '#64748b', marginBottom: '4px' }}>Range</p>
-                                                        <p style={{ fontSize: '1rem', fontWeight: 800 }}>{rig.range}</p>
-                                                    </div>
-                                                )}
-                                                {rig.charging && (
-                                                    <div style={{ background: '#f8fafc', padding: '12px', borderRadius: '10px' }}>
-                                                        <p style={{ fontSize: '0.7rem', color: '#64748b', marginBottom: '4px' }}>Charging</p>
-                                                        <p style={{ fontSize: '1rem', fontWeight: 800 }}>{rig.charging}</p>
-                                                    </div>
-                                                )}
-                                                {rig.carriers && (
-                                                    <div style={{ background: '#f8fafc', padding: '12px', borderRadius: '10px' }}>
-                                                        <p style={{ fontSize: '0.7rem', color: '#64748b', marginBottom: '4px' }}>Carriers</p>
-                                                        <p style={{ fontSize: '1rem', fontWeight: 800 }}>{rig.carriers}</p>
-                                                    </div>
-                                                )}
-                                                {rig.algorithm && (
-                                                    <div style={{ background: '#f8fafc', padding: '12px', borderRadius: '10px' }}>
-                                                        <p style={{ fontSize: '0.7rem', color: '#64748b', marginBottom: '4px' }}>Algorithm</p>
-                                                        <p style={{ fontSize: '1rem', fontWeight: 800 }}>{rig.algorithm}</p>
-                                                    </div>
-                                                )}
-                                                {rig.bandwidth && (
-                                                    <div style={{ background: '#f8fafc', padding: '12px', borderRadius: '10px' }}>
-                                                        <p style={{ fontSize: '0.7rem', color: '#64748b', marginBottom: '4px' }}>Bandwidth</p>
-                                                        <p style={{ fontSize: '1rem', fontWeight: 800 }}>{rig.bandwidth}</p>
-                                                    </div>
-                                                )}
-                                                {rig.latency && (
-                                                    <div style={{ background: '#f8fafc', padding: '12px', borderRadius: '10px' }}>
-                                                        <p style={{ fontSize: '0.7rem', color: '#64748b', marginBottom: '4px' }}>Latency</p>
-                                                        <p style={{ fontSize: '1rem', fontWeight: 800 }}>{rig.latency}</p>
-                                                    </div>
-                                                )}
-                                            </div>
-
-                                            {/* Rent Button */}
-                                            <button
-                                                style={{
-                                                    width: '100%',
-                                                    padding: '14px 20px',
-                                                    background: '#0052ff',
-                                                    color: 'white',
-                                                    border: 'none',
-                                                    borderRadius: '12px',
-                                                    fontWeight: 700,
-                                                    fontSize: '0.95rem',
-                                                    cursor: 'pointer',
-                                                    transition: '0.2s'
-                                                }}
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    setSelectedRig(rig);
-                                                    setShowRentModal(true);
-                                                }}
-                                                onMouseEnter={(e) => e.currentTarget.style.background = '#0041cc'}
-                                                onMouseLeave={(e) => e.currentTarget.style.background = '#0052ff'}
-                                            >
-                                                Rent for KES {rig.price.toLocaleString()}
-                                            </button>
-                                        </div>
-                                    )}
-                                </div>
-                            )})}
-                        </div>
                     </div>
                 )}
 
@@ -2389,7 +2448,17 @@ export default function DashboardPage() {
                                         setShowRentModal(false);
                                         setActiveSection('wallet');
                                     } else {
-                                        alert('Rental feature coming soon!');
+                                        // Deduct balance and add to rented bots
+                                        setBalance(prev => prev - selectedRig.price);
+                                        setRentedBots(prev => [...prev, {
+                                            id: selectedRig.id,
+                                            name: selectedRig.name,
+                                            icon: selectedRig.icon,
+                                            dailyEarnings: selectedRig.dailyEarnings,
+                                            price: selectedRig.price,
+                                            rentedAt: new Date(),
+                                            duration: selectedRig.duration
+                                        }]);
                                         setShowRentModal(false);
                                     }
                                 }}
