@@ -181,6 +181,10 @@ export default function DashboardPage() {
                     .stat-card { padding: 20px !important; }
                     .stat-card h2 { font-size: 1.5rem !important; white-space: nowrap; }
                 }
+                @keyframes pulse {
+                    0%, 100% { opacity: 1; transform: scale(1); }
+                    50% { opacity: 0.5; transform: scale(1.2); }
+                }
             `}</style>
 
             {/* GRID MESH BACKGROUND */}
@@ -472,14 +476,51 @@ export default function DashboardPage() {
                         </div>
 
                         {/* Chart */}
-                        <div style={{ background: 'white', padding: '25px', borderRadius: '20px', border: '1px solid #e2e8f0', marginBottom: '20px' }}>
-                            <h3 style={{ marginBottom: '20px', fontWeight: 700 }}>Live Performance</h3>
-                            <div style={{ height: '150px', display: 'flex', alignItems: 'flex-end', gap: '12px' }}>
-                                {[40, 60, 45, 80, 55, 90, 70].map((h, i) => (
-                                    <div key={i} style={{ height: `${h}%`, flex: 1, background: i === 5 ? '#0052ff' : '#e2e8f0', borderRadius: '6px', transition: '0.3s' }}></div>
-                                ))}
+                        <div style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)', padding: '25px', borderRadius: '20px', marginBottom: '20px', position: 'relative', overflow: 'hidden' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                                <h3 style={{ fontWeight: 700, color: 'white' }}>Live Performance</h3>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                    <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10b981', animation: 'pulse 2s infinite' }}></div>
+                                    <span style={{ fontSize: '0.75rem', color: '#10b981', fontWeight: 600 }}>LIVE</span>
+                                </div>
                             </div>
-                            <p style={{ textAlign: 'center', fontSize: '0.8rem', color: '#94a3b8', marginTop: '15px' }}>Weekly Earnings Growth</p>
+
+                            {/* SVG Chart */}
+                            <svg viewBox="0 0 400 120" style={{ width: '100%', height: '120px' }}>
+                                <defs>
+                                    <linearGradient id="chartGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                        <stop offset="0%" stopColor="#0052ff" stopOpacity="0.3" />
+                                        <stop offset="100%" stopColor="#0052ff" stopOpacity="0" />
+                                    </linearGradient>
+                                </defs>
+
+                                {/* Grid lines */}
+                                {[0, 30, 60, 90].map((y) => (
+                                    <line key={y} x1="0" y1={y} x2="400" y2={y} stroke="rgba(255,255,255,0.05)" strokeWidth="1" />
+                                ))}
+
+                                {/* Flat line (no data yet) */}
+                                <path d="M0,100 L400,100" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="2" strokeDasharray="5,5" />
+
+                                {/* Area fill */}
+                                <path d="M0,100 L0,100 L400,100 L400,100 Z" fill="url(#chartGradient)" />
+
+                                {/* Main line */}
+                                <path d="M0,100 L400,100" fill="none" stroke="#0052ff" strokeWidth="3" strokeLinecap="round" />
+
+                                {/* Data point */}
+                                <circle cx="400" cy="100" r="6" fill="#0052ff" stroke="white" strokeWidth="2" />
+                            </svg>
+
+                            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '15px' }}>
+                                <span style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.5)' }}>7 days ago</span>
+                                <span style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.5)' }}>Today</span>
+                            </div>
+
+                            <div style={{ textAlign: 'center', marginTop: '15px', padding: '12px', background: 'rgba(255,255,255,0.05)', borderRadius: '12px' }}>
+                                <p style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)', marginBottom: '4px' }}>Weekly Earnings</p>
+                                <p style={{ fontSize: '1.5rem', fontWeight: 800, color: 'white' }}>Ksh 0.00</p>
+                            </div>
                         </div>
 
                         <div className="stat-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '20px', marginBottom: '20px' }}>
