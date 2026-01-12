@@ -185,6 +185,7 @@ export default function DashboardPage() {
                     0%, 100% { opacity: 1; transform: scale(1); }
                     50% { opacity: 0.5; transform: scale(1.2); }
                 }
+                label:hover .avatar-overlay { opacity: 1 !important; }
             `}</style>
 
             {/* GRID MESH BACKGROUND */}
@@ -904,13 +905,52 @@ export default function DashboardPage() {
                     <div style={{ animation: 'fadeIn 0.3s ease', maxWidth: '600px' }}>
                         {/* Profile Header */}
                         <div style={{ background: 'white', padding: '30px', borderRadius: '24px', border: '1px solid #e2e8f0', textAlign: 'center', marginBottom: '25px' }}>
-                            <div style={{ width: '100px', height: '100px', background: profilePhoto || user?.profilePhoto ? 'transparent' : 'linear-gradient(135deg, #0052ff, #00a3ff)', borderRadius: '50%', margin: '0 auto 20px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2.5rem', color: 'white', fontWeight: 800, overflow: 'hidden', border: '3px solid #e2e8f0' }}>
-                                {profilePhoto || user?.profilePhoto ? (
-                                    <img src={profilePhoto || user?.profilePhoto} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                                ) : (
-                                    user?.fullName ? user.fullName.charAt(0).toUpperCase() : user?.email?.charAt(0).toUpperCase() || '?'
-                                )}
-                            </div>
+                            {/* Clickable Avatar */}
+                            <label htmlFor="avatarUpload" style={{ cursor: 'pointer', display: 'inline-block', position: 'relative' }}>
+                                <div style={{ width: '100px', height: '100px', background: profilePhoto || user?.profilePhoto ? 'transparent' : 'linear-gradient(135deg, #0052ff, #00a3ff)', borderRadius: '50%', margin: '0 auto 20px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2.5rem', color: 'white', fontWeight: 800, overflow: 'hidden', border: '3px solid #e2e8f0', position: 'relative' }}>
+                                    {profilePhoto || user?.profilePhoto ? (
+                                        <img src={profilePhoto || user?.profilePhoto} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                    ) : (
+                                        user?.fullName ? user.fullName.charAt(0).toUpperCase() : user?.email?.charAt(0).toUpperCase() || '?'
+                                    )}
+                                    {/* Hover overlay */}
+                                    <div style={{
+                                        position: 'absolute',
+                                        inset: 0,
+                                        background: 'rgba(0,0,0,0.5)',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        opacity: 0,
+                                        transition: '0.2s',
+                                        borderRadius: '50%'
+                                    }} className="avatar-overlay">
+                                        <span style={{ fontSize: '1.5rem' }}>📷</span>
+                                    </div>
+                                </div>
+                                <input
+                                    type="file"
+                                    id="avatarUpload"
+                                    accept="image/*"
+                                    style={{ display: 'none' }}
+                                    onChange={(e) => {
+                                        const file = e.target.files?.[0];
+                                        if (file) {
+                                            if (file.size > 2 * 1024 * 1024) {
+                                                setProfileMessage('❌ Image must be less than 2MB');
+                                                return;
+                                            }
+                                            const reader = new FileReader();
+                                            reader.onload = (event) => {
+                                                setProfilePhoto(event.target?.result as string);
+                                                setProfileMessage('📷 Photo selected! Click Save to update.');
+                                            };
+                                            reader.readAsDataURL(file);
+                                        }
+                                    }}
+                                />
+                            </label>
+                            <p style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '-10px', marginBottom: '15px' }}>Click to upload photo</p>
                             <h2 style={{ fontSize: '1.5rem', fontWeight: 800 }}>{user?.fullName || user?.email?.split('@')[0] || 'User'}</h2>
                             <p style={{ color: '#64748b', fontSize: '0.9rem' }}>{user?.email}</p>
                             <div style={{ display: 'inline-block', background: user?.tier === 'vip' ? '#fef3c7' : user?.tier === 'premium' ? '#e0f2fe' : '#f0f7ff', color: user?.tier === 'vip' ? '#b45309' : '#0052ff', padding: '6px 16px', borderRadius: '20px', fontSize: '0.8rem', fontWeight: 700, marginTop: '10px', textTransform: 'capitalize' }}>
