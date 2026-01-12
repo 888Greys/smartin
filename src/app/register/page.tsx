@@ -199,7 +199,7 @@ function RegisterContent() {
             return (
                 <>
                     <h1 style={{ fontSize: '1.4rem', fontWeight: 800, marginBottom: '8px', letterSpacing: '-0.3px' }}>
-                        Grow your $10
+                        Grow your Ksh 200
                     </h1>
                     <p style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '20px', lineHeight: 1.4 }}>
                         Join over 10,000 people making a daily profit on their savings.
