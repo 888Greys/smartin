@@ -35,7 +35,7 @@ export default function DashboardPage() {
     const [isLoading, setIsLoading] = useState(true);
     const [balance, setBalance] = useState(0);
     const [activeSection, setActiveSection] = useState<Section>('home');
-    const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+    const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
     const [expandedMenu, setExpandedMenu] = useState<string | null>(null);
     const [toggleY, setToggleY] = useState(50);
     const [isDragging, setIsDragging] = useState(false);
@@ -1278,27 +1278,30 @@ export default function DashboardPage() {
                     <div style={{ animation: 'fadeIn 0.3s ease', position: 'relative' }}>
                         {/* Hero Balance Card */}
                         <div style={{
-                            background: 'linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 100%)',
+                            background: 'linear-gradient(135deg, rgba(0, 242, 255, 0.22) 0%, rgba(188, 19, 254, 0.16) 45%, rgba(57, 255, 20, 0.12) 100%), rgba(17, 25, 40, 0.90)',
                             backdropFilter: 'blur(10px)',
-                            border: '1px solid rgba(255, 255, 255, 0.1)',
+                            border: '1px solid rgba(255, 255, 255, 0.14)',
                             borderRadius: '24px',
                             padding: '25px',
                             textAlign: 'center',
-                            boxShadow: '0 20px 40px rgba(0,0,0,0.4)',
+                            color: 'white',
+                            boxShadow: '0 20px 50px rgba(0,0,0,0.45), 0 0 0 1px rgba(0, 242, 255, 0.10) inset',
                             marginBottom: '20px'
                         }}>
                             <div style={{
                                 display: 'inline-flex',
                                 alignItems: 'center',
                                 gap: '6px',
-                                background: 'rgba(57, 255, 20, 0.1)',
+                                background: 'rgba(57, 255, 20, 0.18)',
                                 color: '#39ff14',
                                 padding: '4px 12px',
                                 borderRadius: '20px',
                                 fontSize: '0.7rem',
                                 fontWeight: 600,
                                 textTransform: 'uppercase',
-                                marginBottom: '15px'
+                                marginBottom: '15px',
+                                border: '1px solid rgba(57, 255, 20, 0.35)',
+                                boxShadow: '0 10px 25px rgba(57, 255, 20, 0.12)'
                             }}>
                                 <div style={{
                                     width: '6px',
@@ -1322,11 +1325,12 @@ export default function DashboardPage() {
                             <h3 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: '15px' }}>✅ My Active Bots</h3>
                             {rentedBots.length === 0 ? (
                                 <div style={{
-                                    background: 'rgba(17, 25, 40, 0.75)',
-                                    border: '1px dashed rgba(255, 255, 255, 0.2)',
+                                    background: 'linear-gradient(135deg, rgba(17, 25, 40, 0.92) 0%, rgba(2, 6, 23, 0.88) 100%)',
+                                    border: '1px dashed rgba(0, 242, 255, 0.30)',
                                     borderRadius: '16px',
                                     padding: '30px',
-                                    textAlign: 'center'
+                                    textAlign: 'center',
+                                    boxShadow: '0 16px 40px rgba(0,0,0,0.35)'
                                 }}>
                                     <div style={{ fontSize: '2.5rem', marginBottom: '10px', opacity: 0.5 }}>🤖</div>
                                     <p style={{ color: '#94a3b8', fontSize: '0.9rem', fontWeight: 600 }}>No active bots</p>
@@ -1343,10 +1347,10 @@ export default function DashboardPage() {
                                             <div
                                                 key={bot.id + '-rented'}
                                                 style={{
-                                                    background: 'linear-gradient(135deg, rgba(57, 255, 20, 0.1) 0%, rgba(0, 242, 255, 0.1) 100%)',
+                                                    background: 'linear-gradient(135deg, rgba(57, 255, 20, 0.16) 0%, rgba(0, 242, 255, 0.14) 100%), rgba(17, 25, 40, 0.88)',
                                                     borderRadius: '16px',
                                                     padding: '18px 20px',
-                                                    border: '1px solid rgba(57, 255, 20, 0.3)',
+                                                    border: '1px solid rgba(57, 255, 20, 0.45)',
                                                     position: 'relative'
                                                 }}
                                             >
@@ -1363,7 +1367,8 @@ export default function DashboardPage() {
                                                     fontWeight: 800,
                                                     display: 'flex',
                                                     alignItems: 'center',
-                                                    gap: '5px'
+                                                    gap: '5px',
+                                                    boxShadow: '0 10px 24px rgba(0, 242, 255, 0.20)'
                                                 }}>
                                                     <div style={{
                                                         width: '6px',
@@ -1379,12 +1384,13 @@ export default function DashboardPage() {
                                                     <div style={{
                                                         width: '50px',
                                                         height: '50px',
-                                                        background: 'rgba(57, 255, 20, 0.2)',
+                                                        background: 'rgba(57, 255, 20, 0.28)',
                                                         borderRadius: '14px',
                                                         display: 'flex',
                                                         alignItems: 'center',
                                                         justifyContent: 'center',
-                                                        fontSize: '1.5rem'
+                                                        fontSize: '1.5rem',
+                                                        boxShadow: '0 10px 22px rgba(57, 255, 20, 0.12)'
                                                     }}>
                                                         {bot.icon}
                                                     </div>
@@ -1435,14 +1441,19 @@ export default function DashboardPage() {
                                     <div
                                         key={rig.id}
                                         style={{
-                                            background: isAlreadyRented ? 'rgba(17, 25, 40, 0.5)' : 'rgba(17, 25, 40, 0.85)',
+                                            background: isAlreadyRented
+                                                ? 'linear-gradient(135deg, rgba(17, 25, 40, 0.70) 0%, rgba(2, 6, 23, 0.60) 100%)'
+                                                : 'linear-gradient(135deg, rgba(17, 25, 40, 0.95) 0%, rgba(2, 6, 23, 0.90) 100%)',
                                             opacity: isAlreadyRented ? 0.6 : 1,
                                             borderRadius: '16px',
                                             padding: '18px 20px',
-                                            border: expandedRig === rig.id ? '2px solid #00f2ff' : '1px solid rgba(255, 255, 255, 0.1)',
+                                            border: expandedRig === rig.id ? '2px solid #00f2ff' : '1px solid rgba(255, 255, 255, 0.14)',
                                             transition: '0.2s',
                                             cursor: 'pointer',
-                                            position: 'relative'
+                                            position: 'relative',
+                                            boxShadow: expandedRig === rig.id
+                                                ? '0 0 0 1px rgba(0, 242, 255, 0.25), 0 18px 50px rgba(0, 242, 255, 0.12)'
+                                                : '0 14px 40px rgba(0,0,0,0.35)'
                                         }}
                                     >
                                         {/* Limited Supply Badge or Already Rented Badge */}
@@ -1622,12 +1633,13 @@ export default function DashboardPage() {
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginBottom: '20px' }}>
                             {/* CPU Temp */}
                             <div style={{
-                                background: 'rgba(17, 25, 40, 0.75)',
-                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                background: 'linear-gradient(135deg, rgba(0, 242, 255, 0.14) 0%, rgba(17, 25, 40, 0.92) 55%, rgba(2, 6, 23, 0.90) 100%)',
+                                border: '1px solid rgba(0, 242, 255, 0.18)',
                                 borderRadius: '20px',
                                 padding: '16px',
                                 position: 'relative',
-                                overflow: 'hidden'
+                                overflow: 'hidden',
+                                boxShadow: '0 14px 40px rgba(0,0,0,0.35)'
                             }}>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
                                     <span style={{ fontSize: '1rem', color: '#94a3b8' }}>🌡️</span>
@@ -1646,12 +1658,13 @@ export default function DashboardPage() {
 
                             {/* Fan Speed */}
                             <div style={{
-                                background: 'rgba(17, 25, 40, 0.75)',
-                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(17, 25, 40, 0.92) 55%, rgba(2, 6, 23, 0.90) 100%)',
+                                border: '1px solid rgba(255, 255, 255, 0.14)',
                                 borderRadius: '20px',
                                 padding: '16px',
                                 position: 'relative',
-                                overflow: 'hidden'
+                                overflow: 'hidden',
+                                boxShadow: '0 14px 40px rgba(0,0,0,0.35)'
                             }}>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
                                     <span style={{ fontSize: '1rem', color: '#94a3b8' }}>💨</span>
@@ -1667,12 +1680,13 @@ export default function DashboardPage() {
 
                             {/* Hashrate */}
                             <div style={{
-                                background: 'rgba(17, 25, 40, 0.75)',
-                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                background: 'linear-gradient(135deg, rgba(188, 19, 254, 0.14) 0%, rgba(17, 25, 40, 0.92) 55%, rgba(2, 6, 23, 0.90) 100%)',
+                                border: '1px solid rgba(188, 19, 254, 0.18)',
                                 borderRadius: '20px',
                                 padding: '16px',
                                 position: 'relative',
-                                overflow: 'hidden'
+                                overflow: 'hidden',
+                                boxShadow: '0 14px 40px rgba(0,0,0,0.35)'
                             }}>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
                                     <span style={{ fontSize: '1rem', color: '#94a3b8' }}>⚡</span>
@@ -1691,12 +1705,13 @@ export default function DashboardPage() {
 
                             {/* Active Miners */}
                             <div style={{
-                                background: 'rgba(17, 25, 40, 0.75)',
-                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                background: 'linear-gradient(135deg, rgba(57, 255, 20, 0.10) 0%, rgba(17, 25, 40, 0.92) 55%, rgba(2, 6, 23, 0.90) 100%)',
+                                border: '1px solid rgba(57, 255, 20, 0.16)',
                                 borderRadius: '20px',
                                 padding: '16px',
                                 position: 'relative',
-                                overflow: 'hidden'
+                                overflow: 'hidden',
+                                boxShadow: '0 14px 40px rgba(0,0,0,0.35)'
                             }}>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
                                     <span style={{ fontSize: '1rem', color: '#94a3b8' }}>🔧</span>
@@ -1712,13 +1727,14 @@ export default function DashboardPage() {
 
                             {/* Total Earned */}
                             <div style={{
-                                background: 'rgba(17, 25, 40, 0.75)',
-                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                background: 'linear-gradient(135deg, rgba(255, 184, 0, 0.12) 0%, rgba(17, 25, 40, 0.92) 55%, rgba(2, 6, 23, 0.90) 100%)',
+                                border: '1px solid rgba(255, 184, 0, 0.18)',
                                 borderRadius: '20px',
                                 padding: '16px',
                                 position: 'relative',
                                 overflow: 'hidden',
-                                gridColumn: 'span 2'
+                                gridColumn: 'span 2',
+                                boxShadow: '0 14px 40px rgba(0,0,0,0.35)'
                             }}>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
                                     <span style={{ fontSize: '1rem', color: '#94a3b8' }}>📈</span>
@@ -1735,12 +1751,13 @@ export default function DashboardPage() {
 
                         {/* Real-Time Payout Ticker */}
                         <div style={{
-                            background: 'rgba(17, 25, 40, 0.75)',
-                            border: '1px solid rgba(255, 255, 255, 0.1)',
+                            background: 'linear-gradient(135deg, rgba(188, 19, 254, 0.10) 0%, rgba(17, 25, 40, 0.92) 55%, rgba(2, 6, 23, 0.90) 100%)',
+                            border: '1px solid rgba(255, 255, 255, 0.14)',
                             borderRadius: '16px',
                             padding: '15px',
                             marginBottom: '20px',
-                            cursor: 'pointer'
+                            cursor: 'pointer',
+                            boxShadow: '0 14px 40px rgba(0,0,0,0.35)'
                         }}
                             onClick={() => setActivityFeedExpanded(!activityFeedExpanded)}
                         >
@@ -1763,11 +1780,12 @@ export default function DashboardPage() {
 
                         {activityFeedExpanded && (
                             <div style={{
-                                background: 'rgba(17, 25, 40, 0.75)',
-                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(17, 25, 40, 0.92) 55%, rgba(2, 6, 23, 0.90) 100%)',
+                                border: '1px solid rgba(255, 255, 255, 0.14)',
                                 borderRadius: '16px',
                                 padding: '15px',
-                                marginBottom: '20px'
+                                marginBottom: '20px',
+                                boxShadow: '0 14px 40px rgba(0,0,0,0.35)'
                             }}>
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxHeight: '200px', overflowY: 'auto' }}>
                                     {payoutTicker.map((item) => (
@@ -1794,13 +1812,14 @@ export default function DashboardPage() {
                         {/* Mining Terminal */}
                         <div style={{
                             background: '#000',
-                            border: '1px solid rgba(255, 255, 255, 0.1)',
+                            border: '1px solid rgba(57, 255, 20, 0.28)',
                             borderRadius: '16px',
                             padding: '12px 18px',
                             marginBottom: '20px',
                             fontFamily: 'monospace',
                             fontSize: '0.75rem',
-                            cursor: 'pointer'
+                            cursor: 'pointer',
+                            boxShadow: '0 16px 45px rgba(0,0,0,0.55), 0 0 0 1px rgba(57, 255, 20, 0.08) inset'
                         }}
                             onClick={() => setMiningTerminalExpanded(!miningTerminalExpanded)}
                         >
@@ -1830,12 +1849,12 @@ export default function DashboardPage() {
                         {miningTerminalExpanded && (
                             <div style={{
                                 background: '#000',
-                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                border: '1px solid rgba(57, 255, 20, 0.22)',
                                 borderRadius: '16px',
                                 padding: '18px',
                                 marginBottom: '20px',
                                 fontFamily: 'monospace',
-                                boxShadow: '0 4px 20px rgba(0,0,0,0.5)'
+                                boxShadow: '0 18px 55px rgba(0,0,0,0.60), 0 0 0 1px rgba(57, 255, 20, 0.08) inset'
                             }}>
                                 <div style={{
                                     maxHeight: '250px',
