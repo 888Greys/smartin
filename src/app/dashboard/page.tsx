@@ -161,6 +161,12 @@ export default function DashboardPage() {
                 aside { overscroll-behavior: none; touch-action: none; position: fixed !important; }
                 aside::-webkit-scrollbar { display: none; }
                 main { overscroll-behavior: contain; }
+                .stat-value { white-space: nowrap; }
+                @media (max-width: 640px) {
+                    .stat-grid { grid-template-columns: 1fr !important; }
+                    .stat-card { padding: 20px !important; }
+                    .stat-card h2 { font-size: 1.5rem !important; white-space: nowrap; }
+                }
             `}</style>
 
             {/* GRID MESH BACKGROUND */}
@@ -437,17 +443,17 @@ export default function DashboardPage() {
                 {activeSection === 'home' && (
                     <div style={{ animation: 'fadeIn 0.3s ease' }}>
                         {/* Primary Stats - Balance & Money Flow */}
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '20px', marginBottom: '20px' }}>
+                        <div className="stat-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '20px', marginBottom: '20px' }}>
                             {/* Total Portfolio */}
-                            <div style={{ background: '#0f172a', color: 'white', padding: '25px', borderRadius: '20px', boxShadow: '0 10px 30px rgba(15, 23, 42, 0.15)' }}>
+                            <div className="stat-card" style={{ background: '#0f172a', color: 'white', padding: '25px', borderRadius: '20px', boxShadow: '0 10px 30px rgba(15, 23, 42, 0.15)' }}>
                                 <p style={{ fontSize: '0.8rem', opacity: 0.7, marginBottom: '8px' }}>Total Portfolio</p>
-                                <h2 style={{ fontSize: '2rem', fontWeight: 800 }}>Ksh {balance.toLocaleString(undefined, { minimumFractionDigits: 2 })}</h2>
+                                <h2 style={{ fontSize: '2rem', fontWeight: 800, whiteSpace: 'nowrap' }}>Ksh {balance.toLocaleString(undefined, { minimumFractionDigits: 2 })}</h2>
                             </div>
 
                             {/* Total Deposits */}
-                            <div style={{ background: 'white', padding: '25px', borderRadius: '20px', border: '1px solid #e2e8f0' }}>
+                            <div className="stat-card" style={{ background: 'white', padding: '25px', borderRadius: '20px', border: '1px solid #e2e8f0' }}>
                                 <p style={{ fontSize: '0.8rem', color: '#64748b', marginBottom: '8px' }}>Total Deposits</p>
-                                <h2 style={{ fontSize: '2rem', fontWeight: 800, color: '#0052ff' }}>Ksh {(user?.totalDeposits || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</h2>
+                                <h2 style={{ fontSize: '2rem', fontWeight: 800, color: '#0052ff', whiteSpace: 'nowrap' }}>Ksh {(user?.totalDeposits || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</h2>
                             </div>
                         </div>
 
@@ -462,26 +468,26 @@ export default function DashboardPage() {
                             <p style={{ textAlign: 'center', fontSize: '0.8rem', color: '#94a3b8', marginTop: '15px' }}>Weekly Earnings Growth</p>
                         </div>
 
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '20px', marginBottom: '20px' }}>
+                        <div className="stat-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '20px', marginBottom: '20px' }}>
                             {/* Total Withdrawals */}
-                            <div style={{ background: 'white', padding: '25px', borderRadius: '20px', border: '1px solid #e2e8f0' }}>
+                            <div className="stat-card" style={{ background: 'white', padding: '25px', borderRadius: '20px', border: '1px solid #e2e8f0' }}>
                                 <p style={{ fontSize: '0.8rem', color: '#64748b', marginBottom: '8px' }}>Total Withdrawals</p>
-                                <h2 style={{ fontSize: '2rem', fontWeight: 800, color: '#f59e0b' }}>Ksh {(user?.totalWithdrawals || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</h2>
+                                <h2 style={{ fontSize: '2rem', fontWeight: 800, color: '#f59e0b', whiteSpace: 'nowrap' }}>Ksh {(user?.totalWithdrawals || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</h2>
                             </div>
 
                             {/* Net Profit */}
-                            <div style={{ background: 'white', padding: '25px', borderRadius: '20px', border: '1px solid #e2e8f0' }}>
+                            <div className="stat-card" style={{ background: 'white', padding: '25px', borderRadius: '20px', border: '1px solid #e2e8f0' }}>
                                 <p style={{ fontSize: '0.8rem', color: '#64748b', marginBottom: '8px' }}>Net Profit</p>
-                                <h2 style={{ fontSize: '2rem', fontWeight: 800, color: '#10b981' }}>Ksh {((user?.totalEarnings || 0) - (user?.totalWithdrawals || 0)).toLocaleString(undefined, { minimumFractionDigits: 2 })}</h2>
+                                <h2 style={{ fontSize: '2rem', fontWeight: 800, color: '#10b981', whiteSpace: 'nowrap' }}>Ksh {((user?.totalEarnings || 0) - (user?.totalWithdrawals || 0)).toLocaleString(undefined, { minimumFractionDigits: 2 })}</h2>
                             </div>
                         </div>
 
                         {/* Performance Metrics */}
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '20px', marginBottom: '20px' }}>
+                        <div className="stat-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '20px', marginBottom: '20px' }}>
                             {/* ROI Percentage */}
-                            <div style={{ background: 'white', padding: '25px', borderRadius: '20px', border: '1px solid #e2e8f0' }}>
+                            <div className="stat-card" style={{ background: 'white', padding: '25px', borderRadius: '20px', border: '1px solid #e2e8f0' }}>
                                 <p style={{ fontSize: '0.8rem', color: '#64748b', marginBottom: '8px' }}>ROI Percentage</p>
-                                <h2 style={{ fontSize: '2rem', fontWeight: 800, color: '#8b5cf6' }}>
+                                <h2 style={{ fontSize: '2rem', fontWeight: 800, color: '#8b5cf6', whiteSpace: 'nowrap' }}>
                                     {user?.totalDeposits && user.totalDeposits > 0
                                         ? `${(((user?.totalEarnings || 0) / user.totalDeposits) * 100).toFixed(1)}%`
                                         : '0%'
@@ -490,9 +496,9 @@ export default function DashboardPage() {
                             </div>
 
                             {/* Days Active */}
-                            <div style={{ background: 'white', padding: '25px', borderRadius: '20px', border: '1px solid #e2e8f0' }}>
+                            <div className="stat-card" style={{ background: 'white', padding: '25px', borderRadius: '20px', border: '1px solid #e2e8f0' }}>
                                 <p style={{ fontSize: '0.8rem', color: '#64748b', marginBottom: '8px' }}>Days Active</p>
-                                <h2 style={{ fontSize: '2rem', fontWeight: 800, color: '#06b6d4' }}>
+                                <h2 style={{ fontSize: '2rem', fontWeight: 800, color: '#06b6d4', whiteSpace: 'nowrap' }}>
                                     {user?.createdAt
                                         ? Math.floor((new Date().getTime() - new Date(user.createdAt).getTime()) / (1000 * 60 * 60 * 24))
                                         : 0
@@ -502,17 +508,17 @@ export default function DashboardPage() {
                         </div>
 
                         {/* Activity Stats */}
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '20px', marginBottom: '30px' }}>
+                        <div className="stat-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '20px', marginBottom: '30px' }}>
                             {/* Daily Profit */}
-                            <div style={{ background: 'linear-gradient(135deg, #10b981, #059669)', color: 'white', padding: '25px', borderRadius: '20px', boxShadow: '0 10px 30px rgba(16, 185, 129, 0.2)' }}>
+                            <div className="stat-card" style={{ background: 'linear-gradient(135deg, #10b981, #059669)', color: 'white', padding: '25px', borderRadius: '20px', boxShadow: '0 10px 30px rgba(16, 185, 129, 0.2)' }}>
                                 <p style={{ fontSize: '0.8rem', opacity: 0.9, marginBottom: '8px' }}>Daily Profit</p>
-                                <h2 style={{ fontSize: '2rem', fontWeight: 800 }}>+Ksh {(balance * 0.05).toFixed(2)}</h2>
+                                <h2 style={{ fontSize: '2rem', fontWeight: 800, whiteSpace: 'nowrap' }}>+Ksh {(balance * 0.05).toFixed(2)}</h2>
                             </div>
 
                             {/* Referral Earnings */}
-                            <div style={{ background: 'linear-gradient(135deg, #f59e0b, #d97706)', color: 'white', padding: '25px', borderRadius: '20px', boxShadow: '0 10px 30px rgba(245, 158, 11, 0.2)' }}>
+                            <div className="stat-card" style={{ background: 'linear-gradient(135deg, #f59e0b, #d97706)', color: 'white', padding: '25px', borderRadius: '20px', boxShadow: '0 10px 30px rgba(245, 158, 11, 0.2)' }}>
                                 <p style={{ fontSize: '0.8rem', opacity: 0.9, marginBottom: '8px' }}>Referral Earnings</p>
-                                <h2 style={{ fontSize: '2rem', fontWeight: 800 }}>Ksh {(user?.referralEarnings || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</h2>
+                                <h2 style={{ fontSize: '2rem', fontWeight: 800, whiteSpace: 'nowrap' }}>Ksh {(user?.referralEarnings || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</h2>
                             </div>
                         </div>
                     </div>
@@ -917,15 +923,7 @@ export default function DashboardPage() {
                                         if (res.ok) {
                                             setProfileMessage('✅ Profile updated successfully!');
                                             setUser(prev => prev ? { ...prev, ...data.profile } : null);
-                                            // Clear form
-                                            setProfileName('');
-                                            setProfilePhone('');
-                                            setProfileIdNumber('');
-                                            setProfileDateOfBirth('');
-                                            setProfileGender('');
-                                            setProfileOccupation('');
-                                            setProfileAddress('');
-                                            setProfilePhoto(null);
+                                            // Don't clear form - keep data visible
                                         } else {
                                             setProfileMessage('❌ ' + (data.error || 'Failed to update profile'));
                                         }
@@ -946,9 +944,11 @@ export default function DashboardPage() {
                         <div style={{ background: '#f0f7ff', padding: '25px', borderRadius: '20px', border: '1px dashed #0052ff', marginBottom: '25px' }}>
                             <p style={{ fontSize: '0.8rem', fontWeight: 800, color: '#0052ff', marginBottom: '12px' }}>REFERRAL CODE</p>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
-                                <code style={{ fontSize: '1.4rem', fontWeight: 800, background: 'white', padding: '10px 20px', borderRadius: '10px' }}>{user?.referralCode || 'SMART-0000'}</code>
+                                <code style={{ fontSize: '1.4rem', fontWeight: 800, background: 'white', padding: '10px 20px', borderRadius: '10px' }}>
+                                    SMART-{(user?.referralCode || '000000').slice(-6).toUpperCase()}
+                                </code>
                                 <button
-                                    onClick={() => { navigator.clipboard.writeText(user?.referralCode || ''); setProfileMessage('Referral code copied!'); }}
+                                    onClick={() => { navigator.clipboard.writeText(`SMART-${(user?.referralCode || '').slice(-6).toUpperCase()}`); setProfileMessage('Referral code copied!'); }}
                                     style={{ background: '#0052ff', color: 'white', border: 'none', padding: '12px 24px', borderRadius: '10px', fontWeight: 700, cursor: 'pointer' }}
                                 >Copy</button>
                             </div>

@@ -97,7 +97,20 @@ export default function LandingPage() {
                 }
             `}</style>
 
-      <div style={{ background: '#ffffff', color: '#0f172a', fontFamily: "'Plus Jakarta Sans', sans-serif", overflowX: 'hidden' }}>
+      {/* GRID MESH BACKGROUND */}
+      <div style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        zIndex: 0,
+        backgroundImage: 'linear-gradient(rgba(0, 82, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 82, 255, 0.03) 1px, transparent 1px)',
+        backgroundSize: '40px 40px',
+        pointerEvents: 'none'
+      }}></div>
+
+      <div style={{ background: 'transparent', color: '#0f172a', fontFamily: "'Plus Jakarta Sans', sans-serif", overflowX: 'hidden', position: 'relative', zIndex: 1 }}>
         {/* Navigation */}
         <nav className="nav-container" style={{ padding: '20px 5%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'sticky', top: 0, background: 'rgba(255,255,255,0.9)', backdropFilter: 'blur(10px)', zIndex: 100 }}>
           {/* Hamburger Menu - Left */}
