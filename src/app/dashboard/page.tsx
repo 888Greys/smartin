@@ -753,11 +753,11 @@ export default function DashboardPage() {
             </aside>
 
             {/* MAIN CONTENT */}
-            <main style={{ marginLeft: sidebarCollapsed ? 0 : sidebarWidth, padding: '30px', minHeight: '100vh', position: 'relative', zIndex: 1, transition: 'margin-left 0.3s ease' }}>
+            <main style={{ marginLeft: sidebarCollapsed ? 0 : sidebarWidth, padding: '20px', minHeight: '100vh', position: 'relative', zIndex: 1, transition: 'margin-left 0.3s ease' }}>
                 {/* Header */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px', paddingLeft: sidebarCollapsed ? '45px' : '0', transition: 'padding-left 0.3s ease' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', paddingLeft: sidebarCollapsed ? '45px' : '0', transition: 'padding-left 0.3s ease' }}>
                     <div>
-                        <h1 style={{ fontSize: '1.8rem', fontWeight: 800 }}>
+                        <h1 style={{ fontSize: '1.4rem', fontWeight: 800 }}>
                             {activeSection === 'home' && 'Dashboard'}
                             {activeSection === 'market' && 'Mining Marketplace'}
                             {activeSection === 'investments' && 'Active Mining'}
@@ -767,12 +767,12 @@ export default function DashboardPage() {
                             {activeSection === 'wallet' && 'Wallet'}
                             {activeSection === 'profile' && 'Profile'}
                         </h1>
-                        <p style={{ color: '#64748b', fontSize: '0.9rem' }}>Welcome back, {user?.email?.split('@')[0] || 'User'}!</p>
+                        <p style={{ color: '#64748b', fontSize: '0.8rem' }}>Welcome back, {user?.email?.split('@')[0] || 'User'}!</p>
                     </div>
                     <div style={{ position: 'relative' }}>
                         <div
                             onClick={() => setShowNotifications(!showNotifications)}
-                            style={{ position: 'relative', fontSize: '1.4rem', cursor: 'pointer', background: 'white', padding: '12px', borderRadius: '12px', boxShadow: '0 2px 10px rgba(0,0,0,0.05)' }}
+                            style={{ position: 'relative', fontSize: '1.2rem', cursor: 'pointer', background: 'white', padding: '10px', borderRadius: '10px', boxShadow: '0 2px 10px rgba(0,0,0,0.05)' }}
                         >
                             🔔<div style={{ position: 'absolute', top: '8px', right: '8px', width: '8px', height: '8px', background: 'red', borderRadius: '50%' }}></div>
                         </div>
@@ -835,22 +835,22 @@ export default function DashboardPage() {
                 {activeSection === 'home' && (
                     <div style={{ animation: 'fadeIn 0.3s ease' }}>
                         {/* Primary Stats - Balance & Money Flow */}
-                        <div className="stat-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '20px', marginBottom: '20px' }}>
+                        <div className="stat-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px', marginBottom: '15px' }}>
                             {/* Total Portfolio */}
-                            <div className="stat-card" style={{ background: '#0f172a', color: 'white', padding: '25px', borderRadius: '20px', boxShadow: '0 10px 30px rgba(15, 23, 42, 0.15)' }}>
-                                <p style={{ fontSize: '0.8rem', opacity: 0.7, marginBottom: '8px' }}>Total Portfolio</p>
-                                <h2 style={{ fontSize: '2rem', fontWeight: 800, whiteSpace: 'nowrap' }}>Ksh {balance.toLocaleString(undefined, { minimumFractionDigits: 2 })}</h2>
+                            <div className="stat-card" style={{ background: '#0f172a', color: 'white', padding: '15px', borderRadius: '16px', boxShadow: '0 10px 30px rgba(15, 23, 42, 0.15)' }}>
+                                <p style={{ fontSize: '0.75rem', opacity: 0.7, marginBottom: '6px' }}>Total Portfolio</p>
+                                <h2 style={{ fontSize: '1.4rem', fontWeight: 800, whiteSpace: 'nowrap' }}>Ksh {balance.toLocaleString(undefined, { minimumFractionDigits: 2 })}</h2>
                             </div>
 
                             {/* Total Deposits */}
-                            <div className="stat-card" style={{ background: 'white', padding: '25px', borderRadius: '20px', border: '1px solid #e2e8f0' }}>
-                                <p style={{ fontSize: '0.8rem', color: '#64748b', marginBottom: '8px' }}>Total Deposits</p>
-                                <h2 style={{ fontSize: '2rem', fontWeight: 800, color: '#0052ff', whiteSpace: 'nowrap' }}>Ksh {(user?.totalDeposits || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</h2>
+                            <div className="stat-card" style={{ background: 'white', padding: '15px', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
+                                <p style={{ fontSize: '0.75rem', color: '#64748b', marginBottom: '6px' }}>Total Deposits</p>
+                                <h2 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#0052ff', whiteSpace: 'nowrap' }}>Ksh {(user?.totalDeposits || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</h2>
                             </div>
                         </div>
 
                         {/* Chart */}
-                        <div style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)', padding: '25px', borderRadius: '20px', marginBottom: '20px', position: 'relative', overflow: 'hidden' }}>
+                        <div style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)', padding: '18px', borderRadius: '16px', marginBottom: '15px', position: 'relative', overflow: 'hidden' }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
                                 <h3 style={{ fontWeight: 700, color: 'white' }}>Live Performance</h3>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
@@ -897,26 +897,26 @@ export default function DashboardPage() {
                             </div>
                         </div>
 
-                        <div className="stat-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '20px', marginBottom: '20px' }}>
+                        <div className="stat-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px', marginBottom: '15px' }}>
                             {/* Total Withdrawals */}
-                            <div className="stat-card" style={{ background: 'white', padding: '25px', borderRadius: '20px', border: '1px solid #e2e8f0' }}>
+                            <div className="stat-card" style={{ background: 'white', padding: '15px', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
                                 <p style={{ fontSize: '0.8rem', color: '#64748b', marginBottom: '8px' }}>Total Withdrawals</p>
-                                <h2 style={{ fontSize: '2rem', fontWeight: 800, color: '#f59e0b', whiteSpace: 'nowrap' }}>Ksh {(user?.totalWithdrawals || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</h2>
+                                <h2 style={{ fontSize: '1.3rem', fontWeight: 800, color: '#f59e0b', whiteSpace: 'nowrap' }}>Ksh {(user?.totalWithdrawals || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</h2>
                             </div>
 
                             {/* Net Profit */}
-                            <div className="stat-card" style={{ background: 'white', padding: '25px', borderRadius: '20px', border: '1px solid #e2e8f0' }}>
+                            <div className="stat-card" style={{ background: 'white', padding: '15px', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
                                 <p style={{ fontSize: '0.8rem', color: '#64748b', marginBottom: '8px' }}>Net Profit</p>
-                                <h2 style={{ fontSize: '2rem', fontWeight: 800, color: '#10b981', whiteSpace: 'nowrap' }}>Ksh {((user?.totalEarnings || 0) - (user?.totalWithdrawals || 0)).toLocaleString(undefined, { minimumFractionDigits: 2 })}</h2>
+                                <h2 style={{ fontSize: '1.3rem', fontWeight: 800, color: '#10b981', whiteSpace: 'nowrap' }}>Ksh {((user?.totalEarnings || 0) - (user?.totalWithdrawals || 0)).toLocaleString(undefined, { minimumFractionDigits: 2 })}</h2>
                             </div>
                         </div>
 
                         {/* Performance Metrics */}
-                        <div className="stat-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '20px', marginBottom: '20px' }}>
+                        <div className="stat-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px', marginBottom: '15px' }}>
                             {/* ROI Percentage */}
-                            <div className="stat-card" style={{ background: 'white', padding: '25px', borderRadius: '20px', border: '1px solid #e2e8f0' }}>
+                            <div className="stat-card" style={{ background: 'white', padding: '15px', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
                                 <p style={{ fontSize: '0.8rem', color: '#64748b', marginBottom: '8px' }}>ROI Percentage</p>
-                                <h2 style={{ fontSize: '2rem', fontWeight: 800, color: '#8b5cf6', whiteSpace: 'nowrap' }}>
+                                <h2 style={{ fontSize: '1.3rem', fontWeight: 800, color: '#8b5cf6', whiteSpace: 'nowrap' }}>
                                     {user?.totalDeposits && user.totalDeposits > 0
                                         ? `${(((user?.totalEarnings || 0) / user.totalDeposits) * 100).toFixed(1)}%`
                                         : '0%'
