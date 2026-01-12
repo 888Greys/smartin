@@ -14,6 +14,15 @@ export default function LoginPage() {
     const [isHydrated, setIsHydrated] = useState(false);
 
     useEffect(() => {
+        // DEV MODE BYPASS - auto-login for local development
+        // Set NEXT_PUBLIC_DEV_BYPASS=true in .env.local
+        const DEV_BYPASS = process.env.NEXT_PUBLIC_DEV_BYPASS === 'true';
+        if (DEV_BYPASS) {
+            localStorage.setItem('smartinvest_token', 'dev-bypass-token');
+            router.push('/dashboard');
+            return;
+        }
+
         const token = localStorage.getItem('smartinvest_token');
         if (token) {
             router.push('/dashboard');

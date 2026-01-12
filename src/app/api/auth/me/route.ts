@@ -4,6 +4,30 @@ import prisma from '@/lib/prisma';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'smartinvest-secret-key-change-in-production';
 
+// DEV USER DATA - for local development without database
+const DEV_USER = {
+    id: 'dev-user-123',
+    email: 'dev@smartinvest.com',
+    balance: 5000,
+    totalEarnings: 1250,
+    totalDeposits: 10000,
+    totalWithdrawals: 0,
+    createdAt: new Date().toISOString(),
+    fullName: 'Dev User',
+    phone: '0712345678',
+    idNumber: null,
+    dateOfBirth: null,
+    profilePhoto: null,
+    gender: null,
+    occupation: null,
+    address: null,
+    tier: 'premium',
+    referralCode: 'DEV123ABC',
+    referralCount: 5,
+    referralEarnings: 250,
+    hasBiometrics: false,
+};
+
 interface JWTPayload {
     userId: string;
     email: string;
@@ -24,6 +48,14 @@ export async function GET(request: NextRequest) {
             payload = jwt.verify(token, JWT_SECRET) as JWTPayload;
         } catch {
             return NextResponse.json({ error: 'Invalid or expired token' }, { status: 401 });
+        }
+
+        // DEV MODE - return mock user data
+        if (payload.userId === 'dev-user-123' || payload.email === 'dev@smartinvest.com') {
+            return NextResponse.json({
+                success: true,
+                user: DEV_USER
+            });
         }
 
         const user = await prisma.user.findUnique({
