@@ -61,7 +61,8 @@ export default function DashboardPage() {
     const [loadingTransactions, setLoadingTransactions] = useState(false);
 
     // Profile form state
-    const [profileName, setProfileName] = useState('');
+    const [profileFirstName, setProfileFirstName] = useState('');
+    const [profileLastName, setProfileLastName] = useState('');
     const [profilePhone, setProfilePhone] = useState('');
     const [profileIdNumber, setProfileIdNumber] = useState('');
     const [profileDateOfBirth, setProfileDateOfBirth] = useState('');
@@ -75,8 +76,8 @@ export default function DashboardPage() {
 
     useEffect(() => {
         const fetchUser = async () => {
-            // DEMO MODE - Remove this block for production
-            const DEMO_MODE = true;
+            // DEMO MODE - Set to false for production
+            const DEMO_MODE = false;
             if (DEMO_MODE) {
                 setUser({
                     id: 'demo123',
@@ -115,13 +116,18 @@ export default function DashboardPage() {
                 setBalance(data.user.balance || 0);
 
                 // Pre-fill form fields with existing data
-                if (data.user.fullName) setProfileName(data.user.fullName);
+                if (data.user.fullName) {
+                    const nameParts = data.user.fullName.split(' ');
+                    setProfileFirstName(nameParts[0] || '');
+                    setProfileLastName(nameParts.slice(1).join(' ') || '');
+                }
                 if (data.user.phone) setProfilePhone(data.user.phone);
                 if (data.user.idNumber) setProfileIdNumber(data.user.idNumber);
                 if (data.user.dateOfBirth) setProfileDateOfBirth(new Date(data.user.dateOfBirth).toISOString().split('T')[0]);
                 if (data.user.gender) setProfileGender(data.user.gender);
                 if (data.user.occupation) setProfileOccupation(data.user.occupation);
                 if (data.user.address) setProfileAddress(data.user.address);
+                if (data.user.profilePhoto) setProfilePhoto(data.user.profilePhoto);
             } catch {
                 localStorage.removeItem('smartinvest_token');
                 router.push('/login');
@@ -375,7 +381,7 @@ export default function DashboardPage() {
                         </div>
                         <div style={{ flex: 1 }}>
                             <div style={{ color: 'white', fontWeight: 700, fontSize: '0.9rem' }}>
-                                {user?.fullName || user?.email?.split('@')[0] || 'User'}
+                                {user?.fullName?.split(' ')[0] || user?.email?.split('@')[0] || 'User'}
                             </div>
                             <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.75rem' }}>{user?.tier === 'vip' ? 'VIP Member' : user?.tier === 'premium' ? 'Premium Member' : 'Basic Member'}</div>
                         </div>
@@ -962,21 +968,40 @@ export default function DashboardPage() {
                         <div style={{ background: 'white', padding: '25px', borderRadius: '24px', border: '1px solid #e2e8f0', marginBottom: '25px' }}>
                             <h3 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: '20px' }}>Edit Profile</h3>
 
-                            <label style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: '6px', display: 'block' }}>Full Name <span style={{ color: '#dc2626' }}>*</span></label>
-                            <input
-                                type="text"
-                                value={profileName}
-                                onChange={(e) => {
-                                    setProfileName(e.target.value);
-                                    if (validationErrors.fullName) {
-                                        setValidationErrors(prev => ({ ...prev, fullName: '' }));
-                                    }
-                                }}
-                                placeholder={user?.fullName || 'Enter your full name'}
-                                style={{ width: '100%', padding: '14px', border: validationErrors.fullName ? '2px solid #dc2626' : '1px solid #e2e8f0', borderRadius: '12px', marginBottom: '5px', fontSize: '1rem', outline: 'none', boxSizing: 'border-box' }}
-                            />
-                            {validationErrors.fullName && <p style={{ color: '#dc2626', fontSize: '0.75rem', marginBottom: '15px' }}>{validationErrors.fullName}</p>}
-                            {!validationErrors.fullName && <div style={{ marginBottom: '15px' }} />}
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginBottom: '15px' }}>
+                                <div>
+                                    <label style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: '6px', display: 'block' }}>First Name <span style={{ color: '#dc2626' }}>*</span></label>
+                                    <input
+                                        type="text"
+                                        value={profileFirstName}
+                                        onChange={(e) => {
+                                            setProfileFirstName(e.target.value);
+                                            if (validationErrors.firstName) {
+                                                setValidationErrors(prev => ({ ...prev, firstName: '' }));
+                                            }
+                                        }}
+                                        placeholder="First name"
+                                        style={{ width: '100%', padding: '14px', border: validationErrors.firstName ? '2px solid #dc2626' : '1px solid #e2e8f0', borderRadius: '12px', fontSize: '1rem', outline: 'none', boxSizing: 'border-box' }}
+                                    />
+                                    {validationErrors.firstName && <p style={{ color: '#dc2626', fontSize: '0.75rem', marginTop: '5px' }}>{validationErrors.firstName}</p>}
+                                </div>
+                                <div>
+                                    <label style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: '6px', display: 'block' }}>Last Name <span style={{ color: '#dc2626' }}>*</span></label>
+                                    <input
+                                        type="text"
+                                        value={profileLastName}
+                                        onChange={(e) => {
+                                            setProfileLastName(e.target.value);
+                                            if (validationErrors.lastName) {
+                                                setValidationErrors(prev => ({ ...prev, lastName: '' }));
+                                            }
+                                        }}
+                                        placeholder="Last name"
+                                        style={{ width: '100%', padding: '14px', border: validationErrors.lastName ? '2px solid #dc2626' : '1px solid #e2e8f0', borderRadius: '12px', fontSize: '1rem', outline: 'none', boxSizing: 'border-box' }}
+                                    />
+                                    {validationErrors.lastName && <p style={{ color: '#dc2626', fontSize: '0.75rem', marginTop: '5px' }}>{validationErrors.lastName}</p>}
+                                </div>
+                            </div>
 
                             <label style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: '6px', display: 'block' }}>Phone Number <span style={{ color: '#dc2626' }}>*</span></label>
                             <input
@@ -1062,9 +1087,11 @@ export default function DashboardPage() {
                                     // Validation
                                     const errors: Record<string, string> = {};
 
-                                    const nameToValidate = profileName || user?.fullName;
-                                    if (!nameToValidate || nameToValidate.trim().length < 3) {
-                                        errors.fullName = 'Full name must be at least 3 characters';
+                                    if (!profileFirstName || profileFirstName.trim().length < 2) {
+                                        errors.firstName = 'First name is required';
+                                    }
+                                    if (!profileLastName || profileLastName.trim().length < 2) {
+                                        errors.lastName = 'Last name is required';
                                     }
 
                                     const phoneToValidate = profilePhone || user?.phone;
@@ -1088,11 +1115,12 @@ export default function DashboardPage() {
                                     setValidationErrors({});
 
                                     try {
+                                        const fullName = `${profileFirstName.trim()} ${profileLastName.trim()}`;
                                         const res = await fetch('/api/profile', {
                                             method: 'PUT',
                                             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                                             body: JSON.stringify({
-                                                fullName: profileName || undefined,
+                                                fullName: fullName,
                                                 phone: profilePhone || undefined,
                                                 idNumber: profileIdNumber || undefined,
                                                 dateOfBirth: profileDateOfBirth || undefined,
