@@ -1896,7 +1896,7 @@ export default function DashboardPage() {
 
                 {/* WALLET SECTION */}
                 {activeSection === 'wallet' && (
-                    <div style={{ animation: 'fadeIn 0.3s ease', maxWidth: '500px' }}>
+                    <div style={{ animation: 'fadeIn 0.3s ease', width: '100%', maxWidth: '720px', margin: '0 auto' }}>
                         <div style={{ background: '#effef4', border: '1px solid #10b981', padding: '20px', borderRadius: '20px', display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '25px' }}>
                             <div style={{ background: '#10b981', color: 'white', fontWeight: 900, padding: '8px 14px', borderRadius: '8px', fontSize: '1.1rem' }}>M</div>
                             <div>
@@ -1914,6 +1914,7 @@ export default function DashboardPage() {
                         <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
                             <button
                                 onClick={() => setWalletTab('deposit')}
+                                className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#059669] focus-visible:ring-offset-2"
                                 style={{
                                     flex: 1,
                                     padding: '14px',
@@ -1931,6 +1932,7 @@ export default function DashboardPage() {
                             </button>
                             <button
                                 onClick={() => setWalletTab('withdraw')}
+                                className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#059669] focus-visible:ring-offset-2"
                                 style={{
                                     flex: 1,
                                     padding: '14px',
@@ -1975,7 +1977,8 @@ export default function DashboardPage() {
                                             value={depositPhone}
                                             onChange={(e) => setDepositPhone(e.target.value.replace(/\D/g, '').slice(0, 12))}
                                             placeholder="07XXXXXXXX"
-                                            style={{ width: '100%', padding: '14px', border: '1px solid #e2e8f0', borderRadius: '12px', marginBottom: '15px', fontSize: '1rem', outline: 'none', boxSizing: 'border-box' }}
+                                            className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#059669] focus-visible:ring-offset-2"
+                                            style={{ width: '100%', padding: '14px', border: '1px solid #e2e8f0', borderRadius: '12px', marginBottom: '15px', fontSize: '1rem', boxSizing: 'border-box' }}
                                         />
 
                                         <label style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: '6px', display: 'block' }}>Amount (Ksh)</label>
@@ -1985,18 +1988,19 @@ export default function DashboardPage() {
                                             onChange={(e) => setDepositAmount(e.target.value)}
                                             placeholder="Minimum Ksh 10"
                                             min="10"
-                                            style={{ width: '100%', padding: '14px', border: '1px solid #e2e8f0', borderRadius: '12px', marginBottom: '15px', fontSize: '1rem', outline: 'none', boxSizing: 'border-box' }}
+                                            className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#059669] focus-visible:ring-offset-2"
+                                            style={{ width: '100%', padding: '14px', border: '1px solid #e2e8f0', borderRadius: '12px', marginBottom: '15px', fontSize: '1rem', boxSizing: 'border-box' }}
                                         />
 
                                         {/* Quick amounts */}
-                                        <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
+                                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-5">
                                             {[100, 500, 1000, 5000].map((amt) => (
                                                 <button
                                                     key={amt}
                                                     type="button"
                                                     onClick={() => setDepositAmount(amt.toString())}
+                                                    className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0052ff] focus-visible:ring-offset-2"
                                                     style={{
-                                                        flex: 1,
                                                         padding: '10px',
                                                         background: depositAmount === amt.toString() ? '#0052ff' : '#f1f5f9',
                                                         color: depositAmount === amt.toString() ? 'white' : '#64748b',
@@ -2012,7 +2016,7 @@ export default function DashboardPage() {
                                             ))}
                                         </div>
 
-                                        <div style={{ background: '#f0f7ff', padding: '12px 14px', borderRadius: '12px', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                        <div style={{ background: '#f0f7ff', padding: '14px 14px', borderRadius: '12px', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '10px' }}>
                                             <span style={{ fontSize: '1rem' }}>🔒</span>
                                             <span style={{ fontSize: '0.8rem', color: '#0052ff', fontWeight: 600 }}>Secure M-Pesa payment. You'll receive an STK push.</span>
                                         </div>
@@ -2047,6 +2051,7 @@ export default function DashboardPage() {
                                                 }
                                             }}
                                             disabled={depositLoading}
+                                            className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#059669] focus-visible:ring-offset-2"
                                             style={{ width: '100%', padding: '16px', background: '#059669', color: 'white', border: 'none', borderRadius: '12px', fontSize: '1rem', fontWeight: 800, cursor: 'pointer', opacity: depositLoading ? 0.7 : 1 }}
                                         >
                                             {depositLoading ? 'Sending request...' : `Deposit ${depositAmount ? `Ksh ${parseInt(depositAmount).toLocaleString()}` : ''}`}
@@ -2083,7 +2088,8 @@ export default function DashboardPage() {
                                             value={withdrawPhone}
                                             onChange={(e) => setWithdrawPhone(e.target.value.replace(/\D/g, '').slice(0, 12))}
                                             placeholder="07XXXXXXXX"
-                                            style={{ width: '100%', padding: '14px', border: '1px solid #e2e8f0', borderRadius: '12px', marginBottom: '15px', fontSize: '1rem', outline: 'none', boxSizing: 'border-box' }}
+                                            className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#059669] focus-visible:ring-offset-2"
+                                            style={{ width: '100%', padding: '14px', border: '1px solid #e2e8f0', borderRadius: '12px', marginBottom: '15px', fontSize: '1rem', boxSizing: 'border-box' }}
                                         />
 
                                         <label style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: '6px', display: 'block' }}>Amount (Ksh)</label>
@@ -2093,18 +2099,19 @@ export default function DashboardPage() {
                                             onChange={(e) => setWithdrawAmount(e.target.value)}
                                             placeholder="Minimum Ksh 50"
                                             min="50"
-                                            style={{ width: '100%', padding: '14px', border: '1px solid #e2e8f0', borderRadius: '12px', marginBottom: '15px', fontSize: '1rem', outline: 'none', boxSizing: 'border-box' }}
+                                            className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#059669] focus-visible:ring-offset-2"
+                                            style={{ width: '100%', padding: '14px', border: '1px solid #e2e8f0', borderRadius: '12px', marginBottom: '15px', fontSize: '1rem', boxSizing: 'border-box' }}
                                         />
 
                                         {/* Quick amounts */}
-                                        <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
+                                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-5">
                                             {[100, 500, 1000, 5000].map((amt) => (
                                                 <button
                                                     key={amt}
                                                     type="button"
                                                     onClick={() => setWithdrawAmount(amt.toString())}
+                                                    className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#059669] focus-visible:ring-offset-2"
                                                     style={{
-                                                        flex: 1,
                                                         padding: '10px',
                                                         background: withdrawAmount === amt.toString() ? '#059669' : '#f1f5f9',
                                                         color: withdrawAmount === amt.toString() ? 'white' : '#64748b',
@@ -2121,7 +2128,7 @@ export default function DashboardPage() {
                                         </div>
 
                                         {/* Available balance info */}
-                                        <div style={{ background: '#fef3c7', padding: '12px 14px', borderRadius: '12px', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                        <div style={{ background: '#fef3c7', padding: '14px 14px', borderRadius: '12px', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '10px' }}>
                                             <span style={{ fontSize: '1rem' }}>💰</span>
                                             <span style={{ fontSize: '0.8rem', color: '#92400e', fontWeight: 600 }}>Available: Ksh {balance.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
                                         </div>
@@ -2149,6 +2156,7 @@ export default function DashboardPage() {
                                                 }
                                             }}
                                             disabled={withdrawLoading}
+                                            className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#059669] focus-visible:ring-offset-2"
                                             style={{ width: '100%', padding: '16px', background: '#059669', color: 'white', border: 'none', borderRadius: '12px', fontSize: '1rem', fontWeight: 800, cursor: 'pointer', opacity: withdrawLoading ? 0.7 : 1 }}
                                         >
                                             {withdrawLoading ? 'Processing...' : `Withdraw ${withdrawAmount ? `Ksh ${parseInt(withdrawAmount).toLocaleString()}` : ''}`}

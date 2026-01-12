@@ -4,6 +4,11 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
+import { AuthLayout } from "@/components/layouts/AuthLayout";
+import { Card } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
+
 type Step = 'email' | 'code' | 'success';
 
 export default function ForgotPasswordPage() {
@@ -114,21 +119,35 @@ export default function ForgotPasswordPage() {
         if (step === 'email') {
             return (
                 <>
-                    <h1 style={{ fontSize: '1.4rem', fontWeight: 800, marginBottom: '8px' }}>Forgot password?</h1>
-                    <p style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '20px' }}>Enter your email and we&apos;ll send you a reset code.</p>
+                    <h1 className="text-[1.4rem] font-extrabold tracking-[-0.3px]">Forgot password?</h1>
+                    <p className="mt-2 text-[0.85rem] leading-snug text-slate-500">
+                        Enter your email and we&apos;ll send you a reset code.
+                    </p>
 
-                    <div style={{ background: 'white', padding: '20px', borderRadius: '16px', boxShadow: '0 10px 25px rgba(0,0,0,0.04)', border: '1px solid #e2e8f0', textAlign: 'left' }}>
-                        <form onSubmit={handleSendCode}>
-                            <label style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: '6px', display: 'block' }}>Email Address</label>
-                            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Enter your email" required style={{ width: '100%', padding: '12px', border: '1px solid #cbd5e1', borderRadius: '10px', marginBottom: '14px', fontSize: '0.9rem', outline: 'none', boxSizing: 'border-box' }} />
+                    <Card className="mt-5 text-left" padding="md">
+                        <form onSubmit={handleSendCode} className="space-y-3">
+                            <div>
+                                <label htmlFor="fp-email" className="mb-1.5 block text-[0.8rem] font-semibold">
+                                    Email Address
+                                </label>
+                                <Input
+                                    id="fp-email"
+                                    type="email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    placeholder="Enter your email"
+                                    required
+                                    autoComplete="email"
+                                />
+                            </div>
 
-                            {error && <p style={{ color: '#dc2626', fontSize: '0.75rem', marginBottom: '12px' }}>{error}</p>}
+                            {error ? <p className="text-[0.75rem] text-red-600">{error}</p> : null}
 
-                            <button type="submit" disabled={isLoading} style={{ width: '100%', padding: '14px', background: '#0052ff', color: 'white', border: 'none', borderRadius: '10px', fontSize: '0.95rem', fontWeight: 700, cursor: 'pointer', opacity: isLoading ? 0.8 : 1 }}>
-                                {isLoading ? "Sending..." : "Send Reset Code"}
-                            </button>
+                            <Button type="submit" className="w-full" isLoading={isLoading}>
+                                Send Reset Code
+                            </Button>
                         </form>
-                    </div>
+                    </Card>
                 </>
             );
         }
@@ -136,65 +155,116 @@ export default function ForgotPasswordPage() {
         if (step === 'code') {
             return (
                 <>
-                    <h1 style={{ fontSize: '1.4rem', fontWeight: 800, marginBottom: '8px' }}>Reset your password</h1>
-                    <p style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '20px' }}>We sent a code to <strong style={{ color: '#1e293b' }}>{email}</strong></p>
+                    <h1 className="text-[1.4rem] font-extrabold tracking-[-0.3px]">Reset your password</h1>
+                    <p className="mt-2 text-[0.85rem] leading-snug text-slate-500">
+                        We sent a code to <strong className="text-slate-800">{email}</strong>
+                    </p>
 
-                    <div style={{ background: 'white', padding: '20px', borderRadius: '16px', boxShadow: '0 10px 25px rgba(0,0,0,0.04)', border: '1px solid #e2e8f0', textAlign: 'left' }}>
-                        <form onSubmit={handleResetPassword}>
-                            <label style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: '6px', display: 'block' }}>Reset Code</label>
-                            <input type="text" value={code} onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))} placeholder="Enter 6-digit code" required style={{ width: '100%', padding: '12px', border: '1px solid #cbd5e1', borderRadius: '10px', marginBottom: '14px', fontSize: '1.2rem', outline: 'none', boxSizing: 'border-box', textAlign: 'center', letterSpacing: '6px', fontWeight: 700 }} />
+                    <Card className="mt-5 text-left" padding="md">
+                        <form onSubmit={handleResetPassword} className="space-y-3">
+                            <div>
+                                <label htmlFor="fp-code" className="mb-1.5 block text-[0.8rem] font-semibold">
+                                    Reset Code
+                                </label>
+                                <Input
+                                    id="fp-code"
+                                    inputMode="numeric"
+                                    type="text"
+                                    value={code}
+                                    onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                                    placeholder="Enter 6-digit code"
+                                    required
+                                    className="text-center text-[1.2rem] font-bold tracking-[0.4em]"
+                                />
+                            </div>
 
-                            <label style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: '6px', display: 'block' }}>New Password</label>
-                            <input type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} placeholder="At least 8 characters" required style={{ width: '100%', padding: '12px', border: '1px solid #cbd5e1', borderRadius: '10px', marginBottom: '14px', fontSize: '0.9rem', outline: 'none', boxSizing: 'border-box' }} />
+                            <div>
+                                <label htmlFor="fp-new" className="mb-1.5 block text-[0.8rem] font-semibold">
+                                    New Password
+                                </label>
+                                <Input
+                                    id="fp-new"
+                                    type="password"
+                                    value={newPassword}
+                                    onChange={(e) => setNewPassword(e.target.value)}
+                                    placeholder="At least 8 characters"
+                                    required
+                                    autoComplete="new-password"
+                                />
+                            </div>
 
-                            <label style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: '6px', display: 'block' }}>Confirm Password</label>
-                            <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Re-enter password" required style={{ width: '100%', padding: '12px', border: '1px solid #cbd5e1', borderRadius: '10px', marginBottom: '14px', fontSize: '0.9rem', outline: 'none', boxSizing: 'border-box' }} />
+                            <div>
+                                <label htmlFor="fp-confirm" className="mb-1.5 block text-[0.8rem] font-semibold">
+                                    Confirm Password
+                                </label>
+                                <Input
+                                    id="fp-confirm"
+                                    type="password"
+                                    value={confirmPassword}
+                                    onChange={(e) => setConfirmPassword(e.target.value)}
+                                    placeholder="Re-enter password"
+                                    required
+                                    autoComplete="new-password"
+                                />
+                            </div>
 
-                            {error && <p style={{ color: '#dc2626', fontSize: '0.75rem', marginBottom: '12px' }}>{error}</p>}
+                            {error ? <p className="text-[0.75rem] text-red-600">{error}</p> : null}
 
-                            <button type="submit" disabled={isLoading} style={{ width: '100%', padding: '14px', background: '#0052ff', color: 'white', border: 'none', borderRadius: '10px', fontSize: '0.95rem', fontWeight: 700, cursor: 'pointer', opacity: isLoading ? 0.8 : 1 }}>
-                                {isLoading ? "Resetting..." : "Reset Password"}
-                            </button>
+                            <Button type="submit" className="w-full" isLoading={isLoading}>
+                                Reset Password
+                            </Button>
 
-                            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '12px' }}>
-                                <button type="button" onClick={() => setStep('email')} style={{ background: 'transparent', color: '#64748b', border: 'none', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer' }}>← Back</button>
-                                <button type="button" onClick={resendCode} disabled={isLoading} style={{ background: 'transparent', color: '#0052ff', border: 'none', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer' }}>Resend code</button>
+                            <div className="flex items-center justify-between pt-1">
+                                <button
+                                    type="button"
+                                    onClick={() => setStep('email')}
+                                    className="text-[0.75rem] font-semibold text-slate-500 hover:text-slate-700"
+                                >
+                                    ← Back
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={resendCode}
+                                    disabled={isLoading}
+                                    className="text-[0.75rem] font-semibold text-[#0052ff] hover:underline disabled:opacity-60"
+                                >
+                                    Resend code
+                                </button>
                             </div>
                         </form>
-                    </div>
+                    </Card>
                 </>
             );
         }
 
         return (
             <>
-                <div style={{ fontSize: '3rem', marginBottom: '20px' }}>✓</div>
-                <h1 style={{ fontSize: '1.4rem', fontWeight: 800, marginBottom: '8px' }}>Password reset!</h1>
-                <p style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '20px' }}>Your password has been reset successfully.</p>
-                <button onClick={() => router.push('/login')} style={{ padding: '14px 40px', background: '#0052ff', color: 'white', border: 'none', borderRadius: '10px', fontSize: '0.95rem', fontWeight: 700, cursor: 'pointer' }}>
-                    Back to Login
-                </button>
+                <div className="text-5xl">✓</div>
+                <h1 className="mt-4 text-[1.4rem] font-extrabold tracking-[-0.3px]">Password reset!</h1>
+                <p className="mt-2 text-[0.85rem] text-slate-500">Your password has been reset successfully.</p>
+                <div className="mt-5">
+                    <Button onClick={() => router.push('/login')} className="w-full">
+                        Back to Login
+                    </Button>
+                </div>
             </>
         );
     };
 
     return (
-        <div style={{ minHeight: '100vh', background: 'linear-gradient(180deg, #f0f5ff 0%, #ffffff 100%)', display: 'flex', justifyContent: 'center', alignItems: 'center', fontFamily: "'Plus Jakarta Sans', sans-serif", color: '#1e293b' }}>
-            <div style={{ width: '90%', maxWidth: '380px', textAlign: 'center', padding: '16px' }}>
-                <div style={{ fontSize: '1.2rem', fontWeight: 800, marginBottom: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
-                    <div style={{ width: '26px', height: '26px', background: '#0052ff', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 900, fontSize: '0.85rem' }}>S</div>
-                    smart<span style={{ color: '#0052ff' }}>Invest</span>
-                </div>
-
-                {renderStep()}
-
-                {step !== 'success' && (
-                    <p style={{ marginTop: '16px', fontSize: '0.75rem', color: '#64748b' }}>
+        <AuthLayout
+            footer={
+                step !== 'success' ? (
+                    <p className="text-[0.75rem] text-slate-500">
                         Remember your password?{" "}
-                        <Link href="/login" style={{ color: '#0052ff', textDecoration: 'none', fontWeight: 600 }}>Log in</Link>
+                        <Link className="font-semibold text-[#0052ff] hover:underline" href="/login">
+                            Log in
+                        </Link>
                     </p>
-                )}
-            </div>
-        </div>
+                ) : null
+            }
+        >
+            {renderStep()}
+        </AuthLayout>
     );
 }

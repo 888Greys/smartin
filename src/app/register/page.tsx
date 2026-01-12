@@ -5,6 +5,11 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Suspense } from "react";
 
+import { AuthLayout } from "@/components/layouts/AuthLayout";
+import { Card } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
+
 type Step = 'register' | 'otp';
 
 interface RegistrationState {
@@ -188,9 +193,11 @@ function RegisterContent() {
 
     if (!isHydrated) {
         return (
-            <div style={{ minHeight: '100vh', background: 'linear-gradient(180deg, #f0f5ff 0%, #ffffff 100%)', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                <img src="/lion.png" alt="SmartInvest" style={{ height: '40px', objectFit: 'contain' }} />
-            </div>
+            <AuthLayout>
+                <div className="flex justify-center">
+                    <img src="/lion.png" alt="SmartInvest" className="h-10 w-auto object-contain opacity-80" />
+                </div>
+            </AuthLayout>
         );
     }
 
@@ -198,112 +205,202 @@ function RegisterContent() {
         if (step === 'register') {
             return (
                 <>
-                    <h1 style={{ fontSize: '1.4rem', fontWeight: 800, marginBottom: '8px', letterSpacing: '-0.3px' }}>
-                        Grow your Ksh 200
-                    </h1>
-                    <p style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '20px', lineHeight: 1.4 }}>
+                    <h1 className="text-[1.4rem] font-extrabold tracking-[-0.3px]">Grow your Ksh 200</h1>
+                    <p className="mt-2 text-[0.85rem] leading-snug text-slate-500">
                         Join over 10,000 people making a daily profit on their savings.
                     </p>
-                    <div style={{ background: 'white', padding: '20px', borderRadius: '16px', boxShadow: '0 10px 25px rgba(0,0,0,0.04)', border: '1px solid #e2e8f0', textAlign: 'left' }}>
-                        <form onSubmit={handleRegister}>
-                            <label style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: '6px', display: 'block' }}>Your Email</label>
-                            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="e.g. name@mail.com" required style={{ width: '100%', padding: '12px', border: '1px solid #cbd5e1', borderRadius: '10px', marginBottom: '14px', fontSize: '0.9rem', outline: 'none', boxSizing: 'border-box' }} />
 
-                            <label style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: '6px', display: 'block' }}>Create Password</label>
-                            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="At least 8 characters" required style={{ width: '100%', padding: '12px', border: '1px solid #cbd5e1', borderRadius: '10px', marginBottom: '14px', fontSize: '0.9rem', outline: 'none', boxSizing: 'border-box' }} />
-
-                            <label style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: '6px', display: 'block' }}>Confirm Password</label>
-                            <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Re-enter your password" required style={{ width: '100%', padding: '12px', border: '1px solid #cbd5e1', borderRadius: '10px', marginBottom: '14px', fontSize: '0.9rem', outline: 'none', boxSizing: 'border-box' }} />
-
-                            {/* Referral Code Input - Always visible */}
-                            <label style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: '6px', display: 'block' }}>🎁 Referral Code (optional)</label>
-                            <input
-                                type="text"
-                                value={referralCode}
-                                onChange={(e) => setReferralCode(e.target.value.toUpperCase())}
-                                placeholder="Enter referral code"
-                                style={{ width: '100%', padding: '12px', border: '1px solid #10b981', borderRadius: '10px', marginBottom: '14px', fontSize: '0.9rem', outline: 'none', boxSizing: 'border-box', background: '#f0fdf4' }}
-                            />
-                            {referralCode && (
-                                <div style={{ background: '#f0fdf4', padding: '10px 12px', borderRadius: '10px', marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '10px', border: '1px solid #bbf7d0' }}>
-                                    <span style={{ fontSize: '1rem' }}>🎉</span>
-                                    <span style={{ fontSize: '0.75rem', color: '#059669', fontWeight: 600, lineHeight: 1.3 }}>You'll get a KES 10 welcome bonus!</span>
-                                </div>
-                            )}
-
-                            <div style={{ background: '#f0f5ff', padding: '10px 12px', borderRadius: '10px', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                <span style={{ fontSize: '1rem' }}>📈</span>
-                                <span style={{ fontSize: '0.75rem', color: '#0052ff', fontWeight: 600, lineHeight: 1.3 }}>Deposit Ksh 200 today and see your first earnings tomorrow.</span>
+                    <Card className="mt-5 text-left" padding="md">
+                        <form onSubmit={handleRegister} className="space-y-3">
+                            <div>
+                                <label htmlFor="reg-email" className="mb-1.5 block text-[0.8rem] font-semibold">
+                                    Your Email
+                                </label>
+                                <Input
+                                    id="reg-email"
+                                    type="email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    placeholder="e.g. name@mail.com"
+                                    required
+                                    autoComplete="email"
+                                />
                             </div>
 
-                            {error && <p style={{ color: '#dc2626', fontSize: '0.75rem', marginBottom: '12px' }}>{error}</p>}
+                            <div>
+                                <label
+                                    htmlFor="reg-password"
+                                    className="mb-1.5 block text-[0.8rem] font-semibold"
+                                >
+                                    Create Password
+                                </label>
+                                <Input
+                                    id="reg-password"
+                                    type="password"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    placeholder="At least 8 characters"
+                                    required
+                                    autoComplete="new-password"
+                                />
+                            </div>
 
-                            <button type="submit" disabled={isLoading} style={{ width: '100%', padding: '14px', background: '#0052ff', color: 'white', border: 'none', borderRadius: '10px', fontSize: '0.95rem', fontWeight: 700, cursor: 'pointer', opacity: isLoading ? 0.8 : 1 }}>
-                                {isLoading ? "Sending code..." : "Grow my Ksh 200"}
-                            </button>
+                            <div>
+                                <label
+                                    htmlFor="reg-confirm"
+                                    className="mb-1.5 block text-[0.8rem] font-semibold"
+                                >
+                                    Confirm Password
+                                </label>
+                                <Input
+                                    id="reg-confirm"
+                                    type="password"
+                                    value={confirmPassword}
+                                    onChange={(e) => setConfirmPassword(e.target.value)}
+                                    placeholder="Re-enter your password"
+                                    required
+                                    autoComplete="new-password"
+                                />
+                            </div>
+
+                            <div>
+                                <label
+                                    htmlFor="reg-ref"
+                                    className="mb-1.5 block text-[0.8rem] font-semibold"
+                                >
+                                    🎁 Referral Code (optional)
+                                </label>
+                                <Input
+                                    id="reg-ref"
+                                    type="text"
+                                    value={referralCode}
+                                    onChange={(e) => setReferralCode(e.target.value.toUpperCase())}
+                                    placeholder="Enter referral code"
+                                    className="border-emerald-400 bg-emerald-50"
+                                />
+                                {referralCode ? (
+                                    <div className="mt-2 flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2">
+                                        <span className="text-base">🎉</span>
+                                        <span className="text-[0.75rem] font-semibold leading-snug text-emerald-700">
+                                            You'll get a Ksh 10 welcome bonus!
+                                        </span>
+                                    </div>
+                                ) : null}
+                            </div>
+
+                            <div className="flex items-center gap-2 rounded-xl bg-[#f0f5ff] px-3 py-2">
+                                <span className="text-base">📈</span>
+                                <span className="text-[0.75rem] font-semibold leading-snug text-[#0052ff]">
+                                    Deposit Ksh 200 today and see your first earnings tomorrow.
+                                </span>
+                            </div>
+
+                            {error ? <p className="text-[0.75rem] text-red-600">{error}</p> : null}
+
+                            <Button type="submit" className="w-full" isLoading={isLoading}>
+                                Grow my Ksh 200
+                            </Button>
                         </form>
-                    </div>
+                    </Card>
                 </>
             );
         }
 
         return (
             <>
-                <img src="/lion.png" alt="SmartInvest" style={{ height: '50px', marginBottom: '20px' }} />
-                <h1 style={{ fontSize: '1.4rem', fontWeight: 800, marginBottom: '8px', letterSpacing: '-0.3px' }}>Check your email</h1>
-                <p style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '20px', lineHeight: 1.4 }}>We sent a code to <strong style={{ color: '#1e293b' }}>{email}</strong></p>
-                <div style={{ background: 'white', padding: '20px', borderRadius: '16px', boxShadow: '0 10px 25px rgba(0,0,0,0.04)', border: '1px solid #e2e8f0', textAlign: 'left' }}>
-                    <form onSubmit={handleVerifyOTP}>
-                        <label style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: '6px', display: 'block' }}>Verification Code</label>
-                        <input type="text" value={otp} onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))} placeholder="Enter 6-digit code" required style={{ width: '100%', padding: '12px', border: '1px solid #cbd5e1', borderRadius: '10px', marginBottom: '14px', fontSize: '1.2rem', outline: 'none', boxSizing: 'border-box', textAlign: 'center', letterSpacing: '6px', fontWeight: 700 }} />
+                <h1 className="text-[1.4rem] font-extrabold tracking-[-0.3px]">Check your email</h1>
+                <p className="mt-2 text-[0.85rem] leading-snug text-slate-500">
+                    We sent a code to <strong className="text-slate-800">{email}</strong>
+                </p>
 
-                        {error && <p style={{ color: '#dc2626', fontSize: '0.75rem', marginBottom: '12px' }}>{error}</p>}
+                <Card className="mt-5 text-left" padding="md">
+                    <form onSubmit={handleVerifyOTP} className="space-y-3">
+                        <div>
+                            <label htmlFor="reg-otp" className="mb-1.5 block text-[0.8rem] font-semibold">
+                                Verification Code
+                            </label>
+                            <Input
+                                id="reg-otp"
+                                inputMode="numeric"
+                                type="text"
+                                value={otp}
+                                onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                                placeholder="Enter 6-digit code"
+                                required
+                                className="text-center text-[1.2rem] font-bold tracking-[0.4em]"
+                            />
+                        </div>
 
-                        <button type="submit" disabled={isLoading} style={{ width: '100%', padding: '14px', background: '#0052ff', color: 'white', border: 'none', borderRadius: '10px', fontSize: '0.95rem', fontWeight: 700, cursor: 'pointer', opacity: isLoading ? 0.8 : 1 }}>
-                            {isLoading ? "Creating account..." : "Verify & Continue"}
-                        </button>
+                        {error ? <p className="text-[0.75rem] text-red-600">{error}</p> : null}
 
-                        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '12px' }}>
-                            <button type="button" onClick={goBack} style={{ background: 'transparent', color: '#64748b', border: 'none', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer' }}>← Back</button>
-                            <button type="button" onClick={resendOTP} disabled={isLoading} style={{ background: 'transparent', color: '#0052ff', border: 'none', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer' }}>Resend code</button>
+                        <Button type="submit" className="w-full" isLoading={isLoading}>
+                            Verify & Continue
+                        </Button>
+
+                        <div className="flex items-center justify-between pt-1">
+                            <button
+                                type="button"
+                                onClick={goBack}
+                                className="text-[0.75rem] font-semibold text-slate-500 hover:text-slate-700"
+                            >
+                                ← Back
+                            </button>
+                            <button
+                                type="button"
+                                onClick={resendOTP}
+                                disabled={isLoading}
+                                className="text-[0.75rem] font-semibold text-[#0052ff] hover:underline disabled:opacity-60"
+                            >
+                                Resend code
+                            </button>
                         </div>
                     </form>
-                </div>
+                </Card>
             </>
         );
     };
 
     return (
-        <div style={{ minHeight: '100vh', background: 'linear-gradient(180deg, #f0f5ff 0%, #ffffff 100%)', display: 'flex', justifyContent: 'center', alignItems: 'center', fontFamily: "'Plus Jakarta Sans', sans-serif", color: '#1e293b' }}>
-            <div style={{ width: '90%', maxWidth: '380px', textAlign: 'center', padding: '16px' }}>
-                <div style={{ marginBottom: '28px', display: 'flex', justifyContent: 'center' }}>
-                    <Link href="/"><img src="/lion.png" alt="SmartInvest" style={{ height: '60px', objectFit: 'contain', cursor: 'pointer' }} /></Link>
-                </div>
-
-                {renderStep()}
-
-                <p style={{ marginTop: '16px', fontSize: '0.75rem', color: '#64748b' }}>
-                    Already have an account?{" "}
-                    <Link href="/login" style={{ color: '#0052ff', textDecoration: 'none', fontWeight: 600 }}>Log in</Link>
-                </p>
-
-                <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '5px', fontSize: '0.65rem', color: '#059669', fontWeight: 600 }}>
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                    </svg>
-                    Your money is safe and insured
-                </div>
-            </div>
-        </div>
+        <AuthLayout
+            footer={
+                <>
+                    <p className="text-[0.75rem] text-slate-500">
+                        Already have an account?{" "}
+                        <Link className="font-semibold text-[#0052ff] hover:underline" href="/login">
+                            Log in
+                        </Link>
+                    </p>
+                    <div className="mt-5 flex items-center justify-center gap-2 text-[0.65rem] font-semibold text-emerald-600">
+                        <svg
+                            width="12"
+                            height="12"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="3"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                        >
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                        </svg>
+                        Your money is safe and insured
+                    </div>
+                </>
+            }
+        >
+            {renderStep()}
+        </AuthLayout>
     );
 }
 
 export default function RegisterPage() {
     return (
         <Suspense fallback={
-            <div style={{ minHeight: '100vh', background: 'linear-gradient(180deg, #f0f5ff 0%, #ffffff 100%)', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                <img src="/lion.png" alt="SmartInvest" style={{ height: '40px', objectFit: 'contain' }} />
-            </div>
+            <AuthLayout>
+                <div className="flex justify-center">
+                    <img src="/lion.png" alt="SmartInvest" className="h-10 w-auto object-contain opacity-80" />
+                </div>
+            </AuthLayout>
         }>
             <RegisterContent />
         </Suspense>

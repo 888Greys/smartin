@@ -13,6 +13,18 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Remove "odd" number spinners for a cleaner finance UI */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
 /* Custom Animations */
 @keyframes morph {
   0% {
