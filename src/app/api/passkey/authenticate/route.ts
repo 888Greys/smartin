@@ -1,15 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyAuthenticationResponse, type VerifiedAuthenticationResponse, type AuthenticatorTransportFuture } from '@simplewebauthn/server';
-import jwt from 'jsonwebtoken';
 import prisma from '@/lib/prisma';
+import { signAuthToken } from '@/lib/auth-token';
+import { passkeyChallengeStore } from '@/lib/passkey-challenge-store';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'smartinvest-secret-key';
 const RP_ID = process.env.RP_ID || 'localhost';
 const ORIGIN = process.env.ORIGIN || 'http://localhost:3000';
 
 export async function POST(request: NextRequest) {
     try {
-        const { response, challenge, userId } = await request.json();
+        const { response, userId } = await request.json();
+        const expectedChallenge = await passkeyChallengeStore.consume(`auth:${userId}`);
+        if (!expectedChallenge) {
+            return NextResponse.json({ error: 'Authentication challenge expired. Start again.' }, { status: 400 });
+        }
 
         const passkey = await prisma.passkey.findFirst({
             where: {
@@ -27,7 +31,7 @@ export async function POST(request: NextRequest) {
         try {
             verification = await verifyAuthenticationResponse({
                 response,
-                expectedChallenge: challenge,
+                expectedChallenge: expectedChallenge,
                 expectedOrigin: ORIGIN,
                 expectedRPID: RP_ID,
                 credential: {
@@ -53,11 +57,7 @@ export async function POST(request: NextRequest) {
             data: { counter: BigInt(authenticationInfo.newCounter) }
         });
 
-        const token = jwt.sign(
-            { userId: passkey.user.id, email: passkey.user.email },
-            JWT_SECRET,
-            { expiresIn: '7d' }
-        );
+        const token = signAuthToken({ userId: passkey.user.id, email: passkey.user.email });
 
         return NextResponse.json({
             success: true,

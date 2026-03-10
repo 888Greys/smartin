@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
 import { otpStore } from '@/lib/otp-store';
+import { createRateLimitKey, rateLimiter } from '@/lib/rate-limit';
 
 // Create email transporter
 const transporter = nodemailer.createTransport({
@@ -24,11 +25,23 @@ export async function POST(request: NextRequest) {
             );
         }
 
+        const rateLimit = rateLimiter.check(
+            createRateLimitKey('send-otp', request, email),
+            5,
+            10 * 60 * 1000
+        );
+        if (!rateLimit.allowed) {
+            return NextResponse.json(
+                { error: 'Too many OTP requests. Please try again later.' },
+                { status: 429 }
+            );
+        }
+
         // Generate OTP
         const otp = otpStore.generateOTP();
 
         // Store OTP with 10-minute expiry
-        otpStore.set(email, otp, 10);
+        await otpStore.set(email, otp, 10);
 
         // Send email
         await transporter.sendMail({

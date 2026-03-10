@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generateAuthenticationOptions, type AuthenticatorTransportFuture } from '@simplewebauthn/server';
 import prisma from '@/lib/prisma';
+import { passkeyChallengeStore } from '@/lib/passkey-challenge-store';
 
 const RP_ID = process.env.RP_ID || 'localhost';
 
@@ -29,6 +30,8 @@ export async function POST(request: NextRequest) {
             })),
             userVerification: 'preferred',
         });
+
+        await passkeyChallengeStore.set(`auth:${user.id}`, options.challenge);
 
         return NextResponse.json({
             success: true,

@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { startAuthentication } from "@simplewebauthn/browser";
 
 export default function LoginPage() {
@@ -18,7 +19,6 @@ export default function LoginPage() {
         // Set NEXT_PUBLIC_DEV_BYPASS=true in .env.local
         const DEV_BYPASS = process.env.NEXT_PUBLIC_DEV_BYPASS === 'true';
         if (DEV_BYPASS) {
-            localStorage.setItem('smartinvest_token', 'dev-bypass-token');
             router.push('/dashboard');
             return;
         }
@@ -123,7 +123,9 @@ export default function LoginPage() {
         <div style={{ minHeight: '100vh', background: 'linear-gradient(180deg, #f0f5ff 0%, #ffffff 100%)', display: 'flex', justifyContent: 'center', alignItems: 'center', fontFamily: "'Plus Jakarta Sans', sans-serif", color: '#1e293b' }}>
             <div style={{ width: '90%', maxWidth: '380px', textAlign: 'center', padding: '16px' }}>
                 <div style={{ marginBottom: '28px', display: 'flex', justifyContent: 'center' }}>
-                    <Link href="/"><img src="/lion.png" alt="SmartInvest" style={{ height: '60px', objectFit: 'contain', cursor: 'pointer' }} /></Link>
+                    <Link href="/">
+                        <Image src="/lion.png" alt="SmartInvest" width={160} height={60} style={{ height: '60px', width: 'auto', objectFit: 'contain', cursor: 'pointer' }} />
+                    </Link>
                 </div>
 
                 <h1 style={{ fontSize: '1.4rem', fontWeight: 800, marginBottom: '8px', letterSpacing: '-0.3px' }}>Welcome back</h1>

@@ -1,11 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
+import { verifyMpesaCallbackToken } from '@/lib/mpesa-callback';
 
 // MegaPay callback endpoint
 // This receives payment confirmation after user completes M-Pesa payment
 
 export async function POST(request: NextRequest) {
     try {
+        if (!verifyMpesaCallbackToken(request)) {
+            return NextResponse.json({ error: 'Unauthorized callback' }, { status: 401 });
+        }
+
         const body = await request.json();
 
         // Log callback for debugging
@@ -14,8 +19,6 @@ export async function POST(request: NextRequest) {
         // MegaPay callback structure varies, handle common formats
         const {
             reference,
-            transaction_id,
-            mpesa_code,
             amount,
             status,
             ResultCode,
@@ -34,7 +37,6 @@ export async function POST(request: NextRequest) {
         // Find the pending transaction by reference
         const transaction = await prisma.transaction.findFirst({
             where: { reference: reference },
-            include: { user: true }
         });
 
         if (!transaction) {
@@ -48,13 +50,24 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ success: true, message: 'Already processed' });
         }
 
+        const callbackAmount = Number(amount);
+        if (Number.isFinite(callbackAmount) && callbackAmount !== transaction.amount) {
+            await prisma.transaction.update({
+                where: { id: transaction.id },
+                data: { status: 'failed' }
+            });
+
+            console.error(`Amount mismatch for reference ${reference}: expected ${transaction.amount}, got ${callbackAmount}`);
+            return NextResponse.json({ error: 'Amount mismatch' }, { status: 400 });
+        }
+
         if (isSuccess) {
             // Update transaction to completed
             await prisma.transaction.update({
                 where: { id: transaction.id },
                 data: {
                     status: 'completed',
-                    reference: mpesa_code || transaction_id || reference
+                    reference: reference
                 }
             });
 
@@ -80,7 +93,7 @@ export async function POST(request: NextRequest) {
                 where: { id: transaction.id },
                 data: {
                     status: 'failed',
-                    reference: `FAILED: ${ResultDesc || status || 'Unknown error'}`
+                    reference: reference
                 }
             });
 

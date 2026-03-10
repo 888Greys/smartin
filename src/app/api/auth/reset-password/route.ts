@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import prisma from '@/lib/prisma';
 import { resetCodes } from '../forgot-password/route';
+import { createRateLimitKey, rateLimiter } from '@/lib/rate-limit';
 
 export async function POST(request: NextRequest) {
     try {
@@ -9,6 +10,18 @@ export async function POST(request: NextRequest) {
 
         if (!email || !code || !newPassword) {
             return NextResponse.json({ error: 'Email, code, and new password are required' }, { status: 400 });
+        }
+
+        const rateLimit = rateLimiter.check(
+            createRateLimitKey('reset-password', request, email),
+            10,
+            15 * 60 * 1000
+        );
+        if (!rateLimit.allowed) {
+            return NextResponse.json(
+                { error: 'Too many attempts. Try again later.' },
+                { status: 429 }
+            );
         }
 
         if (newPassword.length < 8) {
@@ -28,6 +41,14 @@ export async function POST(request: NextRequest) {
         }
 
         if (stored.code !== code) {
+            stored.attempts += 1;
+            if (stored.attempts >= 5) {
+                resetCodes.delete(email.toLowerCase());
+                return NextResponse.json(
+                    { error: 'Too many invalid attempts. Request a new reset code.' },
+                    { status: 400 }
+                );
+            }
             return NextResponse.json({ error: 'Invalid reset code' }, { status: 400 });
         }
 

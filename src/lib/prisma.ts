@@ -3,17 +3,16 @@ import { PrismaPg } from '@prisma/adapter-pg';
 import { Pool } from 'pg';
 
 declare global {
-    // eslint-disable-next-line no-var
     var prisma: PrismaClient | undefined;
 }
 
-// TCP connection with password
+const databaseUrl = process.env.DATABASE_URL;
+if (!databaseUrl) {
+    throw new Error('DATABASE_URL is required.');
+}
+
 const pool = new Pool({
-    host: '127.0.0.1',
-    port: 5433,
-    user: 'postgres',
-    password: process.env.POSTGRES_PASSWORD || 'postgres123',
-    database: 'smartinvest',
+    connectionString: databaseUrl,
 });
 
 const adapter = new PrismaPg(pool);

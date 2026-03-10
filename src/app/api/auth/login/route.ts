@@ -1,13 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
 import prisma from '@/lib/prisma';
-
-const JWT_SECRET = process.env.JWT_SECRET || 'smartinvest-secret-key-change-in-production';
-
-// DEV CREDENTIALS - for local development without database
-const DEV_EMAIL = 'dev@smartinvest.com';
-const DEV_PASSWORD = 'dev123456';
+import { signAuthToken } from '@/lib/auth-token';
+import { createRateLimitKey, rateLimiter } from '@/lib/rate-limit';
 
 export async function POST(request: NextRequest) {
     try {
@@ -20,25 +15,16 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // DEV MODE LOGIN - bypass database
-        if (email.toLowerCase() === DEV_EMAIL && password === DEV_PASSWORD) {
-            const token = jwt.sign(
-                { userId: 'dev-user-123', email: DEV_EMAIL },
-                JWT_SECRET,
-                { expiresIn: '7d' }
+        const rateLimit = rateLimiter.check(
+            createRateLimitKey('login', request, email),
+            10,
+            10 * 60 * 1000
+        );
+        if (!rateLimit.allowed) {
+            return NextResponse.json(
+                { error: 'Too many login attempts. Please try again later.' },
+                { status: 429 }
             );
-
-            return NextResponse.json({
-                success: true,
-                message: 'Dev login successful',
-                token,
-                user: {
-                    id: 'dev-user-123',
-                    email: DEV_EMAIL,
-                    balance: 5000,
-                    totalEarnings: 1250,
-                }
-            });
         }
 
         // Find user in database
@@ -64,11 +50,7 @@ export async function POST(request: NextRequest) {
         }
 
         // Generate JWT token
-        const token = jwt.sign(
-            { userId: user.id, email: user.email },
-            JWT_SECRET,
-            { expiresIn: '7d' }
-        );
+        const token = signAuthToken({ userId: user.id, email: user.email });
 
         return NextResponse.json({
             success: true,

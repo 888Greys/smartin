@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 
 interface User {
     id: string;
@@ -27,6 +28,19 @@ interface User {
     referralEarnings?: number;
 }
 
+interface MiningRig {
+    id: string;
+    name: string;
+    icon: string;
+    dailyEarnings: number;
+    price: number;
+    category: string;
+    description: string;
+    roi: string;
+    duration: string;
+    [key: string]: string | number | undefined;
+}
+
 type Section = 'home' | 'market' | 'investments' | 'trading' | 'staking' | 'pools' | 'uber-fleet' | 'wallet' | 'team' | 'profile';
 
 export default function DashboardPage() {
@@ -37,12 +51,10 @@ export default function DashboardPage() {
     const [activeSection, setActiveSection] = useState<Section>('home');
     const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
     const [expandedMenu, setExpandedMenu] = useState<string | null>(null);
-    const [toggleY, setToggleY] = useState(50);
-    const [isDragging, setIsDragging] = useState(false);
     const [showNotifications, setShowNotifications] = useState(false);
     const [expandedRig, setExpandedRig] = useState<string | null>(null);
     const [showRentModal, setShowRentModal] = useState(false);
-    const [selectedRig, setSelectedRig] = useState<any>(null);
+    const [selectedRig, setSelectedRig] = useState<MiningRig | null>(null);
 
     // Mining simulation states
     const [cpuTemp, setCpuTemp] = useState(68);
@@ -50,7 +62,6 @@ export default function DashboardPage() {
     const [hashrate, setHashrate] = useState(142.5);
     const [miningLogs, setMiningLogs] = useState<string[]>([]);
     const [payoutTicker, setPayoutTicker] = useState<Array<{ id: number, text: string, amount: string }>>([]);
-    const [xRayMode, setXRayMode] = useState(false);
     const [activeMiners, setActiveMiners] = useState(0);
     const [totalMined, setTotalMined] = useState(0);
     const [activityFeedExpanded, setActivityFeedExpanded] = useState(false);
@@ -111,8 +122,7 @@ export default function DashboardPage() {
             // DEV MODE - controlled by environment variable
             // Set NEXT_PUBLIC_DEV_BYPASS=true in .env.local for local development
             const token = localStorage.getItem('smartinvest_token');
-            const DEV_BYPASS = process.env.NEXT_PUBLIC_DEV_BYPASS === 'true';
-            const DEMO_MODE = DEV_BYPASS || token === 'dev-bypass-token';
+            const DEMO_MODE = process.env.NEXT_PUBLIC_DEV_BYPASS === 'true';
 
             if (DEMO_MODE) {
                 setUser({
@@ -346,7 +356,7 @@ export default function DashboardPage() {
     if (isLoading) {
         return (
             <div style={{ minHeight: '100vh', background: '#f8fafc', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                <img src="/lion.png" alt="Loading" style={{ height: '50px', opacity: 0.5 }} />
+                <Image src="/lion.png" alt="Loading" width={133} height={50} style={{ height: '50px', width: 'auto', opacity: 0.5 }} />
             </div>
         );
     }
@@ -628,7 +638,7 @@ export default function DashboardPage() {
             }}>
                 {/* Logo */}
                 <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none', marginBottom: '30px' }}>
-                    <img src="/lion.png" alt="SmartInvest" style={{ height: '36px' }} />
+                    <Image src="/lion.png" alt="SmartInvest" width={96} height={36} style={{ height: '36px', width: 'auto' }} />
                     <span style={{ color: 'white', fontWeight: 800, fontSize: '1rem', letterSpacing: '0.5px' }}>SMARTINVEST</span>
                 </Link>
 
@@ -1977,7 +1987,7 @@ export default function DashboardPage() {
                                         <div style={{ fontSize: '3rem', marginBottom: '15px' }}>📱</div>
                                         <h3 style={{ fontSize: '1.2rem', fontWeight: 800, marginBottom: '10px' }}>Check your phone!</h3>
                                         <p style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '20px' }}>
-                                            We've sent an M-Pesa prompt to <strong>{depositPhone}</strong>. Enter your PIN to complete the deposit of <strong>Ksh {depositAmount}</strong>.
+                                            We have sent an M-Pesa prompt to <strong>{depositPhone}</strong>. Enter your PIN to complete the deposit of <strong>Ksh {depositAmount}</strong>.
                                         </p>
                                         <button
                                             onClick={() => { setDepositSuccess(false); setDepositPhone(''); setDepositAmount(''); }}
@@ -2035,7 +2045,7 @@ export default function DashboardPage() {
 
                                         <div style={{ background: '#f0f7ff', padding: '12px 14px', borderRadius: '12px', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>
                                             <span style={{ fontSize: '1rem' }}>🔒</span>
-                                            <span style={{ fontSize: '0.8rem', color: '#0052ff', fontWeight: 600 }}>Secure M-Pesa payment. You'll receive an STK push.</span>
+                                            <span style={{ fontSize: '0.8rem', color: '#0052ff', fontWeight: 600 }}>Secure M-Pesa payment. You will receive an STK push.</span>
                                         </div>
 
                                         {depositError && <p style={{ color: '#dc2626', fontSize: '0.85rem', marginBottom: '15px' }}>{depositError}</p>}
@@ -2474,6 +2484,7 @@ export default function DashboardPage() {
                             <label htmlFor="avatarUpload" style={{ cursor: 'pointer', display: 'inline-block', position: 'relative' }}>
                                 <div style={{ width: '100px', height: '100px', background: profilePhoto || user?.profilePhoto ? 'transparent' : 'linear-gradient(135deg, #0052ff, #00a3ff)', borderRadius: '50%', margin: '0 auto 20px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2.5rem', color: 'white', fontWeight: 800, overflow: 'hidden', border: '3px solid #e2e8f0', position: 'relative' }}>
                                     {profilePhoto || user?.profilePhoto ? (
+                                        // eslint-disable-next-line @next/next/no-img-element
                                         <img src={profilePhoto || user?.profilePhoto} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                     ) : (
                                         user?.fullName ? user.fullName.charAt(0).toUpperCase() : user?.email?.charAt(0).toUpperCase() || '?'

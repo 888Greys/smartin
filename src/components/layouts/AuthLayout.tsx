@@ -1,5 +1,6 @@
 import * as React from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 import { cn } from "@/lib/cn";
 
@@ -29,9 +30,11 @@ export function AuthLayout({
       <div className="w-full max-w-[380px] px-4 py-10 text-center">
         <div className="mb-7 flex justify-center">
           <Link href="/" aria-label="Go to home">
-            <img
+            <Image
               src="/lion.png"
               alt="SmartInvest"
+              width={160}
+              height={60}
               className="h-[60px] w-auto cursor-pointer object-contain"
             />
           </Link>

@@ -1,18 +1,18 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
-import jwt from 'jsonwebtoken';
-
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
+import { getBearerToken, verifyAuthToken } from '@/lib/auth-token';
 
 export async function GET(request: Request) {
     try {
-        const authHeader = request.headers.get('authorization');
-        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        const token = getBearerToken(request);
+        if (!token) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
-        const token = authHeader.split(' ')[1];
-        const decoded = jwt.verify(token, JWT_SECRET) as { userId: string };
+        const decoded = verifyAuthToken(token);
+        if (!decoded) {
+            return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
+        }
 
         const user = await prisma.user.findUnique({
             where: { id: decoded.userId },
@@ -51,13 +51,15 @@ export async function GET(request: Request) {
 
 export async function PUT(request: Request) {
     try {
-        const authHeader = request.headers.get('authorization');
-        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        const token = getBearerToken(request);
+        if (!token) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
-        const token = authHeader.split(' ')[1];
-        const decoded = jwt.verify(token, JWT_SECRET) as { userId: string };
+        const decoded = verifyAuthToken(token);
+        if (!decoded) {
+            return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
+        }
 
         const body = await request.json();
         const { fullName, phone, idNumber, dateOfBirth, profilePhoto, gender, occupation, address } = body;

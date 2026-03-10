@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Suspense } from "react";
+import Image from "next/image";
 
 type Step = 'register' | 'otp';
 
@@ -24,7 +25,6 @@ function RegisterContent() {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [referralCode, setReferralCode] = useState('');
-    const [showReferralInput, setShowReferralInput] = useState(true);
     const [otp, setOtp] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
@@ -42,7 +42,6 @@ function RegisterContent() {
         const refCode = searchParams.get('ref');
         if (refCode) {
             setReferralCode(refCode);
-            setShowReferralInput(true);
         }
 
         const saved = localStorage.getItem('smartinvest_registration');
@@ -189,7 +188,7 @@ function RegisterContent() {
     if (!isHydrated) {
         return (
             <div style={{ minHeight: '100vh', background: 'linear-gradient(180deg, #f0f5ff 0%, #ffffff 100%)', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                <img src="/lion.png" alt="SmartInvest" style={{ height: '40px', objectFit: 'contain' }} />
+                <Image src="/lion.png" alt="SmartInvest" width={107} height={40} style={{ height: '40px', width: 'auto', objectFit: 'contain' }} />
             </div>
         );
     }
@@ -227,7 +226,7 @@ function RegisterContent() {
                             {referralCode && (
                                 <div style={{ background: '#f0fdf4', padding: '10px 12px', borderRadius: '10px', marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '10px', border: '1px solid #bbf7d0' }}>
                                     <span style={{ fontSize: '1rem' }}>🎉</span>
-                                    <span style={{ fontSize: '0.75rem', color: '#059669', fontWeight: 600, lineHeight: 1.3 }}>You'll get a KES 10 welcome bonus!</span>
+                                    <span style={{ fontSize: '0.75rem', color: '#059669', fontWeight: 600, lineHeight: 1.3 }}>You will get a KES 10 welcome bonus.</span>
                                 </div>
                             )}
 
@@ -249,7 +248,7 @@ function RegisterContent() {
 
         return (
             <>
-                <img src="/lion.png" alt="SmartInvest" style={{ height: '50px', marginBottom: '20px' }} />
+                <Image src="/lion.png" alt="SmartInvest" width={133} height={50} style={{ height: '50px', width: 'auto', marginBottom: '20px' }} />
                 <h1 style={{ fontSize: '1.4rem', fontWeight: 800, marginBottom: '8px', letterSpacing: '-0.3px' }}>Check your email</h1>
                 <p style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '20px', lineHeight: 1.4 }}>We sent a code to <strong style={{ color: '#1e293b' }}>{email}</strong></p>
                 <div style={{ background: 'white', padding: '20px', borderRadius: '16px', boxShadow: '0 10px 25px rgba(0,0,0,0.04)', border: '1px solid #e2e8f0', textAlign: 'left' }}>
@@ -277,7 +276,9 @@ function RegisterContent() {
         <div style={{ minHeight: '100vh', background: 'linear-gradient(180deg, #f0f5ff 0%, #ffffff 100%)', display: 'flex', justifyContent: 'center', alignItems: 'center', fontFamily: "'Plus Jakarta Sans', sans-serif", color: '#1e293b' }}>
             <div style={{ width: '90%', maxWidth: '380px', textAlign: 'center', padding: '16px' }}>
                 <div style={{ marginBottom: '28px', display: 'flex', justifyContent: 'center' }}>
-                    <Link href="/"><img src="/lion.png" alt="SmartInvest" style={{ height: '60px', objectFit: 'contain', cursor: 'pointer' }} /></Link>
+                    <Link href="/">
+                        <Image src="/lion.png" alt="SmartInvest" width={160} height={60} style={{ height: '60px', width: 'auto', objectFit: 'contain', cursor: 'pointer' }} />
+                    </Link>
                 </div>
 
                 {renderStep()}
@@ -302,7 +303,7 @@ export default function RegisterPage() {
     return (
         <Suspense fallback={
             <div style={{ minHeight: '100vh', background: 'linear-gradient(180deg, #f0f5ff 0%, #ffffff 100%)', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                <img src="/lion.png" alt="SmartInvest" style={{ height: '40px', objectFit: 'contain' }} />
+                <Image src="/lion.png" alt="SmartInvest" width={107} height={40} style={{ height: '40px', width: 'auto', objectFit: 'contain' }} />
             </div>
         }>
             <RegisterContent />

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 
 type Step = 'email' | 'code' | 'success';
 
@@ -182,7 +183,7 @@ export default function ForgotPasswordPage() {
         <div style={{ minHeight: '100vh', background: 'linear-gradient(180deg, #f0f5ff 0%, #ffffff 100%)', display: 'flex', justifyContent: 'center', alignItems: 'center', fontFamily: "'Plus Jakarta Sans', sans-serif", color: '#1e293b' }}>
             <div style={{ width: '90%', maxWidth: '380px', textAlign: 'center', padding: '16px' }}>
                 {/* Lion Logo */}
-                <img src="/lion.png" alt="SmartInvest" style={{ height: '70px', marginBottom: '24px', display: 'block', margin: '0 auto 24px auto' }} />
+                <Image src="/lion.png" alt="SmartInvest" width={187} height={70} style={{ height: '70px', width: 'auto', display: 'block', margin: '0 auto 24px auto' }} />
 
                 {renderStep()}
 

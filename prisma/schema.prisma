@@ -64,3 +64,21 @@ model Passkey {
 
   user User @relation(fields: [userId], references: [id])
 }
+
+model OtpCode {
+  id          String    @id @default(cuid())
+  email       String    @unique
+  otp         String
+  expiresAt   DateTime
+  attempts    Int       @default(0)
+  lockedUntil DateTime?
+  createdAt   DateTime  @default(now())
+}
+
+model PasskeyChallenge {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  challenge String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}

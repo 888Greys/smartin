@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { otpStore } from '@/lib/otp-store';
+import { createRateLimitKey, rateLimiter } from '@/lib/rate-limit';
 
 export async function POST(request: NextRequest) {
     try {
@@ -12,8 +13,20 @@ export async function POST(request: NextRequest) {
             );
         }
 
+        const rateLimit = rateLimiter.check(
+            createRateLimitKey('verify-otp', request, email),
+            12,
+            10 * 60 * 1000
+        );
+        if (!rateLimit.allowed) {
+            return NextResponse.json(
+                { error: 'Too many verification attempts. Please request a new code.' },
+                { status: 429 }
+            );
+        }
+
         // Verify OTP using shared store
-        const result = otpStore.verify(email, otp);
+        const result = await otpStore.verify(email, otp);
 
         if (!result.valid) {
             return NextResponse.json(

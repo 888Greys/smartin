@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
 import prisma from '@/lib/prisma';
+import { createRateLimitKey, rateLimiter } from '@/lib/rate-limit';
 
 // In-memory store for reset codes (use Redis in production)
-const resetCodes = new Map<string, { code: string; expires: number }>();
+const resetCodes = new Map<string, { code: string; expires: number; attempts: number }>();
 
 export async function POST(request: NextRequest) {
     try {
@@ -11,6 +12,18 @@ export async function POST(request: NextRequest) {
 
         if (!email) {
             return NextResponse.json({ error: 'Email is required' }, { status: 400 });
+        }
+
+        const rateLimit = rateLimiter.check(
+            createRateLimitKey('forgot-password', request, email),
+            5,
+            15 * 60 * 1000
+        );
+        if (!rateLimit.allowed) {
+            return NextResponse.json(
+                { error: 'Too many reset requests. Try again later.' },
+                { status: 429 }
+            );
         }
 
         // Check if user exists
@@ -32,7 +45,8 @@ export async function POST(request: NextRequest) {
         // Store code with 15-minute expiry
         resetCodes.set(email.toLowerCase(), {
             code,
-            expires: Date.now() + 15 * 60 * 1000
+            expires: Date.now() + 15 * 60 * 1000,
+            attempts: 0,
         });
 
         // Send email

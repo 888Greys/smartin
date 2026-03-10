@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
 import prisma from '@/lib/prisma';
-
-const JWT_SECRET = process.env.JWT_SECRET || 'smartinvest-secret-key-change-in-production';
+import { signAuthToken } from '@/lib/auth-token';
+import { createRateLimitKey, rateLimiter } from '@/lib/rate-limit';
 
 // Referral bonus amounts
 const LEVEL_1_BONUS = 20; // Direct referral bonus
@@ -27,6 +26,18 @@ export async function POST(request: NextRequest) {
             return NextResponse.json(
                 { error: 'Email and password are required' },
                 { status: 400 }
+            );
+        }
+
+        const rateLimit = rateLimiter.check(
+            createRateLimitKey('register', request, email),
+            5,
+            10 * 60 * 1000
+        );
+        if (!rateLimit.allowed) {
+            return NextResponse.json(
+                { error: 'Too many registration attempts. Please try again later.' },
+                { status: 429 }
             );
         }
 
@@ -135,11 +146,7 @@ export async function POST(request: NextRequest) {
         }
 
         // Generate JWT token
-        const token = jwt.sign(
-            { userId: user.id, email: user.email },
-            JWT_SECRET,
-            { expiresIn: '7d' }
-        );
+        const token = signAuthToken({ userId: user.id, email: user.email });
 
         return NextResponse.json({
             success: true,

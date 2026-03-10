@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
-import { Input } from "@/components/ui/Input";
 
 export interface WalletSectionProps {
     balance: number;
@@ -126,7 +125,7 @@ export function WalletSection({ balance, setBalance, profilePhone }: WalletSecti
                             <div style={{ fontSize: "3rem", marginBottom: "15px" }}>📱</div>
                             <h3 style={{ fontSize: "1.2rem", fontWeight: 800, marginBottom: "10px" }}>Check your phone!</h3>
                             <p style={{ fontSize: "0.85rem", color: "#64748b", marginBottom: "20px" }}>
-                                We've sent an M-Pesa prompt to <strong>{depositPhone}</strong>. Enter your PIN to complete the deposit of{" "}
+                                We have sent an M-Pesa prompt to <strong>{depositPhone}</strong>. Enter your PIN to complete the deposit of{" "}
                                 <strong>Ksh {depositAmount}</strong>.
                             </p>
                             <Button
@@ -226,7 +225,7 @@ export function WalletSection({ balance, setBalance, profilePhone }: WalletSecti
                             >
                                 <span style={{ fontSize: "1rem" }}>🔒</span>
                                 <span style={{ fontSize: "0.8rem", color: "#0052ff", fontWeight: 600 }}>
-                                    Secure M-Pesa payment. You'll receive an STK push.
+                                    Secure M-Pesa payment. You will receive an STK push.
                                 </span>
                             </div>
 
