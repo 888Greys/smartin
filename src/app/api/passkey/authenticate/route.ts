@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
+
+export const dynamic = 'force-dynamic';
 import { verifyAuthenticationResponse, type VerifiedAuthenticationResponse, type AuthenticatorTransportFuture } from '@simplewebauthn/server';
 import prisma from '@/lib/prisma';
 import { signAuthToken } from '@/lib/auth-token';

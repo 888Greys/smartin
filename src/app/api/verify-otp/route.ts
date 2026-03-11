@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
+
+export const dynamic = 'force-dynamic';
 import { otpStore } from '@/lib/otp-store';
 import { createRateLimitKey, rateLimiter } from '@/lib/rate-limit';
 

@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
+
+export const dynamic = 'force-dynamic';
 import { verifyRegistrationResponse, type VerifiedRegistrationResponse } from '@simplewebauthn/server';
 import prisma from '@/lib/prisma';
 import { getBearerToken, verifyAuthToken } from '@/lib/auth-token';

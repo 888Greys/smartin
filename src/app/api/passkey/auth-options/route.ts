@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
+
+export const dynamic = 'force-dynamic';
 import { generateAuthenticationOptions, type AuthenticatorTransportFuture } from '@simplewebauthn/server';
 import prisma from '@/lib/prisma';
 import { passkeyChallengeStore } from '@/lib/passkey-challenge-store';
