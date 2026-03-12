@@ -93,7 +93,7 @@ export async function POST(request: NextRequest) {
             data: {
                 email: email.toLowerCase(),
                 passwordHash,
-                balance: 200.00, // Welcome bonus
+                balance: 20.00, // Welcome bonus ($20 USD)
                 isVerified: true, // Already verified via OTP
                 referredBy: referrerId,
                 referralCode: newReferralCode,

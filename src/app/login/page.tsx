@@ -19,7 +19,16 @@ export default function LoginPage() {
         // Set NEXT_PUBLIC_DEV_BYPASS=true in .env.local
         const DEV_BYPASS = process.env.NEXT_PUBLIC_DEV_BYPASS === 'true';
         if (DEV_BYPASS) {
-            router.push('/dashboard');
+            fetch('/api/dev/token', { method: 'POST' })
+                .then((r) => r.json())
+                .then((data) => {
+                    if (data.token) {
+                        localStorage.setItem('smartinvest_token', data.token);
+                        localStorage.setItem('smartinvest_email', data.user.email);
+                    }
+                    router.push('/dashboard');
+                })
+                .catch(() => router.push('/dashboard'));
             return;
         }
 

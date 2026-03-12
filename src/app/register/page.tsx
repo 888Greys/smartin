@@ -227,7 +227,7 @@ function RegisterContent() {
                             {referralCode && (
                                 <div style={{ background: '#f0fdf4', padding: '10px 12px', borderRadius: '10px', marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '10px', border: '1px solid #bbf7d0' }}>
                                     <span style={{ fontSize: '1rem' }}>🎉</span>
-                                    <span style={{ fontSize: '0.75rem', color: '#059669', fontWeight: 600, lineHeight: 1.3 }}>Referral code applied! You&apos;ll get a KES 200 welcome bonus.</span>
+                                    <span style={{ fontSize: '0.75rem', color: '#059669', fontWeight: 600, lineHeight: 1.3 }}>Referral code applied! You&apos;ll receive a $20 welcome bonus.</span>
                                 </div>
                             )}
 
