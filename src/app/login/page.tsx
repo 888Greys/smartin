@@ -51,7 +51,8 @@ export default function LoginPage() {
             }
 
             localStorage.setItem('smartinvest_token', data.token);
-            router.push('/dashboard');
+            localStorage.setItem('smartinvest_email', data.user.email);
+            router.push('/welcome');
         } catch {
             setError('Something went wrong. Please try again.');
         } finally {
@@ -102,7 +103,8 @@ export default function LoginPage() {
             }
 
             localStorage.setItem('smartinvest_token', verifyData.token);
-            router.push('/dashboard');
+            localStorage.setItem('smartinvest_email', email);
+            router.push('/welcome');
         } catch (err) {
             console.error('Biometrics error:', err);
             setError('Biometrics not available or cancelled');
