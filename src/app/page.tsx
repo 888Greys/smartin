@@ -52,7 +52,7 @@ export default function LandingPage() {
           }
         });
       },
-      { threshold: 0.1 }
+      { threshold: 0.08 }
     );
 
     elementsRef.current.forEach((el) => {
@@ -76,57 +76,45 @@ export default function LandingPage() {
 
   const revealStyle = (idx: number): React.CSSProperties => ({
     opacity: revealed.has(idx) ? 1 : 0,
-    transform: revealed.has(idx) ? "translateY(0)" : "translateY(30px)",
-    transition: "1s ease-out",
+    transform: revealed.has(idx) ? "translateY(0)" : "translateY(28px)",
+    transition: `opacity 0.7s ease-out ${(idx % 6) * 80}ms, transform 0.7s ease-out ${(idx % 6) * 80}ms`,
   });
 
   return (
     <>
-      <style jsx global>{`
-        @media (max-width: 768px) {
-          .bento-grid { grid-template-columns: 1fr !important; }
-          .bento-item { grid-column: span 1 !important; min-height: auto !important; }
-          .hero-title { font-size: 2.2rem !important; letter-spacing: -1px !important; }
-          .hero-desc { font-size: 1rem !important; }
-          .cta-btn { padding: 18px 35px !important; font-size: 1rem !important; }
-          .nav-container { padding: 15px 4% !important; }
-          .bento-item h2 { font-size: 1.4rem !important; }
-          .bento-item p { font-size: 0.9rem !important; }
-          .trust-logos { gap: 25px !important; }
-          .trust-logos > div { font-size: 1.2rem !important; }
-        }
-        @keyframes scroll-left {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
-        }
-        .testimonial-scroll {
-          display: flex;
-          gap: 25px;
-          animation: scroll-left 5s linear infinite;
-        }
-        .testimonial-scroll:hover {
-          animation-play-state: paused;
-        }
-      `}</style>
-
-      {/* Grid mesh background */}
+      {/* Subtle dot-grid background */}
       <div
         style={{
           position: "fixed",
           top: 0, left: 0, right: 0, bottom: 0,
           zIndex: 0,
           backgroundImage:
-            "linear-gradient(rgba(0, 82, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 82, 255, 0.03) 1px, transparent 1px)",
-          backgroundSize: "40px 40px",
+            "radial-gradient(rgba(59,130,246,0.12) 1px, transparent 1px)",
+          backgroundSize: "32px 32px",
           pointerEvents: "none",
+        }}
+      />
+
+      {/* Deep blue radial ambient */}
+      <div
+        style={{
+          position: "fixed",
+          top: "-20%",
+          left: "50%",
+          transform: "translateX(-50%)",
+          width: "900px",
+          height: "600px",
+          background: "radial-gradient(ellipse, rgba(59,130,246,0.08) 0%, transparent 70%)",
+          pointerEvents: "none",
+          zIndex: 0,
         }}
       />
 
       <div
         style={{
           background: "transparent",
-          color: "#0f172a",
-          fontFamily: "'Plus Jakarta Sans', sans-serif",
+          color: "#f1f5f9",
+          fontFamily: "'Inter', sans-serif",
           overflowX: "hidden",
           position: "relative",
           zIndex: 1,
@@ -146,7 +134,7 @@ export default function LandingPage() {
       {menuOpen && (
         <div
           onClick={() => setMenuOpen(false)}
-          style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, zIndex: 50 }}
+          style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, zIndex: 50, background: "rgba(0,0,0,0.3)" }}
         />
       )}
     </>
