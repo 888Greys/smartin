@@ -68,7 +68,7 @@ export default function ContactPage() {
                     {/* Contact Form */}
                     <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm">
                         <h2 className="text-2xl font-bold text-slate-900 mb-6 tracking-tight">Send a Message</h2>
-                        <form className="space-y-5" onSubmit={(e) => e.preventDefault()}>
+                        <form className="space-y-5">
                             <div>
                                 <label className="block text-sm font-semibold text-slate-700 mb-1.5">Full Name</label>
                                 <input type="text" className="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all placeholder-slate-400 font-medium text-slate-800" placeholder="John Doe" />
